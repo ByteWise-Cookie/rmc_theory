@@ -1,0 +1,76 @@
+,,
+,6-Month High-Level Project Roadmap,
+,,
+,Work Items/Tasks,Tentative Timeline / Expected Completion
+,Microarchitecture Version 0.1,Completed 
+,Microarchitecture Version 0.5,"Client Interface -Specification of client Interface ( Write and Read Path) Sublock Identification, MC Core"
+,Microarchitecture Version 1.0,
+,CIF Block Implementation,
+,MC Core Block Implementation,
+,Simulation,
+,Functional Verification,
+,Synthesis,
+,Performance Evaluation / Benchmarking,
+,Debugging & Iteration,
+,Documentation / Report Writing,
+,Final Integration,
+,,
+,CIF Microarchitecture v0.1 (Complete),Status
+,AXI Write Port,Complete
+,Burst Splitter,Complete
+,Address Translator,Complete
+,Write Cmd Pool,Complete
+,AXI Read Port,Complete
+,Read Cmd Pool,Complete
+,Response Tracking,Complete
+,Reorder Buffer,Complete
+,Merge Logic,Complete
+,,
+,CIF Microarchitecture v0.5 and v1.0 Roadmap,
+,"Goal: Freeze CIF v1.0 architecture by end of June.
+This includes proposed block decomposition, interface definitions, architectural rules, signal specifications, and review-driven refinements.",
+,AXI Write Port,June 10
+,  - AW Channel Handler,
+,  - W Channel Handler,
+,  - Write Request Validation,
+,  - B Response Generator,
+,AXI Read Port,June 10
+,  - AR Channel Handler,
+,  - Read Request Validation,
+,  - Outstanding Request Tracking,
+,  - Read Request Formatter,
+,Burst Splitter (Reviewed),Complete
+,  - Page Boundary Detector,
+,  - Burst Split Logic,
+,  - Command Generator,
+,  - Metadata Generator,
+,Address Translator,June 14
+,  - Address Mapping Logic,
+,  - Address Field Extractor,
+,  - Mapping Configuration,
+,  - Address Validation,
+,Write Cmd Pool,June 17
+,  - Entry Storage,
+,  - Allocation Logic,
+,  - Dispatch Logic,
+,  - Free Logic,
+,Read Cmd Pool,June 17
+,  - Entry Storage,
+,  - Allocation Logic,
+,  - Dispatch Logic,
+,  - Free Logic,
+,Response Tracking,June 21
+,  - Sequence Number Generator,
+,  - Tag Generator,
+,  - Attribute Buffer,
+,  - Tag Lookup Logic,
+,Reorder Buffer,June 24
+,  - Per-AXID Queues,
+,  - Fill Logic,
+,  - Ordering Logic,
+,  - Retirement Logic,
+,Merge Logic,June 28
+,  - Response Collection,
+,  - Burst Reconstruction,
+,  - Response Merge Logic,
+,  - AXI Response Formatter,

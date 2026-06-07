@@ -1,0 +1,410 @@
+
+% ============================================================
+%  RMC — Reconfigurable DDR5 Memory Controller
+%  Block-by-Block Reference — v1.9.8
+%  Beamer presentation — every block in RMC_Architecture_v11
+%  Style/preamble reused verbatim from memory_ctl/rocky.tex
+%  Compile:  pdflatex -shell-escape RMC_Block_Reference_v1.9.8.tex
+% ============================================================
+\documentclass[aspectratio=169,9pt]{beamer}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, fit, backgrounds, calc, positioning, matrix}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\definecolor{Navy}   {HTML}{0D1B2A}
+\definecolor{Teal}   {HTML}{1A6060}
+\definecolor{TealF}  {HTML}{D4EEEE}
+\definecolor{Blue}   {HTML}{1A3A7A}
+\definecolor{BlueF}  {HTML}{DDE3F5}
+\definecolor{Amber}  {HTML}{7A4010}
+\definecolor{AmberF} {HTML}{FAE8D4}
+\definecolor{Purp}   {HTML}{534AB7}
+\definecolor{PurpF}  {HTML}{EEEDFE}
+\definecolor{Green}  {HTML}{3B6D11}
+\definecolor{GreenF} {HTML}{EAF3DE}
+\definecolor{MGray}  {HTML}{5F5E5A}
+\definecolor{LGray}  {HTML}{E8EBF0}
+\definecolor{BypassR}{HTML}{993C1D}
+
+\usetheme{default}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.72cm,dp=0pt,leftskip=0.35cm]{frametitle}%
+    \vbox to 0.72cm{\vfil
+      \usebeamerfont{frametitle}\insertframetitle
+      \ifx\insertframesubtitle\@empty\else
+        \hfill{\footnotesize\color{cyan!60!white}\insertframesubtitle}%
+      \fi
+    \hspace*{0.35cm}\vfil}%
+  \end{beamercolorbox}%
+}
+\setbeamercolor{frametitle}{bg=Navy, fg=white}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamercolor{background canvas}{bg=LGray!30!white}
+\setbeamercolor{normal text}{fg=Navy}
+\setbeamertemplate{footline}{%
+  \hfill{\tiny\color{MGray}\insertframenumber/\inserttotalframenumber\hspace*{4pt}}%
+  \vspace*{3pt}%
+}
+
+% ── Block-card macro: Name / one-line purpose / key ports ──────────────────
+% \blockcard{stroke}{fill}{Name}{Purpose text}{Ports text}
+\newcommand{\blockcard}[5]{%
+  \begin{tikzpicture}
+    \node[rectangle, rounded corners=4pt,
+          draw=#1, fill=#2, text=Navy,
+          inner sep=6pt, line width=0.9pt,
+          text width=\linewidth-12pt-2\pgflinewidth] {%
+      {\scriptsize\bfseries\color{#1}#3}\\[2pt]
+      {\tiny #4}\\[2pt]
+      {\tiny\ttfamily\color{MGray}#5}
+    };
+  \end{tikzpicture}%
+}
+
+% ── Info card helper (free-text callouts) ───────────────────────────────────
+\newcommand{\infocard}[3]{%
+  \begin{tikzpicture}
+    \node[rectangle, rounded corners=4pt,
+          draw=#1, fill=#2, text=Navy,
+          inner sep=7pt, line width=0.9pt,
+          text width=\linewidth-14pt-2\pgflinewidth] {#3};
+  \end{tikzpicture}%
+}
+
+\begin{document}
+
+% ── Title ─────────────────────────────────────────────────────────────────
+\setbeamercolor{background canvas}{bg=Navy}
+\begin{frame}[plain]
+  \vspace*{0.6cm}
+  \begin{center}
+    {\huge\bfseries\color{white}RMC Block Reference}\\[6pt]
+    {\large\color{cyan!70!white}Every Block in the v1.9.8 Architecture Diagram}\\[4pt]
+    {\small\color{blue!40!white}46 blocks across 7 domains — name, function, key ports}
+  \end{center}
+\end{frame}
+\setbeamercolor{background canvas}{bg=LGray!30!white}
+
+% ── AXI DOMAIN ────────────────────────────────────────────────────────────
+\begin{frame}{AXI Domain}{2 blocks}
+  \blockcard{Teal}{TealF}{AXI Masters}{%
+    N\_CLIENTS host masters issuing AXI4 transactions. Outside RMC's own scope —
+    drawn as the traffic source.}{%
+    (system-level, N\_CLIENTS instances)}
+  \vspace{5pt}
+  \blockcard{Teal}{TealF}{AXI Interconnect}{%
+    Routes N\_CLIENTS masters to the CIF's write/read ports. Outside RMC's scope.}{%
+    routes to: AXI Write Port, AXI Read Port}
+\end{frame}
+
+% ── CIF (1/2) ─────────────────────────────────────────────────────────────
+\begin{frame}{CIF — Client Interface (1/2)}{AXI clock domain}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{Blue}{BlueF}{AXI Write Port}{%
+        Terminates the AXI4 write subordinate port. Valid-ready, spec-mandated.}{%
+        AWID/AWADDR/AWLEN/AWVALID $\to$ \textbar\ AWREADY,WREADY,BVALID $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Blue}{BlueF}{AXI Read Port}{%
+        Terminates the AXI4 read subordinate port. Valid-ready, spec-mandated.}{%
+        ARID/ARADDR/ARLEN/ARVALID $\to$ \textbar\ RDATA,RLAST,RVALID $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Blue}{BlueF}{AMU (Address Map Unit)}{%
+        Replaces the plain Address Translator. Per-field XOR hash + split-field
+        extract, CSR-configurable setup time. Rank/ch hashed to MSBs (spread);
+        bg/bank/row/col left raw (preserve row-hit locality).}{%
+        byte\_addr $\to$ \textbar\ ch,rank,bg,bank,row,col $\leftarrow$}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{Blue}{BlueF}{Burst Splitter}{%
+        Stage 1: row-boundary check. Stage 2: BL16 alignment check.}{%
+        raw\_addr,raw\_len,raw\_id $\to$ \textbar\ split\_addr[],split\_valid $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Blue}{BlueF}{ROB (Reorder Buffer)}{%
+        Tags every request with composite \{AXID,seqnum\}; per-AXID head pointer
+        re-orders DRAM-side out-of-order completions back into AXI's required
+        per-ID order.}{%
+        alloc\_id,alloc\_seqnum $\to$ \textbar\ rob\_slot,rd\_data\_out $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Blue}{BlueF}{Merge Logic}{%
+        Reassembles any request the Burst Splitter fragmented.}{%
+        frag\_data,frag\_mask,frag\_id $\to$ \textbar\ merged\_data,merged\_valid $\leftarrow$}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── CIF (2/2) ─────────────────────────────────────────────────────────────
+\begin{frame}{CIF — Client Interface (2/2)}{The single CDC boundary}
+  \blockcard{Blue}{BlueF}{Async REQ FIFO (CIF $\to$ MC)}{%
+    The \emph{only} CDC crossing in the whole design, request direction.
+    CIF side: credit-based push, no combinational \texttt{wr\_full}. MC side:
+    valid-credit receive, registered \texttt{rd\_valid}, credit returned after
+    consume. FIFO\_DEPTH = 16.}{%
+    packet: req\_type,axi\_id,addr,data,mask \textbar\ credit\_return (MC$\to$CIF, registered)}
+  \vspace{6pt}
+  \blockcard{Blue}{BlueF}{Async RESP FIFO (MC $\to$ CIF)}{%
+    The reverse CDC crossing. MC side: credit-based push, gated by
+    \texttt{gate\_resp\_fifo\_avail = (local\_credit > reserved\_slots)} — MC never
+    issues a read without this. CIF side: valid-credit receive, always accepts
+    immediately.}{%
+    packet: resp\_type,axi\_id,data,status \textbar\ credit\_return (CIF$\to$MC, registered)}
+\end{frame}
+
+% ── MC CORE subA (1/2) ────────────────────────────────────────────────────
+\begin{frame}{MC Core — Buffers, TCAM, Status (1/3)}{MC clock domain}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{Amber}{AmberF}{Write Data Buffer}{%
+        Index-addressed SRAM — \emph{not} a FIFO. Random access via
+        \texttt{data\_buf\_idx} carried in the WR\_TCAM entry.}{%
+        wr\_idx,wr\_data,wr\_mask,wr\_en $\to$ \textbar\ rd\_data,rd\_mask $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Amber}{AmberF}{WR\_TCAM}{%
+        Full address match \{bg,bank,row,col\} for exact-match RAW hazard detection.
+        No valid/timestamp fields in-entry — gated externally by status.valid.}{%
+        raw\_search\_key $\to$ \textbar\ raw\_hit\_vector,raw\_hit\_entry $\leftarrow$ \newline
+        24{,}576T baseline}
+      \vspace{5pt}
+      \blockcard{Amber}{AmberF}{RD\_TCAM}{%
+        Ternary match \{bg,bank\} only — row/col carried, not matched. Feeds
+        Scheduler Stage 1's per-bank pre-filter.}{%
+        sched\_search\_key $\to$ \textbar\ sched\_hit\_bitmap,sched\_hit\_meta $\leftarrow$ \newline
+        1{,}920T baseline}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{Amber}{AmberF}{WR Status Reg}{%
+        \texttt{valid\textbar status\textbar age} per WR\_TCAM entry — single source of
+        truth for occupancy. Owner: WR Watermark Mgr. Scheduler: READ ONLY.}{%
+        alloc\_idx,update\_idx,update\_status $\to$ \textbar\ rd\_valid[],rd\_age[] $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Amber}{AmberF}{RD Status Reg}{%
+        Same pattern + \texttt{merge\_pending},\texttt{wdb\_entry\_idx} for RAW
+        partial-hit tracking. Owner: RD Watermark Mgr. Scheduler: READ ONLY.}{%
+        alloc\_idx,update\_status $\to$ \textbar\ rd\_valid[],rd\_age[],merge\_pending $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Amber}{AmberF}{WR / RD Watermark Buffer Mgr}{%
+        Own their TCAM+status-reg pair outright: alloc, retire, watermark tracking.
+        Scheduler never writes either.}{%
+        new\_req\_valid,sched\_ack $\to$ \textbar\ wr/rd\_count,high/low\_wm\_hit $\leftarrow$}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── MC CORE subB (2/3) ────────────────────────────────────────────────────
+\begin{frame}{MC Core — RAW Path \& Global State (2/3)}{MC clock domain}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{Amber}{AmberF}{RAW Bypass Manager}{%
+        Stage A: WR\_TCAM exact-match search parallel with RD alloc (zero-penalty
+        miss). Stage B: mask-coverage decides full-hit / partial-overlap / miss.
+        Hit valid only if \texttt{wr\_age <= rd\_age}.}{%
+        new\_rd\_bg/bank/row/col,wr\_tcam\_hit\_vector $\to$ \textbar\ raw\_hit,raw\_data $\leftarrow$}
+      \vspace{6pt}
+      \blockcard{Amber}{AmberF}{Merge Unit}{%
+        64$\times$2:1 byte mux, combinational. Fires only when
+        \texttt{merge\_pending==1}: \texttt{merged[b] = wdb[b] if mask[b] else dram[b]}.}{%
+        wdb\_data,wdb\_mask,dram\_data,dram\_valid $\to$ \textbar\ merged\_data $\leftarrow$}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{Amber}{AmberF}{Hold-Forward (2-deep)}{%
+        Holds up to 2 same-cycle responses: src0 = RAW bypass, src1 = DRAM return.
+        A 3rd simultaneous collision is impossible by construction (each source
+        rate-limited to 1/cycle).}{%
+        src0/1\_valid,src0/1\_data $\to$ \textbar\ out\_valid,out\_data $\leftarrow$}
+      \vspace{6pt}
+      \blockcard{Amber}{AmberF}{Global Cycle Counter}{%
+        Free-running GC\_WIDTH counter, resets only on SOFT\_RESET. The timestamp
+        source for every absolute-deadline field in the design.}{%
+        clk,rst\_n $\to$ \textbar\ gc $\leftarrow$ (read by all blocks)}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── MC CORE subB (3/3) ────────────────────────────────────────────────────
+\begin{frame}{MC Core — Partition Ctrl \& Datapaths (3/3)}{MC clock domain}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{Amber}{AmberF}{timing\_reg\_file}{%
+        \texttt{param\_id $\to$ nCK value} lookup for every JEDEC timing parameter
+        (tRCD, tRP, tRAS, tFAW, tRFC1/sb, tREFI...). Combinational multi-port read;
+        CSR-only write at init.}{%
+        param\_id[] $\to$ \textbar\ param\_val[] $\leftarrow$ (combinational)}
+      \vspace{6pt}
+      \blockcard{Amber}{AmberF}{Bank Partition Ctrl}{%
+        Splits banks into RD-half/WR-half, rotating every WINDOW\_SIZE cycles —
+        eliminates tRTW/tWTR inside a window.}{%
+        wr\_count,WR\_HIGH\_WM $\to$ \textbar\ rd/wr\_partition\_mask $\leftarrow$ S2}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{Amber}{AmberF}{Write Data Path}{%
+        WL alignment, CRC generation, DFI write-enable timing.}{%
+        wr\_data\_buf\_data/mask,CWL $\to$ \textbar\ dfi\_wrdata,dfi\_wrdata\_en $\leftarrow$}
+      \vspace{6pt}
+      \blockcard{Amber}{AmberF}{Read Data Path}{%
+        Read-latency counter, capture FIFO, ECC/CRC check. MRR sideband output
+        feeds MR\_Poll FSM directly (not through the response FIFO).}{%
+        dfi\_rddata,dfi\_rddata\_valid $\to$ \textbar\ rd\_data\_out,mrr\_data\_valid $\leftarrow$}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SCHEDULER ─────────────────────────────────────────────────────────────
+\begin{frame}{Scheduler — 5-Stage Pipeline}{Read-only against state; Stage 4 alone writes}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{Purp}{PurpF}{Stage 0 — Maintenance Override}{%
+        Priority \texttt{ref\_urgent>ref\_due>rfm\_req>zq\_due}. If any fires, bypasses
+        Stages 1--3 straight to Stage 4.}{%
+        ref\_urgent,ref\_due,zq\_due,rfm\_req $\to$ \textbar\ s0\_override,s0\_cmd\_* $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Purp}{PurpF}{Stage 1 — TCAM Search}{%
+        Searches RD\_TCAM + WR\_TCAM simultaneously (multi-port). Multi-hit same
+        bank resolved by \texttt{argmax(age)}.}{%
+        wr/rd\_tcam\_hit\_bitmap,\_meta $\to$ \textbar\ s1\_hit\_bitmap,s1\_hit\_meta $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Purp}{PurpF}{Stage 2 — can\_* Gate + SJF Cost}{%
+        Reads only registered can\_* flags — zero subtractors in critical path.
+        Classifies hit-set/miss-set with cost; detects speculative-ACT opportunities
+        on NOP cycles.}{%
+        can\_cas/pre/act/ref,can\_*\_any/bg/rank,rd/wr\_partition\_mask $\to$ \textbar\ hit\_set,remaining\_cost[] $\leftarrow$}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{Purp}{PurpF}{Stage 3 — SJF Winner Select}{%
+        Priority: S0-override $>$ starved-miss (staggered, $\le$1/cycle) $>$ hit-set
+        (prefer different BG) $>$ miss-set (lowest cost). RD/WR mode flips on
+        watermark crossings.}{%
+        hit/miss\_set,remaining\_cost[],rd/wr\_status\_age $\to$ \textbar\ winner\_valid,winner\_cmd\_type $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Purp}{PurpF}{Stage 4 — Command Emission + Writeback}{%
+        The \emph{only} writer of Per-Bank/Global-Timing/Per-Rank tables and status
+        registers. Drives DFI via the ME mux.}{%
+        winner\_*,s0\_override,timing\_reg\_vals $\to$ \textbar\ dfi\_*,bank\_fsm\_update\_*,sched\_ack $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Purp}{PurpF}{NOP Priority + Bank Pipeline (policy, not a stage)}{%
+        NOP order: opportunity REFsb $>$ speculative ACT $>$ WR-partition drain $>$
+        true NOP. Consecutive ACTs prefer different BG (tRRD\_S $<$ tRRD\_L).}{%
+        (folded into Stage 2/3 logic — no separate ports)}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── FSM TABLES ────────────────────────────────────────────────────────────
+\begin{frame}{FSM Tables}{What Stage 4 writes, Stage 2/0 read}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{Green}{GreenF}{Per-Bank FSM Table}{%
+        [N\_RANKS$\times$16] rows. 8-state bank FSM (IDLE..SELF\_REFRESH), open row,
+        next\_\{cas,pre,act,ref\}+can\_* pairs, ref\_pending.}{%
+        update\_state,update\_next\_*,gc $\to$ \textbar\ can\_cas/pre/act/ref\_out $\leftarrow$ S2 \newline
+        writer: Stage 4 + ME \textbullet\ reader: Stage 2}
+      \vspace{5pt}
+      \blockcard{Green}{GreenF}{Per-Rank FSM Table}{%
+        [N\_RANKS] rows. Rank FSM, REFab/ZQcal/PDX/SRX deadlines, leaky-bucket
+        refresh credits, RAA[16], MR4 thermal state, last\_refsb\_gc[32].}{%
+        set/clr\_gate\_rfc/zq,raa\_inc\_en $\to$ \textbar\ gate\_rfc/zq\_out,can\_rfc/zq\_out $\leftarrow$ \newline
+        writer: ME \textbullet\ reader: ME + Stage 0}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{Green}{GreenF}{Global Timing Table}{%
+        1 instance. Cross-bank tRRD\_S/tCCD\_S, tFAW ring buffer[4], per-BG
+        tRRD\_L/tCCD\_L/tWTR\_L family, per-rank tRRD/tCCD.}{%
+        update\_faw,update\_act/cas\_bg,gc $\to$ \textbar\ can\_faw\_out,can\_act/cas\_bg\_out $\leftarrow$ S2 \newline
+        writer: Stage 4 \textbullet\ reader: Stage 2}
+      \vspace{5pt}
+      \blockcard{Green}{GreenF}{Bank Activity Counter}{%
+        [N\_RANKS$\times$16], \texttt{count\textbar dirty}. ME targets least-loaded bank for
+        REFsb; Power Mgmt uses count==0 as PD-entry gate; Stage 3 prefers
+        high-count banks.}{%
+        inc/dec\_en,dirty\_set/clr $\to$ \textbar\ count\_out,all\_idle[rank] $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{Green}{GreenF}{Error Handler}{%
+        Watches scheduler\_error and dfi\_alert\_n (PHY CRC/CA-parity alert) plus
+        Write/Read Data Path CRC/ECC flags.}{%
+        scheduler\_error,dfi\_alert\_n,crc/ecc\_err $\to$ \textbar\ err\_interrupt,err\_cmd $\leftarrow$}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── MAINTENANCE ENGINE (1/2) ──────────────────────────────────────────────
+\begin{frame}{Maintenance Engine (1/2)}{Peer to the Scheduler — writes tables, never issues CAS}
+  \begin{columns}[T,totalwidth=\linewidth]
+    \begin{column}{0.49\linewidth}
+      \blockcard{BypassR}{LGray}{1. Init FSM (16 states)}{%
+        DDR5 POR sequence: reset assert/deassert, ODT settle, DLL divider/reset
+        (MPC), ZQ start/latch, MRW, training. Owns DFI until \texttt{init\_done}.}{%
+        INIT\_KICK,timing\_reg\_vals $\to$ \textbar\ dfi\_*,init\_done $\leftarrow$ (one-way latch)}
+      \vspace{5pt}
+      \blockcard{BypassR}{LGray}{2. Refresh FSM (6 states)}{%
+        Leaky-bucket credits (+1/tREFI, --1/REFsb). \texttt{ref\_urgent} at 8 credits.
+        Targets least-loaded bank unless watchdog forces overdue bank. Fires free
+        opportunity REFsb on NOP cycles.}{%
+        bank\_act\_count,all\_idle $\to$ \textbar\ ref\_urgent,ref\_due,me\_cmd\_* $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{BypassR}{LGray}{3. ZQcal FSM (7 states, per-rank)}{%
+        MPC ZQ-calibration start$\to$latch sequence. Gates the entire rank for the
+        duration.}{%
+        all\_idle,sched\_ack $\to$ \textbar\ zq\_due,set/clr\_gate\_zq $\leftarrow$}
+    \end{column}
+    \begin{column}{0.49\linewidth}
+      \blockcard{BypassR}{LGray}{4. RFM FSM (6 states)}{%
+        Tracks per-bank RAA (+1/ACT, --RAADec/REF). Requests targeted RFM once RAA
+        crosses RAAIMT. Priority below refresh, above ZQcal.}{%
+        raa\_out,RAAIMT $\to$ \textbar\ rfm\_req,raa\_dec\_en $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{BypassR}{LGray}{5. Power Mgmt FSM (10 states)}{%
+        Independent PD and SR branches. PD entry requires every bank in the rank
+        idle (count==0) with no maintenance pending.}{%
+        all\_idle,bank\_act\_count,pd\_en $\to$ \textbar\ me\_cmd\_*,rank\_state\_update $\leftarrow$}
+      \vspace{5pt}
+      \blockcard{BypassR}{LGray}{6. MR\_Poll FSM (6 states)}{%
+        Periodic MRR to MR4 reads thermal update flag. TUF=1 ($>$85\textdegree C)
+        halves effective tREFI. Response via Read Data Path sideband, not resp FIFO.}{%
+        mrr\_data\_valid,mrr\_data $\to$ \textbar\ tuf\_bit,me\_cmd\_valid $\leftarrow$}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── MAINTENANCE ENGINE (2/2) ──────────────────────────────────────────────
+\begin{frame}{Maintenance Engine (2/2)}{The DFI handoff}
+  \blockcard{BypassR}{LGray}{DFI Output Mux}{%
+    Lives inside the ME. While \texttt{init\_done==0}, Init FSM drives every DFI
+    output. Once \texttt{init\_done} fires (one-way latch, never de-asserted),
+    Scheduler Stage 4 drives DFI permanently. MRR issue is a Stage-0 bypass straight
+    to Stage 4 — no third mux input ever needed.}{%
+    init\_dfi\_*, sched\_dfi\_*, init\_done $\to$ \textbar\ dfi\_address,dfi\_cs\_n,dfi\_wrdata,\ldots $\leftarrow$ PHY}
+  \vspace{10pt}
+  \infocard{MGray}{LGray}{%
+    \scriptsize\itshape Internal ME priority mirrors Scheduler Stage 0 exactly:
+    \texttt{ref\_urgent > ref\_due > rfm\_req > zq\_due}. The Maintenance Engine
+    never issues a CAS command itself — it only ever writes into the Per-Bank and
+    Per-Rank FSM Tables, and requests Stage-0 override slots from the Scheduler for
+    anything that must actually reach DFI.
+  }
+\end{frame}
+
+% ── DFI / PHY ─────────────────────────────────────────────────────────────
+\begin{frame}{DFI / PHY}{Outside RMC's own scope — the pipeline's destination}
+  \blockcard{Teal}{TealF}{DDR PHY}{%
+    DFI 5.2 contract boundary. Handles IO calibration, DQS alignment, ODT, and the
+    generation-specific electrical signalling RMC never has to know about.}{%
+    dfi\_address,dfi\_cs\_n,dfi\_wrdata\_en $\to$ \textbar\ dfi\_rddata,dfi\_rddata\_valid,dfi\_alert\_n $\leftarrow$}
+  \vspace{6pt}
+  \blockcard{Teal}{TealF}{DDR5 DRAM}{%
+    JESD79-5 device(s) the whole controller ultimately exists to drive correctly.
+    Outside RMC's scope; drawn as the pipeline's final destination.}{%
+    (JEDEC JESD79-5 physical/electrical interface, via PHY)}
+\end{frame}
+
+\end{document}

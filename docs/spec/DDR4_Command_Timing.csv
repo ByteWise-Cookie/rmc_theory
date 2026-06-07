@@ -1,0 +1,239 @@
+,,,,DDR4 Command Delays - JESD79-4,,,,,,,,,
+""
+,Assumptions:,BL=8 (BL/2=4),CL=10 (DDR4-1600 10-10-10),CWL=9,WPreamble=1tCK,RPreamble=1tCK,AL=0,tRP=tRCD=12.5ns,tRAS=35ns (DDR4-1600),tWR=15ns,"tRTP=max(4nCK,7.5ns)",,
+,,,,"tWTR_L=max(4nCK,7.5ns)","tWTR_S=max(2nCK,2.5ns)",tCCD_L=5nCK (DDR4-1600),tCCD_S=4nCK,tMRD=8nCK,"tMOD=max(24nCK,15ns)=24nCK","tXP=max(4nCK,6ns)",tRFC1=350ns(8Gb),tXS=tRFC1+10ns=360ns,
+,DDR4 vs DDR5 key differences:,BL=8 not 16,No REFsb/RFM,tRFC1 larger (350ns 8Gb vs 195ns DDR5),tREFI=7.8us vs 3.9us,tMOD=24nCK vs tMRD=16nCK,tCCD_L=5nCK (not 8),tCCD_S=4nCK (not 8),WR-to-RD uses tWTR_L/S from BL/2 end,,,,
+""
+,,,,,Minimum Delay (in cycles),,,,,,,,
+,S.No.,Command to Command,Symbol,Option/Variation,Same Chip - Same Bank Expression,@200MHz CL=10,@100MHz CL=10,Same Chip - Diff Bank Expression,@200MHz CL=10,@100MHz CL=10,Different Chip Expression,@200MHz CL=10,@100MHz CL=10,Remarks
+,,,Active to Any other Command,,,,,,,,,,,
+,A1,Active to DESELECT,ACT-to-DES,,1,1,1,1,1,1,1,1,1,
+,A2,Active to NOP,ACT-to-NOP,,1,1,1,1,1,1,1,1,1,
+,A3,Active to Burst Stop,ACT-BST,,tRCD+1,5,5,tRCD+1,5,5,tRCD+1,5,5,
+,A4,Active to Read,ACT-to-RD,Same Bank,tRCD,4,4,tRCD,4,4,tRCD,4,4,
+,A5,Active to Read with Auto Precharge,ACT-to-RDA,Same Bank,tRCD,4,4,tRCD,4,4,tRCD,4,4,
+,A6,Active to Write,ACT-to-WR,Same Bank,tRCD,4,4,tRCD,4,4,tRCD,4,4,
+,A7,Active to Write with Auto Precharge,ACT-to-WRA,Same Bank,tRCD,4,4,tRCD,4,4,tRCD,4,4,
+,A8,Active to Active,ACT-to-ACT,Same BG / Diff BG,tRRD_L,4,4,tRRD_S,4,4,tRRD_S,4,4,Same BG: tRRD_L; Diff BG: tRRD_S. Also constrained by tFAW window (4 ACTs in tFAW=35ns)
+,A9,Active to Precharge,ACT-to-PRE,Same Bank,tRAS(min),7,4,1,1,1,1,1,1,Same bank: must satisfy tRAS before PRE
+,A10,Active to Precharge All,ACT-to-PREA,,tRAS(min),7,4,tRAS(min),7,4,tRAS(min),7,4,All active banks must satisfy tRAS before PREA
+,A11,Active to Auto Refresh,ACT-to-REF,,tRAS+tRP,11,8,tRAS+tRP,11,8,tRAS+tRP,11,8,Must PRE (tRAS+tRP) all banks before REF
+,A12,Active to Enter Self-Refresh,ACT-to-SRE,,tRAS+tRP+tCKSRE,16,13,tRAS+tRP+tCKSRE,16,13,tRAS+tRP+tCKSRE,16,13,
+,A13,Active to Enter Power Down,ACT-to-PDE,,tACTPDEN,1,1,tACTPDEN,1,1,tACTPDEN,1,1,tACTPDEN=1nCK @DDR4-1600; 2nCK @DDR4-2400+; CKE deassertable 1tCK after ACT
+,A14,Active to Mode Register Set,ACT-to-MRS,,tRAS+tRP+tMOD,35,32,tRAS+tRP+tMOD,35,32,tRAS+tRP+tMOD,35,32,Must precharge all banks (tRAS+tRP); then tMRD for MRS; then tMOD before next cmd
+,,,Read to Any other Command,,,,,,,,,,,
+,B1,Read to DESELECT,RD-to-DES,,CL+BL/2,14,14,CL+BL/2,14,14,CL+BL/2,14,14,Wait for read burst to complete
+,B2,Read to NOP,RD-to-NOP,,1,1,1,1,1,1,1,1,1,
+,B3,Read to Burst Stop,RD-to-BST,,1,1,1,1,1,1,1,1,1,BST can be issued 1tCK after RD to truncate BL8 to BC4
+,B4,Read to Read,RD-to-RD,Same BG / Diff BG,tCCD_L,5,5,tCCD_S,4,4,tCCD_S,4,4,Same BG: tCCD_L=5nCK; Diff BG: tCCD_S=4nCK (DDR4-1600)
+,B5,Read to Read with Auto Precharge,RD-to-RDA,Same BG / Diff BG,tCCD_L,5,5,tCCD_S,4,4,tCCD_S,4,4,
+,B6,Read to Write,RD-to-WR,Same/Diff BG,RL+BL/2-WL+2,7,7,RL+BL/2-WL+2,7,7,RL+BL/2-WL+2,7,7,1tCK write preamble. +1 more for 2tCK write preamble mode
+,B7,Read to Active,RD-to-ACT,Same Bank,tRTP+tRP,8,8,tCCD_S,4,4,tCCD_S,4,4,Same bank: RD-to-PRE(tRTP)+tRP; diff bank: no constraint beyond tRRD on subsequent ACT
+,B8,Read to Precharge,RD-to-PRE,Same Bank,tRTP,4,4,tRTP,4,4,tRTP,4,4,
+,B9,Read to Precharge All,RD-to-PREA,,tRTP,4,4,tRTP,4,4,tRTP,4,4,
+,B10,Read to Write with Autoprecharge,RD-to-WRA,,RL+BL/2-WL+2,7,7,RL+BL/2-WL+2,7,7,RL+BL/2-WL+2,7,7,
+,B11,Read to Auto Refresh,RD-to-REF,,tRTP+tRP,8,8,tRTP+tRP,8,8,tRTP+tRP,8,8,
+,B12,Read to Enter Self-Refresh,RD-to-SRE,,tRTP+tRP+tCKSRE,13,13,tRTP+tRP+tCKSRE,13,13,tRTP+tRP+tCKSRE,13,13,
+,B13,Read to Enter Power Down,RD-to-PDE,,tRDPDEN=RL+BL/2+1,15,15,tRDPDEN=RL+BL/2+1,15,15,tRDPDEN=RL+BL/2+1,15,15,Spec: tRDPDEN=RL+4+1 (BL8); data must complete before CKE falls
+,B14,Read to Mode Register Set,RD-to-MRS,,tRTP+tRP+tMOD,32,32,tRTP+tRP+tMOD,32,32,tRTP+tRP+tMOD,32,32,
+,,,Write to Any other Command,,,,,,,,,,,
+,C1,Write to DESELECT,WR-to-DES,,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,
+,C2,Write to NOP,WR-to-NOP,,1,1,1,1,1,1,1,1,1,
+,C3,Write to Burst Stop,WR-to-BST,,1,1,1,1,1,1,1,1,1,BST can truncate WR burst from BL8 to BC4; 1tCK after WR
+,C4,Write to Read,WR-to-RD,Same BG / Diff BG,CWL+BL/2+tWTR_L,17,17,CWL+BL/2+tWTR_S,15,15,CWL+BL/2+tWTR_S,15,15,"Same BG: tWTR_L=max(4,7.5ns); Diff BG: tWTR_S=max(2,2.5ns)"
+,C5,Write to Write with Auto Precharge,WR-to-WRA,Same BG / Diff BG,tCCD_L,5,5,tCCD_S,4,4,tCCD_S,4,4,
+,C6,Write to Write,WR-to-WR,Same BG / Diff BG,tCCD_L,5,5,tCCD_S,4,4,tCCD_S,4,4,
+,C7,Write to Active,WR-to-ACT,Same Bank,CWL+BL/2+tWR+tRP,22,22,tCCD_S,4,4,tCCD_S,4,4,Same bank: must PRE after write then tRP
+,C8,Write to Precharge,WR-to-PRE,Same Bank,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,
+,C9,Write to Precharge All,WR-to-PREA,,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,
+,C10,Write to Read with Autoprecharge,WR-to-RDA,Same BG / Diff BG,CWL+BL/2+tWTR_L,17,17,CWL+BL/2+tWTR_S,15,15,CWL+BL/2+tWTR_S,15,15,
+,C11,Write to Auto Refresh,WR-to-REF,,CWL+BL/2+tWR+tRP,22,22,CWL+BL/2+tWR+tRP,22,22,CWL+BL/2+tWR+tRP,22,22,
+,C12,Write to Enter Self-Refresh,WR-to-SRE,,CWL+BL/2+tWR+tRP+tCKSRE,27,27,CWL+BL/2+tWR+tRP+tCKSRE,27,27,CWL+BL/2+tWR+tRP+tCKSRE,27,27,
+,C13,Write to Enter Power Down,WR-to-PDE,,tWRPDEN=CWL+BL/2+tWR,18,18,tWRPDEN=CWL+BL/2+tWR,18,18,tWRPDEN=CWL+BL/2+tWR,18,18,Spec: tWRPDEN=WL+4+(tWR/tCK) for BL8OTF/BL8MRS/BC4OTF
+,C14,Write to Mode Register Set,WR-to-MRS,,CWL+BL/2+tWR+tRP+tMOD,46,46,CWL+BL/2+tWR+tRP+tMOD,46,46,CWL+BL/2+tWR+tRP+tMOD,46,46,
+,,,Read With Auto Precharge to Any other Command,,,,,,,,,,,
+,D1,Read with Auto precharge to DESELECT,RDA-to-DES,,CL+BL/2,14,14,CL+BL/2,14,14,CL+BL/2,14,14,
+,D2,Read with Auto precharge to NOP,RDA-to-NOP,,1,1,1,1,1,1,1,1,1,
+,D3,Read with Auto precharge to Burst Stop,RDA-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,BST not applicable after RDA
+,D4,Read with AP to Read (w/wo Concurrent AP),RDA-to-RD,Diff Bank,tRTP+tRP+tRCD,12,12,tCCD_S,4,4,tCCD_S,4,4,Same bank: AP completes (tRTP+tRP) then tRCD; diff bank: tCCD_S
+,D5,Read with AP to Write (w/wo Concurrent AP),RDA-to-WR,,tRTP+tRP+tRCD,12,12,RL+BL/2-WL+2,7,7,RL+BL/2-WL+2,7,7,
+,D6,Read with AP to Active (w/wo Concurrent AP),RDA-to-ACT,Same Bank,tRTP+tRP,8,8,tRRD_S,4,4,tRRD_S,4,4,"Same bank: hidden PRE completes at tRTP, then tRP. Diff bank: tRRD_S"
+,D7,Read with AP to Precharge,RDA-to-PRE,Diff Bank,NA,N/A,N/A,1,1,1,1,1,1,Same bank: AP in progress; diff bank: 1tCK
+,D8,Read with AP to Precharge All,RDA-to-PREA,,tRTP+tRP,8,8,tRTP+tRP,8,8,tRTP+tRP,8,8,Wait for AP to complete before PREA
+,D9,Read with AP to Read with AP (w/wo Concurrent AP),RDA-to-RDA,Diff Bank,tRTP+tRP+tRCD,12,12,tCCD_S,4,4,tCCD_S,4,4,
+,D10,Read with AP to Write with AP,RDA-to-WRA,,tRTP+tRP+tRCD,12,12,RL+BL/2-WL+2,7,7,RL+BL/2-WL+2,7,7,
+,D11,Read with AP to Auto Refresh,RDA-to-REF,,tRTP+tRP,8,8,tRTP+tRP,8,8,tRTP+tRP,8,8,
+,D12,Read with AP to Enter Self-Refresh,RDA-to-SRE,,tRTP+tRP+tCKSRE,13,13,tRTP+tRP+tCKSRE,13,13,tRTP+tRP+tCKSRE,13,13,
+,D13,Read with AP to Enter Power Down,RDA-to-PDE,,tRDPDEN=RL+BL/2+1,15,15,tRDPDEN=RL+BL/2+1,15,15,tRDPDEN=RL+BL/2+1,15,15,
+,D14,Read with AP to Mode Register Set,RDA-to-MRS,,tRTP+tRP+tMOD,32,32,tRTP+tRP+tMOD,32,32,tRTP+tRP+tMOD,32,32,
+,,,Write With Auto Precharge to Any other Command,,,,,,,,,,,
+,E1,Write with AP to DESELECT,WRA-to-DES,,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,CWL+BL/2+tWR,18,18,
+,E2,Write with AP to NOP,WRA-to-NOP,,1,1,1,1,1,1,1,1,1,
+,E3,Write with AP to Burst Stop,WRA-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,BST not valid after WRA
+,E4,Write with AP to Read,WRA-to-RD,Same Bank / Diff BG,CWL+BL/2+tWR+tRP+tRCD,26,26,CWL+BL/2+tWTR_S,15,15,CWL+BL/2+tWTR_S,15,15,Same bank: wait AP complete then tRCD; diff BG: tWTR_S path
+,E5,Write with AP to Write,WRA-to-WR,Same BG / Diff BG,tCCD_L,5,5,tCCD_S,4,4,tCCD_S,4,4,
+,E6,Write with AP to Write with AP,WRA-to-WRA,Same BG / Diff BG,tCCD_L,5,5,tCCD_S,4,4,tCCD_S,4,4,
+,E7,Write with AP to Active,WRA-to-ACT,Same Bank,CWL+BL/2+tWR+tRP,22,22,tRRD_S,4,4,tRRD_S,4,4,Same bank: hidden PRE completes at CWL+BL/2+tWR; then tRP
+,E8,Write with AP to Precharge,WRA-to-PRE,Diff Bank,NA,N/A,N/A,1,1,1,1,1,1,Same bank AP in progress; diff bank: 1tCK
+,E9,Write with AP to Read with AP,WRA-to-RDA,Same Bank,CWL+BL/2+tWR+tRP+tRCD,26,26,CWL+BL/2+tWTR_S,15,15,CWL+BL/2+tWTR_S,15,15,
+,E10,Write with AP to Precharge All,WRA-to-PREA,,CWL+BL/2+tWR+tRP,22,22,CWL+BL/2+tWR+tRP,22,22,CWL+BL/2+tWR+tRP,22,22,
+,E11,Write with AP to Auto Refresh,WRA-to-REF,,CWL+BL/2+tWR+tRP,22,22,CWL+BL/2+tWR+tRP,22,22,CWL+BL/2+tWR+tRP,22,22,
+,E12,Write with AP to Enter Self-Refresh,WRA-to-SRE,,CWL+BL/2+tWR+tRP+tCKSRE,27,27,CWL+BL/2+tWR+tRP+tCKSRE,27,27,CWL+BL/2+tWR+tRP+tCKSRE,27,27,
+,E13,Write with AP to Enter Power Down,WRA-to-PDE,,tWRAPDEN=CWL+BL/2+tWR+1,19,19,tWRAPDEN=CWL+BL/2+tWR+1,19,19,tWRAPDEN=CWL+BL/2+tWR+1,19,19,Spec: tWRAPDEN=WL+4+WR+1
+,E14,Write with AP to Mode Register Set,WRA-to-MRS,,CWL+BL/2+tWR+tRP+tMOD,46,46,CWL+BL/2+tWR+tRP+tMOD,46,46,CWL+BL/2+tWR+tRP+tMOD,46,46,
+,,,Burst Stop to Any other Command,,,,,,,,,,,
+,F1,Burst Stop to DESELECT,BST-to-DES,,2,2,2,2,2,2,2,2,2,
+,F2,Burst Stop to NOP,BST-to-NOP,,1,1,1,1,1,1,1,1,1,
+,F3,Burst Stop to Burst Stop,BST-to-BST,,1,1,1,1,1,1,1,1,1,
+,F4,Burst Stop to Read,BST-to-RD,,2,2,2,2,2,2,2,2,2,Bus idle after BST; 2tCK settle
+,F5,Burst Stop to Write,BST-to-WR,,2,2,2,2,2,2,2,2,2,
+,F6,Burst Stop to Write with Auto Precharge,BST-to-WRA,,2,2,2,2,2,2,2,2,2,
+,F7,Burst Stop to Active,BST-to-ACT,Same Bank,tRTP+tRP,8,8,tRRD_S,4,4,tRRD_S,4,4,
+,F8,Burst Stop to Precharge,BST-to-PRE,,tRTP,4,4,tRTP,4,4,tRTP,4,4,
+,F9,Burst Stop to Precharge All,BST-to-PREA,,tRTP,4,4,tRTP,4,4,tRTP,4,4,
+,F10,Burst Stop to Read with Auto Precharge,BST-to-RDA,,2,2,2,2,2,2,2,2,2,
+,F11,Burst Stop to Auto Refresh,BST-to-REF,,tRTP+tRP,8,8,tRTP+tRP,8,8,tRTP+tRP,8,8,
+,F12,Burst Stop to Enter Self-Refresh,BST-to-SRE,,tRTP+tRP+tCKSRE,13,13,tRTP+tRP+tCKSRE,13,13,tRTP+tRP+tCKSRE,13,13,
+,F13,Burst Stop to Enter Power Down,BST-to-PDE,,2,2,2,2,2,2,2,2,2,
+,F14,Burst Stop to Mode Register Set,BST-to-MRS,,tRTP+tRP+tMOD,32,32,tRTP+tRP+tMOD,32,32,tRTP+tRP+tMOD,32,32,
+,,,Precharge to Any other Command,,,,,,,,,,,
+,G1,Precharge to DESELECT,PRE-to-DES,,1,1,1,1,1,1,1,1,1,
+,G2,Precharge to NOP,PRE-to-NOP,,1,1,1,1,1,1,1,1,1,
+,G3,Precharge to Burst Stop,PRE-to-BST,,tRP+tRCD+1,9,9,tRP+tRCD+1,9,9,tRP+tRCD+1,9,9,
+,G4,Precharge to Read,PRE-to-RD,Same Bank,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,G5,Precharge to Write,PRE-to-WR,Same Bank,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,G6,Precharge to Write with Auto Precharge,PRE-to-WRA,,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,G7,Precharge to Active,PRE-to-ACT,Same Bank,tRP,4,4,tRP,4,4,tRP,4,4,
+,G8,Precharge to Precharge,PRE-to-PRE,,tPPD,2,2,tPPD,2,2,tPPD,2,2,tPPD=2nCK min PRE-to-PRE
+,G9,Precharge to Precharge All,PRE-to-PREA,,tPPD,2,2,tPPD,2,2,tPPD,2,2,
+,G10,Precharge to Read with Autoprecharge,PRE-to-RDA,,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,G11,Precharge to Auto Refresh,PRE-to-REF,,tRP,4,4,tRP,4,4,tRP,4,4,
+,G12,Precharge to Enter Self-Refresh,PRE-to-SRE,,tRP+tCKSRE,9,9,tRP+tCKSRE,9,9,tRP+tCKSRE,9,9,
+,G13,Precharge to Enter Power Down,PRE-to-PDE,,1,1,1,1,1,1,1,1,1,tPRPDEN=1nCK @DDR4-1600; 2nCK @DDR4-2400+
+,G14,Precharge to Mode Register Set,PRE-to-MRS,,tRP+tMOD,28,28,tRP+tMOD,28,28,tRP+tMOD,28,28,
+,,,Precharge All to Any other Command,,,,,,,,,,,
+,H1,Precharge All to DESELECT,PREA-to-DES,,1,1,1,1,1,1,1,1,1,
+,H2,Precharge All to NOP,PREA-to-NOP,,1,1,1,1,1,1,1,1,1,
+,H3,Precharge All to Burst Stop,PREA-to-BST,,tRP+tRCD+1,9,9,tRP+tRCD+1,9,9,tRP+tRCD+1,9,9,
+,H4,Precharge All to Read,PREA-to-RD,,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,H5,Precharge All to Read with Auto Precharge,PREA-to-RDA,,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,H6,Precharge All to Write,PREA-to-WR,,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,H7,Precharge All to Write with Auto Precharge,PREA-to-WRA,,tRP+tRCD,8,8,tRP+tRCD,8,8,tRP+tRCD,8,8,
+,H8,Precharge All to Active,PREA-to-ACT,,tRP,4,4,tRP,4,4,tRP,4,4,
+,H9,Precharge All to Precharge,PREA-to-PRE,,tPPD,2,2,tPPD,2,2,tPPD,2,2,
+,H10,Precharge All to Precharge All,PREA-to-PREA,,tPPD,2,2,tPPD,2,2,tPPD,2,2,
+,H11,Precharge All to Auto Refresh,PREA-to-REF,,tRP,4,4,tRP,4,4,tRP,4,4,
+,H12,Precharge All to Enter Self-Refresh,PREA-to-SRE,,tRP+tCKSRE,9,9,tRP+tCKSRE,9,9,tRP+tCKSRE,9,9,
+,H13,Precharge All to Enter Power Down,PREA-to-PDE,,1,1,1,1,1,1,1,1,1,
+,H14,Precharge All to Mode Register Set,PREA-to-MRS,,tRP+tMOD,28,28,tRP+tMOD,28,28,tRP+tMOD,28,28,
+,,,Auto Refresh to Any other Command,,,,,,,,,,,
+,I1,Auto Refresh to DESELECT,REF-to-DES,,tRFC1,70,35,tRFC1,70,35,tRFC1,70,35,
+,I2,Auto Refresh to NOP,REF-to-NOP,,tRFC1,70,35,tRFC1,70,35,tRFC1,70,35,
+,I3,Auto Refresh to Burst Stop,REF-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,I4,Auto Refresh to Read,REF-to-RD,,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,After REF: all banks idle; must ACT then tRCD
+,I5,Auto Refresh to Write,REF-to-WR,,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,
+,I6,Auto Refresh to Write with AP,REF-to-WRA,,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,
+,I7,Auto Refresh to Precharge,REF-to-PRE,,tRFC1,70,35,tRFC1,70,35,tRFC1,70,35,
+,I8,Auto Refresh to Precharge All,REF-to-PREA,,tRFC1,70,35,tRFC1,70,35,tRFC1,70,35,
+,I9,Auto Refresh to Read with AP,REF-to-RDA,,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,tRFC1+tRP+tRCD,78,43,
+,I10,Auto Refresh to Enter Self-Refresh,REF-to-SRE,,tRFC1+tCKSRE,75,40,tRFC1+tCKSRE,75,40,tRFC1+tCKSRE,75,40,
+,I11,Auto Refresh to Enter Power Down,REF-to-PDE,,tREFPDEN,1,1,tREFPDEN,1,1,tREFPDEN,1,1,tREFPDEN=1nCK @DDR4-1600 (Table 101)
+,I12,Auto Refresh to Mode Register Set,REF-to-MRS,,tRFC1+tMOD,94,59,tRFC1+tMOD,94,59,tRFC1+tMOD,94,59,
+,I13,Auto Refresh to Active,REF-to-ACT,,tRFC1,70,35,tRFC1,70,35,tRFC1,70,35,tXS=tRFC1+10ns for SRX path; conservative use tRFC1 for REF-to-ACT
+,I14,Auto Refresh to Auto Refresh,REF-to-REF,,tRFC1,70,35,tRFC1,70,35,tRFC1,70,35,
+,,,Mode Register Set to Any other Command,,,,,,,,,,,
+,J1,Mode Register Set to DESELECT,MRS-to-DES,,tMRD,8,8,tMRD,8,8,tMRD,8,8,
+,J2,Mode Register Set to NOP,MRS-to-NOP,,tMRD,8,8,tMRD,8,8,tMRD,8,8,
+,J3,Mode Register Set to Burst Stop,MRS-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,J4,Mode Register Set to Read,MRS-to-RD,,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,"tMOD=max(24nCK,15ns) before any non-MRS command after MRS"
+,J5,Mode Register Set to Write,MRS-to-WR,,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,
+,J6,Mode Register Set to Write with AP,MRS-to-WRA,,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,
+,J7,Mode Register Set to Active,MRS-to-ACT,,tMOD+tRP,28,28,tMOD+tRP,28,28,tMOD+tRP,28,28,
+,J8,Mode Register Set to Precharge,MRS-to-PRE,,tMOD,24,24,tMOD,24,24,tMOD,24,24,
+,J9,Mode Register Set to Precharge All,MRS-to-PREA,,tMOD,24,24,tMOD,24,24,tMOD,24,24,
+,J10,Mode Register Set to Read with AP,MRS-to-RDA,,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,tMOD+tRP+tRCD,32,32,
+,J11,Mode Register Set to Auto Refresh,MRS-to-REF,,tMOD,24,24,tMOD,24,24,tMOD,24,24,
+,J12,Mode Register Set to Enter Self-Refresh,MRS-to-SRE,,tMOD+tCKSRE,29,29,tMOD+tCKSRE,29,29,tMOD+tCKSRE,29,29,
+,J13,Mode Register Set to Enter Power Down,MRS-to-PDE,,tMRSPDEN=tMOD,24,24,tMRSPDEN=tMOD,24,24,tMRSPDEN=tMOD,24,24,Spec: tMRSPDEN=tMOD(min)
+,J14,Mode Register Set to Mode Register Set,MRS-to-MRS,,tMRD,8,8,tMRD,8,8,tMRD,8,8,tMRD=8nCK between consecutive MRS commands
+,,,Enter Self-Refresh to Any other Command,,,,,,,,,,,
+,K1,Enter Self-Refresh to DESELECT,SRE-to-DES,,1,1,1,1,1,1,1,1,1,
+,K2,Enter Self-Refresh to NOP,SRE-to-NOP,,1,1,1,1,1,1,1,1,1,
+,K3,Enter Self-Refresh to Burst Stop,SRE-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K4,Enter Self-Refresh to Read,SRE-to-RD,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,Illegal during SR
+,K5,Enter Self-Refresh to Write,SRE-to-WR,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K6,Enter Self-Refresh to Write with AP,SRE-to-WRA,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K7,Enter Self-Refresh to Active,SRE-to-ACT,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,Must exit SR (SRX) then tXS before ACT
+,K8,Enter Self-Refresh to Precharge,SRE-to-PRE,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K9,Enter Self-Refresh to Precharge All,SRE-to-PREA,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K10,Enter Self-Refresh to Read with AP,SRE-to-RDA,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K11,Enter Self-Refresh to Auto Refresh,SRE-to-REF,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,Refresh handled internally
+,K12,Enter Self-Refresh to Self-Refresh Exit,SRE-to-SRX,,tCKESR=tCKE+1nCK,6,6,tCKESR,6,6,tCKESR,6,6,"tCKESR=tCKE(min)+1nCK=max(3nCK,5ns)+1; min time in SR before SRX allowed"
+,K13,Enter Self-Refresh to Enter Power Down,SRE-to-PDE,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,K14,Enter Self-Refresh to Mode Register Set,SRE-to-MRS,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,MRS not valid in SR
+,,,Exit Self-Refresh to Any other Command,,,,,,,,,,,
+,L1,Exit Self-Refresh to DESELECT,SRX-to-DES,,tXS,72,36,tXS,72,36,tXS,72,36,
+,L2,Exit Self-Refresh to NOP,SRX-to-NOP,,tCKSRX,5,5,tCKSRX,5,5,tCKSRX,5,5,Stable clock tCKSRX before first command
+,L3,Exit Self-Refresh to Burst Stop,SRX-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,L4,Exit Self-Refresh to Read,SRX-to-RD,,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,
+,L5,Exit Self-Refresh to Write,SRX-to-WR,,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,
+,L6,Exit Self-Refresh to Write with AP,SRX-to-WRA,,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,
+,L7,Exit Self-Refresh to Active,SRX-to-ACT,,tXS,72,36,tXS,72,36,tXS,72,36,tXS=tRFC1+10ns. tXS_FAST=tRFC4+10ns for ZQCL/MRS only
+,L8,Exit Self-Refresh to Precharge,SRX-to-PRE,,tXS,72,36,tXS,72,36,tXS,72,36,
+,L9,Exit Self-Refresh to Precharge All,SRX-to-PREA,,tXS,72,36,tXS,72,36,tXS,72,36,
+,L10,Exit Self-Refresh to Read with AP,SRX-to-RDA,,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,tXS+tRP+tRCD,80,44,
+,L11,Exit Self-Refresh to Auto Refresh,SRX-to-REF,,tXS,72,36,tXS,72,36,tXS,72,36,
+,L12,Exit Self-Refresh to Enter Self-Refresh,SRX-to-SRE,,tXS+tCKSRE,77,41,tXS+tCKSRE,77,41,tXS+tCKSRE,77,41,Spec requires at least 1 extra REF before re-entering SR
+,L13,Exit Self-Refresh to Enter Power Down,SRX-to-PDE,,tXS,72,36,tXS,72,36,tXS,72,36,
+,L14,Exit Self-Refresh to Mode Register Set,SRX-to-MRS,,tXS_FAST+tMOD,58,41,tXS_FAST+tMOD,58,41,tXS_FAST+tMOD,58,41,tXS_FAST=tRFC4+10ns=160+10=170ns for 8Gb; allows MRS/ZQCL before tXS
+,,,Enter Power Down to Any other Command,,,,,,,,,,,
+,M1,Enter Power Down to DESELECT,PDE-to-DES,,1,1,1,1,1,1,1,1,1,
+,M2,Enter Power Down to NOP,PDE-to-NOP,,1,1,1,1,1,1,1,1,1,
+,M3,Enter Power Down to Burst Stop,PDE-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M4,Enter Power Down to Read,PDE-to-RD,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,Illegal; must exit PD (PDX) first
+,M5,Enter Power Down to Write,PDE-to-WR,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M6,Enter Power Down to Write with AP,PDE-to-WRA,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M7,Enter Power Down to Active,PDE-to-ACT,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M8,Enter Power Down to Precharge,PDE-to-PRE,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M9,Enter Power Down to Precharge All,PDE-to-PREA,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M10,Enter Power Down to Read with AP,PDE-to-RDA,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M11,Enter Power Down to Auto Refresh,PDE-to-REF,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M12,Enter Power Down to Enter Self-Refresh,PDE-to-SRE,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,M13,Enter Power Down to Enter Power Down,PDE-to-PDE,,1,1,1,1,1,1,1,1,1,
+,M14,Enter Power Down to Exit Power Down,PDE-to-PDX,,tCKE(min),3,3,tCKE(min),3,3,tCKE(min),3,3,"tCKE=max(3nCK,5ns)=3nCK @200MHz; min CKE low time before PDX"
+,M15,Enter Power Down to Mode Register Set,PDE-to-MRS,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,,,Exit Power Down to Any other Command,,,,,,,,,,,
+,N1,Exit Power Down to DESELECT,PDX-to-DES,,tXP,4,4,tXP,4,4,tXP,4,4,
+,N2,Exit Power Down to NOP,PDX-to-NOP,,tXP,4,4,tXP,4,4,tXP,4,4,
+,N3,Exit Power Down to Burst Stop,PDX-to-BST,NA,NA,N/A,N/A,NA,N/A,N/A,NA,N/A,N/A,
+,N4,Exit Power Down to Read,PDX-to-RD,,tXP+tRCD,8,8,tXP+tRCD,8,8,tXP+tRCD,8,8,ACT PD: bank still active; if Precharge PD: need ACT first. Conservative: tXP+tRCD
+,N5,Exit Power Down to Write,PDX-to-WR,,tXP+tRCD,8,8,tXP+tRCD,8,8,tXP+tRCD,8,8,
+,N6,Exit Power Down to Write with AP,PDX-to-WRA,,tXP+tRCD,8,8,tXP+tRCD,8,8,tXP+tRCD,8,8,
+,N7,Exit Power Down to Active,PDX-to-ACT,,tXP,4,4,tXP,4,4,tXP,4,4,
+,N8,Exit Power Down to Precharge,PDX-to-PRE,,tXP,4,4,tXP,4,4,tXP,4,4,
+,N9,Exit Power Down to Precharge All,PDX-to-PREA,,tXP,4,4,tXP,4,4,tXP,4,4,
+,N10,Exit Power Down to Read with AP,PDX-to-RDA,,tXP+tRCD,8,8,tXP+tRCD,8,8,tXP+tRCD,8,8,
+,N11,Exit Power Down to Auto Refresh,PDX-to-REF,,tXP,4,4,tXP,4,4,tXP,4,4,
+,N12,Exit Power Down to Enter Self-Refresh,PDX-to-SRE,,tXP+tCKSRE,9,9,tXP+tCKSRE,9,9,tXP+tCKSRE,9,9,
+,N13,Exit Power Down to Mode Register Set,PDX-to-MRS,,tXP+tMOD,28,28,tXP+tMOD,28,28,tXP+tMOD,28,28,
+,N14,Exit Power Down to Enter Power Down,PDX-to-PDE,,tXP+1,5,5,tXP+1,5,5,tXP+1,5,5,
+""
+,Notes:
+,1. tRFC1=350ns(8Gb). 2Gb=160ns; 4Gb=260ns; 16Gb=TBD
+,2. tXS=tRFC1+10ns; tXS_FAST=tXS_ABORT=tRFC4+10ns (for MRS/ZQCL only after SRX)
+,"3. tMOD=max(24nCK,15ns) required after ANY MRS before non-MRS commands; tMRD=8nCK between consecutive MRS commands"
+,4. tCCD_L: DDR4-1600/1866=5nCK; DDR4-2133=6nCK; DDR4-2400+=6nCK (MR6 programmable)
+,5. tRRD_L/S depend on page size (2KB/1KB/1/2KB); values shown are for 2KB page at DDR4-1600
+,6. tACTPDEN=1nCK @DDR4-1600; =2nCK @DDR4-2133+; tPRPDEN same
+,7. Read-to-Write formula = RL+BL/2-WL+2 (1tCK write preamble); +3 for 2tCK write preamble
+,8. N/A = command illegal in that state per DDR4 state machine (§3.1)
+,"9. tXP=max(4nCK,6ns). Exit Precharge PD with DLL frozen: same tXP; if DLL off mode required: tXSDLL=tDLLK"
+,"10. Write CRC enabled: add max(4nCK,3.75ns) to tWR and tWTR (tWR_CRC_DM and tWTR_x_CRC_DM)"
+""
+,,,,,Maximum Delay (in cycles),,,,,,,,
+,S.No.,Command to Command,Symbol,Option,Same Chip - Same Bank Expression,@200MHz,@100MHz,Same Chip - Diff Bank Expression,@200MHz,@100MHz,Different Chip Expression,@200MHz,@100MHz,Remarks
+,,,Active/PD to Any other Command,,,,,,,,,,,
+,1,Active to Precharge,ACT-to-PRE,,tRAS(max)=9*tREFI,System dep.,System dep.,tRAS(max),System dep.,System dep.,tRAS(max),System dep.,System dep.,tRAS(max)=9*tREFI per spec Table 80; must PRE before expiry of refresh window
+,2,Active to Precharge All,ACT-to-PREA,,tRAS(max)=9*tREFI,System dep.,System dep.,tRAS(max),System dep.,System dep.,tRAS(max),System dep.,System dep.,Same constraint as ACT-to-PRE
+,3,Auto Refresh to Auto Refresh,REF-to-REF,,tREFI,1560,780,tREFI,1560,780,tREFI,1560,780,"tREFI=7.8us @200MHz=1560nCK, @100MHz=780nCK; up to 8x postponement (DDR4 FGR 2x/4x modes)"
+,4,Power Down Entry to Power Down Exit,PDE-to-PDX,,tPD(max)=9*tREFI,System dep.,System dep.,tPD(max),System dep.,System dep.,tPD(max),System dep.,System dep.,tPD(max)=9*tREFI per Table 101; must exit PD to service refresh
