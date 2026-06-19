@@ -1,0 +1,23 @@
+{
+  "config": {
+    "addr_width": 33,
+    "offset_bits": 3,
+    "fields": {
+      "rank": 1,
+      "bg": 3,
+      "bank": 2,
+      "row": 17,
+      "col": 7
+    }
+  },
+  "traffic": [
+    "linear",
+    "strided",
+    "random",
+    "locality"
+  ],
+  "n_placements_searched": 96,
+  "n_total_runs": 384,
+  "best_overall": "ord8_xor_bank",
+  "best_overall_score": 2.201944769574075
+}

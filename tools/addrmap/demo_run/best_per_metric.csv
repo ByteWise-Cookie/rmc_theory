@@ -1,0 +1,10 @@
+metric,best_placement,traffic,value
+row_hit_rate,ord0_direct,linear,0.9687
+avg_parallelism,ord16_xor_bank,random,20.53665
+row_miss_rate,ord0_direct,linear,0.0313
+bank_conflict_rate,ord0_direct,linear,0.0
+ch_balance_std,ord0_direct,linear,0.0
+subch_balance_std,ord0_direct,linear,0.0
+rank_balance_std,ord0_direct,linear,0.0
+bg_balance_std,ord6_direct,strided,0.0
+bank_balance_std,ord8_direct,strided,0.002683281572999748
