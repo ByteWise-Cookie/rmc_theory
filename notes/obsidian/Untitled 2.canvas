@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"0d7845ecd3a07731","x":-360,"y":-240,"width":250,"height":60,"type":"text","text":"CIF\n"},
+		{"id":"a48a52ee0be20b62","x":-260,"y":40,"width":250,"height":60,"type":"text","text":"MCC"}
+	],
+	"edges":[
+		{"id":"099fa082b2bc9aa4","fromNode":"0d7845ecd3a07731","fromSide":"bottom","toNode":"a48a52ee0be20b62","toSide":"top","label":"async"}
+	]
+}
