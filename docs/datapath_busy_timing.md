@@ -33,29 +33,34 @@ That "8" is the heartbeat of the whole analysis: consecutive CAS must be spaced
 | tCK | — | 5 ns | 0.4167 ns | data rate 4800 MT/s |
 | BL | fixed | 16 | 16 | BL16 only |
 | **BL/2** (DQ occupancy/CAS) | BL/2 | **8** | **8** | the heartbeat |
-| RL (=CL) | bin | 3 | 40 | toy from §18; 4800B bin 40-39-39 |
-| WL (=CWL) | bin | 1 | 38 | ⚠ CWL 4800 nominal, verify |
-| tRCD | ns floor | 4 | 39 (16.25 ns) | ⚠ toy=4 is DDR4-scaled |
-| tRP | ns floor | 4 | 39 (16.25 ns) | ⚠ toy=4 is DDR4-scaled |
-| tRAS | ns floor | 7 | 77 (32 ns) | ⚠ toy=7 is DDR4-scaled |
-| tRC = tRAS+tRP | — | 11 | 116 | full row cycle |
-| **tCCD_S** | 8 nCK | **8** | **8** | diff-BG / diff-rank CAS spacing |
-| **tCCD_L** | max(8 nCK, 5 ns) | **8** | **12** | same-BG read spacing |
-| **tCCD_L_WR** | max(32 nCK, —) ⚠ | **32** | **32** | same-BG write spacing |
-| **tWTR_S** | max(4 nCK, 2.5 ns) ⚠ | **4** | **6** | diff-BG write→read, from write-data-end |
-| **tWTR_L** | max(16 nCK, 10 ns) | **16** | **24** | same-BG write→read |
-| tRTP | max(12 nCK, 7.5 ns) | 12 | 18 | read→precharge (same bank) |
-| tWR | 30 ns | 6 | 72 | write recovery (write-data-end→PRE) |
-| tRRD_S | 8 nCK ⚠ | 8 | 8 | diff-BG ACT→ACT |
-| tRRD_L | max(8 nCK, 5 ns) ⚠ | 8 | 12 | same-BG ACT→ACT |
-| tFAW | ns floor ⚠ | ~16 | ~77 (32 ns) | 4 ACTs / window |
-| tWPRE | 1–2 tCK | 1 | 2 | write preamble |
+| RL (=CL) | bin | 3 | 40 | ✓ 4800B bin 40-39-39; toy from §18 |
+| WL (=CWL) | RL−2 | 1 | 38 | ✓ CWL=RL−2 (JEDEC); toy 3−2=1 matches §18 |
+| tRCD | 16 ns @4800 | 4 | 39 | ✓ 16 ns; toy=4 is DDR4-scaled (label) |
+| tRP | 16 ns @4800 | 4 | 39 | ✓ 16 ns; toy=4 is DDR4-scaled |
+| tRAS | 32 ns @4800 | 7 | 77 | ✓ 32 ns; toy=7 is DDR4-scaled |
+| tRC = tRAS+tRP | — | 11 | 116 | 48 ns @4800 |
+| **tCCD_S** | 8 nCK | **8** | **8** | ✓ BL16 diff-BG / diff-rank CAS spacing |
+| **tCCD_L** | max(8 nCK, 5 ns) | **8** | **12** | ✓ same-BG read spacing |
+| **tCCD_L_WR** | 32 nCK | **32** | **32** | ✓ same-BG write, consecutive |
+| tCCD_L_WR2 | 16 nCK | 16 | 16 | ✓ same-BG write, non-consecutive/interrupted |
+| **tWTR_S** | max(4 nCK, 2.5 ns) | **4** | **6** | ✓ diff-BG write→read, from write-data-end |
+| **tWTR_L** | max(16 nCK, 10 ns) | **16** | **24** | ✓ same-BG write→read |
+| tRTP | max(12 nCK, 7.5 ns) | 12 | 18 | ✓ read→precharge (same bank) |
+| tWR | 30 ns | 6 | 72 | ✓ write recovery (write-data-end→PRE) |
+| tRRD_S | 8 nCK | 8 | 8 | ✓ diff-BG ACT→ACT |
+| tRRD_L | max(8 nCK, 5 ns) | 8 | 12 | ✓ same-BG ACT→ACT |
+| tFAW | 32 nCK | 32 | 32 | ✓ 4 ACT/window; ⚠ page-size dependent |
+| tPPD | 2 nCK | 2 | 2 | ✓ PRE→PRE |
+| tWPRE | 1–2 tCK | 1 | 2 | write preamble (2tCK mode @4800) |
 | tRPRE | 1–2 tCK | 1 | 2 | read preamble |
-| **tRTR** (diff-rank CAS bubble) | PHY/ODT ⚠ | 2 | 2 | not JEDEC-core; DQS driver + ODT handoff |
-| tRTW (read→write cmd spacing) | RL+BL/2−WL+tWPRE+1 | 12 | 13 | derived, see §2 |
+| **tRTR** (diff-rank CAS bubble) | PHY/ODT — NOT JEDEC | 2 | 2 | ⚠ only unpinned param; needs PHY spec |
+| tRTW (read→write cmd spacing) | RL+BL/2−WL+tWPRE(+1) | 12 | 12–13 | derived, see §2 |
 
-Derived at both bins from the same formulas — this is the "symbolic + both columns"
-the analysis is built on.
+✓ = JEDEC-locked (JESD79-5 / DDR5-4800B bin, pulled 2026-07-16). ⚠ = still open.
+Only **tRTR** remains open — it is not a JEDEC-core parameter (rank-to-rank
+turnaround is set by the PHY's DQS driver + ODT handoff), so it must come from the
+PHY spec, not JEDEC. All CAS-spacing / turnaround numbers that drive the gap
+analysis are now locked.
 
 ---
 
@@ -229,24 +234,32 @@ write into a write-window unless its age forces it out (starvation threshold).
 Per the agreed workflow, settled artifacts are **not** edited now; conflicts
 accumulate here for a single decision pass.
 
-| # | Settled | New analysis says | Better? (recommendation) |
-|---|---|---|---|
-| C1 | `rmc_pkg.sv`: N_RANKS=1, RANK_BITS=0 | diff-rank cases need N_RANKS=2, RANK_BITS=1 | Bump to 2 — unlocks cheaper cross-rank turnaround (§2b, row 10) |
-| C2 | §18 / KB: tWTR_L = 4 | JEDEC floor max(16 nCK,10 ns) ⇒ 16 (toy) / 24 (4800B). **4 is illegal** | Fix to 16/24 |
-| C3 | §18 implies tRTP = 4 | max(12 nCK,7.5 ns) ⇒ 12/18 | Fix to 12/18 |
-| C4 | §18 tRCD=tRP=4, tRAS=7 | DDR4-1600-scaled, not DDR5 | Keep for *toy* continuity, but label explicitly as toy-only |
-| C5 | timing set single (toy) | need dual (toy + 4800B) as CSR-loadable sets | Add 4800B CSR profile |
+| # | Settled | New analysis says | Better? (recommendation) | JEDEC status |
+|---|---|---|---|---|
+| C1 | `rmc_pkg.sv`: N_RANKS=1, RANK_BITS=0 | diff-rank cases need N_RANKS=2, RANK_BITS=1 | Bump to 2 — unlocks cheaper cross-rank turnaround (§2b, row 10) | design choice |
+| C2 | §18 / KB: tWTR_L = 4 | JEDEC max(16 nCK,10 ns) ⇒ 16 (toy) / 24 (4800B). **4 is illegal** | Fix to 16/24 | ✓ locked |
+| C3 | §18 implies tRTP = 4 | max(12 nCK,7.5 ns) ⇒ 12/18 | Fix to 12/18 | ✓ locked |
+| C4 | §18 tRCD=tRP=4, tRAS=7 | DDR4-1600-scaled, not DDR5 (4800B = 39/39/77) | Keep for *toy* continuity, label toy-only | ✓ 4800B locked |
+| C5 | timing set single (toy) | need dual (toy + 4800B) as CSR-loadable sets | Add 4800B CSR profile | design choice |
 
-## 7. Verify List (⚠ — JEDEC/PHY cross-check before locking numbers)
+C2/C3/C4 numbers are now JEDEC-verified (pulled 2026-07-16); resolving them = apply
+the locked value. C1/C5 are design choices, still user's call.
 
-- CWL (WL) nominal for DDR5-4800 — used 38, confirm bin.
-- tCCD_L_WR — used 32 nCK flat; confirm no ns floor at 4800.
-- tWTR_S floor — used max(4 nCK, 2.5 ns); confirm 4 vs 2 nCK.
-- tRRD_S / tRRD_L / tFAW — used 8 / max(8,5ns) / 32 ns; confirm DDR5-4800 bin.
-- **tRTR (diff-rank CAS bubble)** — not a JEDEC core param; PHY/ODT-driven, used
-  2 tCK placeholder. Needs the PHY's rank-to-rank DQS/ODT handoff spec. Blocks
-  rows 3/6/10/11 numeric accuracy.
-- tRTW exact form — used RL+BL/2−WL+tWPRE+1; confirm the +1/+2 preamble rounding.
+## 7. Verify List — RESOLVED except one
+
+JEDEC values pulled 2026-07-16 (JESD79-5, DDR5-4800B bin). Now locked in §1:
+- CWL = **RL−2** (= 38 @4800B, 1 @toy). ✓
+- tCCD_L_WR = **32 nCK**; second-write variant tCCD_L_WR2 = **16 nCK**. ✓
+- tWTR_S = **max(4 nCK, 2.5 ns)**, tWTR_L = **max(16 nCK, 10 ns)**. ✓
+- tRRD_S = **8 nCK**, tRRD_L = **max(8 nCK, 5 ns)**, tFAW = **32 nCK** (⚠ page-size
+  dependent — only residual uncertainty, ±a few nCK). ✓
+- tRTP = **max(12 nCK, 7.5 ns)**, tWR = **30 ns**, tPPD = **2 nCK**. ✓
+
+**Still open — cannot come from JEDEC:**
+- **tRTR (diff-rank CAS bubble)** — rank-to-rank turnaround is a PHY/ODT parameter,
+  not in JESD79-5. Placeholder 2 tCK. Needs the target PHY's DQS-driver + ODT
+  handoff spec. Affects diff-rank rows 3/6/10/11 only; all same-rank numbers locked.
+- tRTW +1/+2 preamble rounding — derived; ±1 tCK, immaterial to conclusions.
 
 ---
 
