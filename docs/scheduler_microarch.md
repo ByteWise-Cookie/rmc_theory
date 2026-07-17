@@ -162,3 +162,125 @@ the model, then write matching RTL.
 
 pkg untouched. RTL not started — this pins the shape so the eventual `scheduler.sv`
 is a deliberate structure, checked against the JS golden model.
+
+---
+
+## 8. Reconciliation with the `mcc_v3.1.svg` block diagram
+
+Reviewed the existing architecture drawing (`mcc_v3.1.svg`, repo root) against the
+decision in §0–§7.
+
+### 8.1 The drawing stops where the scheduler starts
+
+`mcc_v3.1.svg` draws the **CIF↔MCC front-end only**: intake FIFOs, the request
+router, the allocator, the token store (TCAM + status + data buffers), the RAW
+hazard path, and the response path. It contains **no** ACT/PRE/CAS/DFI/timing/
+arbiter/refresh blocks. The scheduler exists in the drawing only as two stubs:
+
+- `wr_invalidate/update_req_status_schd_cmd` — the retire/update port into the status reg
+- `stall_rd_req_if fully_wrapped (... scheduler should ignore this rd_req for now)`
+
+Those two stubs *are* the interface. The scheduler is **additive** — no existing
+sheet gets redrawn. This independently confirms the §0 decision: the seam between
+the request tables and the scheduler is already an **index + status-update** port,
+not a token handoff.
+
+### 8.2 Blocks already present (drawing ↔ doc §1 mapping)
+
+| Drawing label | §1 concern | Note |
+|---|---|---|
+| `async_request_buffer stack (CIF→MCC)`, rd/wr `*FIFO` | intake | reuse as-is |
+| `incoming cmd/req router *logic` | intake demux | reuse as-is |
+| `valid_field` → `inv_lsb_priority_encoder` → `next_free_slot_idx`, `full_flag` | watermark allocator | **same block**, drawing names it by function, `rtl/mc_core/{wr,rd}_watermark_mgr.sv` names it by module |
+| `wr/rd_reg_tcam_reg_array *reg` | token address / row-hit classify | reuse — see 8.3 D1 |
+| `write_valid_register *reg {VALID, status, timestamp}` | token metadata + age | reuse **+ add work-state** — see 8.3 D2 |
+| `global_32b_counter` → timestamp field | age / starvation source | **already exists** — no new counter needed for age-boost |
+| `wr_data_buffer *sram`, `rd_request_buffer *sram` | payload | reuse as-is |
+| `*_rd_idx` / `*_rd_data` port pairs everywhere | index-passing | the drawing is **already** index-addressed, not token-passing |
+
+The `global_32b_counter` + per-entry timestamp is worth calling out: the starvation
+input the arbiter needs (§7, "where age forces a batch-mode flip") is already wired.
+Age = `global_32b_counter − timestamp[idx]`. No new structure.
+
+### 8.3 Deltas — what must change
+
+**D1. Read TCAM is missing the row field.** *(real bug, blocks S1)*
+
+The drawing's two token stores are asymmetric:
+
+```
+wr_reg_tcam_reg_array *reg N_WR_ENTRIES x1  { wr_rank, wr_bg, wr_bank, wr_row, wr_column }
+rd_reg_tcam_reg_array *reg N_RD_ENTRIES x1  { rd_rank, rd_bg, rd_bank }          <-- no row
+rd_request_buffer     *sram N_RD_ENTRIES x1 { rd_tag, rd_row, rd_column }        <-- row lives here
+```
+
+S1 classifies row-hit/miss by **TCAM search on {rank,bg,bank,row}** against each
+bank's open row. On the read side `rd_row` sits in an **SRAM**, which has no
+parallel search — it needs an indexed read, one entry per port per cycle. So read
+requests **cannot be classified** by the S1 mechanism as drawn.
+
+This is not a corner case: read row-hits are where most of the DQ-busy win comes
+from, and the harness numbers (row-local ≈74% row-hit vs interleave ≈0%) are
+dominated by the read stream.
+
+**Fix:** move `rd_row` into `rd_reg_tcam_reg_array`, making it symmetric with the
+write side. `rd_column` can stay in the SRAM (column is not searched — it is only
+needed at CAS emit, by which point the index is known).
+
+```
+rd_reg_tcam_reg_array *reg N_RD_ENTRIES x1  { rd_rank, rd_bg, rd_bank, rd_row }
+rd_request_buffer     *sram N_RD_ENTRIES x1 { rd_tag, rd_column }
+```
+
+Cost: `ROW_BITS` × `N_RD_ENTRIES` flops moved SRAM→reg, plus the CAM compare width.
+Unavoidable — searchable row is what makes classify single-cycle.
+
+**D2. Add the work-state field to both status registers.**
+
+Per §6 the shrinking work-list is per-entry state:
+
+```
+write_valid_register *reg N_WR_ENTRIES x1 { VALID, status, timestamp, work_state[2] }
+read_valid_register  *reg N_RD_ENTRIES x1 { RD_VALID, rd_status, rd_timestamp, work_state[2] }
+                                             work_state: NEED_PRE | NEED_ACT | NEED_CAS | DONE
+```
+
+Written by S1 on classify (row-hit jumps straight to `NEED_CAS`), advanced by S4 on
+each emit for that index, `DONE` frees the slot back to the allocator.
+
+**D3. New sheet — scheduler + scoreboard.** Nothing to redraw; one new sheet:
+
+```
+  inputs :  {wr,rd}_valid_status_reg_rd   (valid, work_state, timestamp)
+            {wr,rd}_reg_tcam_hit_vector   (row-hit classify, per D1)
+            global_32b_counter            (age)
+  blocks :  S0 refresh/maint  (tREFI down-counter + OVERRIDE)
+            S1 classify + PRE pick   \
+            S2 ACT pick               >  three parallel pickers (§3), each nominates one idx
+            S3 CAS pick              /
+            scoreboard  bank[]/bg[]/rank[]/global   (§4, thin regs)
+            S4 CA mux + DFI emit
+  outputs:  {wr,rd}_invalidate/update_req_status_schd_cmd   <-- existing stub, now driven
+            DFI command bus
+            rd_req stall/unstall  <-- existing `fully_wrapped` stub, now driven
+```
+
+The pipe register between stages is §2's `{ valid, entry_idx, cmd_type, rank, bg,
+bank, row }` — index-width, not token-width, consistent with the drawing's existing
+`*_rd_idx` convention.
+
+**D4. `per_bank_fsm_table` is absent from the drawing.** No conflict to resolve —
+the block exists in RTL (`rtl/mc_core/per_bank_fsm_table.sv`) but was never drawn.
+§4's thin scoreboard replaces it; it lands on the D3 sheet.
+
+**D5. Read-side label typos** *(cosmetic)*. In the drawing the read TCAM box is
+titled `wr_reg_tcam_reg_array` and the read status box is titled
+`write_valid_register` — copy-paste from the write side. Retitle to `rd_*` /
+`read_valid_register` so the two halves are not confusable.
+
+### 8.4 Net
+
+The drawing and this doc agree on the important thing: **requests live in tables and
+are addressed by index; the scheduler selects in place.** One real bug (D1, read row
+not searchable), one required field (D2), one new sheet (D3), two cosmetics (D4/D5).
+No existing block is removed. pkg still untouched.
