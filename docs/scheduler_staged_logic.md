@@ -58,108 +58,149 @@ Classify first, then emit the head of that case's sequence.
 
 ---
 
-## Stage 0 — Maintenance / refresh authority
+## Stage 0 — Maintenance authority (REF / RFM / ZQ / PD-SR)
 
-**Role:** own REFab / REFsb / RFM / ZQ scheduling; assert OVERRIDE over S1–S3 when a
-maintenance op is critical (correctness first). Decide, per refresh window,
-**REFab vs REFsb vs skip-and-defer**.
+**Role:** the rank-level maintenance authority. Owns **all four** sub-FSMs — refresh,
+rowhammer management, ZQ calibration, and power-down / self-refresh — arbitrates one
+maintenance command per cycle, and asserts OVERRIDE + per-rank gates over S1–S3 when a
+maintenance op must run (correctness first). Refresh sub-decision: **REFab vs REFsb vs
+skip-and-defer**, via the predictor below.
 
 ### Input ports (`RMC_IO_Map.md §19 S0` + §20 ME + §29 per-rank FSM)
 
 ```
-→ ref_urgent       1b                          watchdog: refresh no longer deferrable
+→ ref_urgent       1b                          watchdog: refresh no longer deferrable (credits≥8)
 → ref_due          1b                          tREFI elapsed, refresh wanted
-→ zq_due           1b                          ZQ calibration due
+→ zq_due           1b                          ZQ calibration timer due
 → rfm_req          [N_RANKS][DFI_MASK_WIDTH]    RAA over RAAIMT → rowhammer refresh forced
-→ global_state     [BURST_WIDTH]               rank state (idle / active / refreshing)
+→ global_state     [BURST_WIDTH]               rank state (normal / refreshing / zqcal / PD / SR)
 → bank_act_count   [N_RANKS][mask][clog2]       outstanding-ACT demand per bank
 → all_idle         [N_RANKS]                    rank fully precharged?
 → next_trefi_out   [N_RANKS][GC_WIDTH]          next refresh deadline
-→ ref_credits_out  [N_RANKS]                    REFsb credits (8 REFsb = 1 REFab)
+→ next_zqcs_out    [N_RANKS][GC_WIDTH]          next ZQ deadline
+→ ref_credits_out  [N_RANKS]                    leaky-bucket REF credits (8 REFsb = 1 REFab)
+→ raa_out          [N_RANKS][mask][RAA_WIDTH]   Rolling Accumulated ACT per bank
 → last_refsb_gc    [32][GC_WIDTH]               per bank-index last-REFsb timestamp
-→ overdue_bitmap   32b                          (gc − last_refsb_gc[b]) > tREFI×32
+→ overdue_bitmap   32b                          (gc − last_refsb_gc[b]) > tREFI×32 — DUE set
 → most_overdue_idx 5b                           argmax overdue — watchdog target
+→ last_access_gc   [N_BANKS][GC_WIDTH]          per-bank idleness (for coldness)
 ```
 
-### Logic blocks
+### The four sub-FSMs
 
-1. **Deadline tracker** — per-rank tREFI down-counter → `ref_due`; watchdog →
-   `ref_urgent`. RFM RAA compare → `rfm_req`.
-2. **REFab / REFsb / skip decision.**
-   - REFsb granularity is **not** single-bank: JEDEC REFsb refreshes one bank-index
-     `BA[1:0]` across **all 4 bank groups** at once, rotating `00→01→10→11`. Recovery
-     `tRFCsb` (312 @4800B) < `tRFC1` (708); other banks stay accessible during it.
-     8 REFsb = 1 REFab credit.
-   - **Ordering constraint (JEDEC):** REFsb targets must cycle **in order**
-     `00→01→10→11` for coverage; the controller tracks the rotation counter. So the
-     predictor does **not** freely pick the coldest index — each window it decides
-     *refresh-now vs defer* for the **current rotation index k** only. Free choice is
-     timing, not which index.
-   - **Predictor — cold-index refresh gate.** One index k = 4 banks
-     `B_k = {k, k+4, k+8, k+12}` (same bank across all 4 BGs). Three tiers:
+Internal priority (v3-locked): **`ref_urgent > ref_due > rfm_req > zq_due`**; PD/SR is
+lowest (only when fully idle). One `me_cmd_valid` per cycle to S4, valid-credit.
 
-     **Tier 1 — correctness override (no prediction):**
-     ```
-     if ref_urgent | overdue_bitmap[k] | skip[k] >= SKIP_MAX:
-         REFRESH NOW   (REFsb k; escalate to REFab if rank pressure high)
-     ```
-     **Tier 2 — hard safety gate (exact, the 96-entry queue is known):**
-     ```
-     if any bank_act_count[b] > 0 for b in B_k:
-         DEFER; skip[k]++          # a queued request already wants these banks
-     ```
-     **Tier 3 — arrival predictor (will NEW arrivals hit B_k during the tRFCsb window?):**
-     ```
-     cold    = min over b in B_k of (gc - last_access_gc[b])    # hottest bank governs
-     proj    = { b_head + i*Δ (mod N_BANKS) : i = 1..P }        # stride projection
-     collide = proj ∩ B_k != ∅
-     predict_no_arrival = (cold >= COLD_THRESH) AND NOT collide
-     if predict_no_arrival: REFRESH NOW (REFsb k)
-     else:                  DEFER; skip[k]++
-     ```
-     **Stride detector:** each new arrival pushes its bank into a 2-deep history;
-     `Δ = b_curr − b_prev (mod N_BANKS)`, `b_head = b_curr`. Δ stable over last M
-     arrivals ⇒ **locked**, projection trusted; else `collide=1` (unknown pattern —
-     no speculative refresh, fall back to Tier 2 + coldness).
+**1. Refresh FSM** — `IDLE→REF_DUE→WAIT_BANKS_IDLE→ISSUE_REF→WAIT_tRFC→DONE`
+- **Leaky-bucket credits:** `++` per tREFI, `--` per REF issued. `ref_urgent` at
+  credits ≥ 8 (no longer deferrable).
+- **REFab vs REFsb vs skip** = the predictor (next subsection).
+- FGR 2×/4× → tRFC2/tRFC4, threshold halved / quartered; temperature: MR4 TUF →
+  tREFI/2 above 85 °C.
 
-     | param | default @4800B | meaning |
-     |---|---|---|
-     | `COLD_THRESH` | `tRFCsb`=312 | idle > one refresh window ⇒ likely stays cold |
-     | `P` | ≤ N_BANKS=16 | projection depth (near-future arrivals to dodge) |
-     | `SKIP_MAX` | 3–4 | bounds deferral so a hot index refreshes within a few windows |
+**2. RFM FSM (rowhammer)** — `IDLE→MONITOR_RAA→RFM_REQUEST→WAIT_ISSUE→WAIT_tRFM→UPDATE_RAA`
+- `raa[rank][bank]`: **+1 per ACT** (S4 `raa_inc_en`), `−RAADec` per REF.
+- Trigger `raa[b] ≥ RAAIMT` → `rfm_req` → issue RFMab/RFMsb → `WAIT_tRFM` → reset.
+- Clean address mapping (addrmap) that avoids re-hammering one bank *lowers* RAA
+  pressure — the same property the refresh predictor exploits.
 
-     **Weights tie-in (read/write-outstanding) — occupancy-scaled threshold:**
-     `COLD_THRESH = tRFCsb * (1 + outstanding/depth)`. Low occupancy → ~312, refresh
-     eagerly into the idle; high occupancy → threshold rises, protect throughput,
-     defer.
-   - **Why it self-limits (mirrors the adaptive-batching finding):**
-     - concentrated / strided working set (< all banks) → cold indices exist, and with
-       clean address mapping the stride projection is exact → REFsb hides in the
-       datapath. This is the original insight made concrete.
-     - uniform all-bank sweep (Δ=1 over all 16) → every index collides within one wrap
-       → `predict_no_arrival` never fires → correctly falls through to **REFab on a
-       drain** (Tier 1 when overdue). No free REFsb window exists when all banks are
-       hot; the predictor routes to the right fallback instead of forcing a bad REFsb.
-   - RFM tie-in: JEDEC mandates the per-bank RAA (Rolling Accumulated ACT) counter for
-     rowhammer; clean mapping that avoids re-hammering one bank *reduces* RFM pressure.
-   - New scoreboard state this needs: `last_access_gc[N_BANKS]` (per-bank idleness),
-     `skip[4]` (per rotation-index defer counter), stride detector (2-deep bank
-     history + locked flag). All thin regs, off the critical path.
-3. **Override arbiter** — if `ref_urgent | rfm_req | zq_due`, raise `s0_override` and
-   drive the maintenance command; S4 gives it top priority.
+**3. ZQcal FSM** — `IDLE→WAIT_IDLE→ISSUE_START→WAIT_tZQCAL→ISSUE_LATCH→WAIT_tZQLAT→DONE`
+- Periodic `next_zqcs` timer trims output-driver / ODT impedance vs the external 240 Ω.
+- `gate_zq[rank]=1` for the whole sequence. Rare, cheap (short tZQLAT) — correctness,
+  not a throughput cost.
+
+**4. Power-management FSM (PD / SR)** — folded into S0 (user decision)
+- `PD: NORMAL→PD_ENTRY_CHECK→PRECHARGE_PD / ACTIVE_PD→PDX_WAIT→NORMAL`
+- `SR: NORMAL→SR_ENTRY→WAIT_tCKSRE→SELF_REFRESHING→SR_EXIT→WAIT_tXS_tDLLK→NORMAL`
+- PD entry only when `bank_act_count==0 AND no pending maintenance`; exit on a new
+  request (tXS / tDLLK). SR is deeper (CK may stop; DRAM self-refreshes). S0 owns the
+  policy so power state and refresh accounting stay in one place.
+
+### Refresh predictor — free-target cold-index gate
+
+REFsb refreshes one bank-**index** `BA[1:0]` across **all 4 BGs** at once (8 banks),
+`tRFCsb`=312 < `tRFC1`=708, other banks stay live. **Targeting = free-pick (v3
+option-B):** the predictor chooses the coldest **DUE** index each window (per-bank
+deadlines via `last_refsb_gc` / `overdue_bitmap`), not a fixed rotation. Index k = the
+4 banks `B_k = {k, k+4, k+8, k+12}`.
+
+```
+DUE      = { k : overdue_bitmap[k] OR (gc - last_refsb_gc[k]) approaching deadline }
+CAND     = DUE                                  # only indices that actually need it
+for each k in CAND (evaluate, pick best):
+  # Tier 2 — hard safety (exact; the 96-entry queue is known)
+  occ_k  = Σ bank_act_count[b] for b in B_k
+  # Tier 3 — arrival prediction (will NEW arrivals hit B_k during tRFCsb?)
+  cold_k = min over b in B_k of (gc - last_access_gc[b])   # hottest bank governs
+  proj   = { b_head + i*Δ (mod N_BANKS) : i = 1..P }        # stride projection
+  coll_k = (proj ∩ B_k != ∅)
+  safe_k = (occ_k == 0) AND (cold_k >= COLD_THRESH) AND NOT coll_k
+score → pick the safe DUE index with max cold_k (coldest, least-demanded)
+
+# Tier 1 — correctness override (bypasses prediction)
+if ref_urgent | any overdue_bitmap[k] past hard deadline | skip[k] >= SKIP_MAX:
+    force REFsb most_overdue_idx  (escalate to REFab if whole rank hot / drained)
+elif a safe DUE index exists:
+    REFsb that index
+else:
+    DEFER all; skip[k]++ for due indices; retry next window
+```
+
+**Stride detector:** each new arrival pushes its bank into a 2-deep history;
+`Δ = b_curr − b_prev (mod N_BANKS)`, `b_head = b_curr`. Δ stable over last M arrivals ⇒
+**locked**, projection trusted; else treat `coll=1` (unknown pattern — no speculative
+refresh; fall back to occupancy + coldness only).
+
+| param | default @4800B | meaning |
+|---|---|---|
+| `COLD_THRESH` | `tRFCsb`=312 | idle > one refresh window ⇒ likely stays cold |
+| `P` | ≤ N_BANKS=16 | projection depth (near-future arrivals to dodge) |
+| `SKIP_MAX` | 3–4 | bounds deferral so a hot index still refreshes within a few windows |
+
+**Weights tie-in (read/write-outstanding) — occupancy-scaled threshold:**
+`COLD_THRESH = tRFCsb * (1 + outstanding/depth)`. Low occupancy → ~312, refresh
+eagerly into the idle; high occupancy → threshold rises, protect throughput, defer.
+
+**Why it self-limits (mirrors the adaptive-batching finding):**
+- concentrated / strided working set (< all banks) → cold DUE indices exist, and with
+  clean address mapping the stride projection is exact → REFsb hides in the datapath.
+  Free-target makes this stronger than ordered rotation: it refreshes *whichever* cold
+  index is due, never stuck behind a hot one.
+- uniform all-bank sweep (Δ=1 over all 16) → every DUE index collides → no `safe_k`
+  → falls through to **REFab on a drain** (Tier 1 when overdue). No free REFsb window
+  exists when all banks are hot; the predictor routes to the right fallback.
+
+New scoreboard state: `last_access_gc[N_BANKS]` (idleness), `skip[N_BANKS]` (per-index
+defer counter), stride detector (2-deep history + locked flag). Thin regs, off the
+critical path.
+
+### Override & gating (how S0 preempts the pickers)
+
+- **`s0_override`** — beats S1–S3 at S4's priority mux (invariant 4). Drives the winning
+  maintenance command.
+- **`gate_rfc[rank]` / `gate_zq[rank]`** — assert for the whole maintenance sequence;
+  block **all** picker commands on that rank (invariant 8). This is the *lock*, not a
+  per-command check — S2/S3 see the rank as unavailable until the gate clears.
+- **Drain contract:** REFab / PD / SR need the rank idle first — S0 raises override,
+  lets outstanding CAS complete (ROB watermark policy), issues PREA, then the op.
 
 ### Output ports
 
 ```
 ← s0_override   1b
-← s0_cmd_type   [BURST_WIDTH]   REFab / REFsb / ZQCS / PREA(drain)
+← s0_cmd_type   [BURST_WIDTH]   REFab / REFsb / RFMab / RFMsb / ZQCS / ZQLatch / PREA / PDE / SRE …
 ← s0_rank       [RANK_BITS]
 ← s0_bg         [BG_BITS]
-← s0_bank       [BANK_BITS]     REFsb rotation index
+← s0_bank       [BANK_BITS]     REFsb / RFMsb target index (free-picked)
+← set_gate_rfc / clr_gate_rfc   [N_RANKS]
+← set_gate_zq  / clr_gate_zq    [N_RANKS]
+← inc/dec_ref_credits           [N_RANKS]   leaky bucket
+← refsb_issued_en / refsb_bank_idx / refsb_gc            → per-rank FSM (last_refsb_gc update)
 ```
 
-Reuse: `maintenance_engine` (Refresh / ZQ / RFM FSMs), `bank_activity_ctr`, per-rank
-FSM `last_refsb_gc` / `overdue_bitmap`. Predictor defined above (cold-index gate).
+Reuse: `maintenance_engine` (Refresh / ZQ / RFM / power FSMs), `bank_activity_ctr`,
+per-rank FSM (`last_refsb_gc` / `overdue_bitmap` / `raa`). Predictor = free-target
+cold-index gate (above).
 
 ---
 
