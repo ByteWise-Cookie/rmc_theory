@@ -301,6 +301,12 @@ apply the sibling-tag PRE-defer; nominate ONE PRE. (Not fetch-one; see §0 frame
      sustained hot-row stream would keep `demand_count > 0` forever and starve a waiting
      miss, so the oldest miss force-breaks the lock after `AGE_MAX`. This is the *only*
      timer in S1 — everything else is demand-driven. `AGE_MAX` default → weights pass.
+   - **The force-break is two-sided** (golden-model finding): permitting the miss's PRE
+     is *not enough* — while row-hits keep firing, each CAS pushes `next_pre` out by
+     tRTP/tWR, so the PRE stays timing-blocked and the miss still starves. When the cap
+     fires the bank must **also stop serving hits** (gate its CAS), so the in-flight
+     burst finishes, tRTP/tWR clears, and the PRE can actually issue. Verified: starved
+     miss served ≈`AGE_MAX` cycles in vs at the trace tail without the two-sided gate.
    - **Supersedes** three older mechanisms: sibling-tag defer (subsumed above), the S2
      demand-gate, and the adaptive-batch **stall-flip** — all three collapse into "hold
      the open row while it has demand, release on drain-or-age." Noted again in S2.
@@ -536,11 +542,18 @@ slots. The row-lock being per-bank is what makes each path resolve to a single c
 ## Consistency / verification
 
 - Ports = `RMC_IO_Map.md §19` + `scheduler.sv`, verbatim.
-- Logic = golden model `sched_test.js` — the eventual RTL must match it
-  cycle-for-cycle on the same trace (the bench is the checker). **TODO (golden model):**
-  the age-capped per-bank row-lock and the 64-deep / 32-wide ping-pong classify are
-  documented here but **not yet in `sched_test.js`** — add them before this doc is the
-  RTL reference, else the checker lags the spec.
+- Logic = golden model `tools/sched_model/sched_test.js` — the eventual RTL must match
+  it cycle-for-cycle on the same trace (the bench is the checker). **DONE:** the
+  age-capped per-bank row-lock (two-sided force-break), the in-flight window (`WIN`), and
+  the 32-wide 2-batch ping-pong classify are now in the model, opt-gated; 15/15
+  self-tests pass, 0 violations on both bins. The model caught two things this pass — a
+  `legal(ACT)` `!bank_open` guard (a stale ping-pong classify must not ACT an open bank),
+  and the two-sided force-break above.
+- **Visibility finding (golden model).** With a bounded `WIN=64` in-flight window the
+  greedy hits ~43 % DQ-busy on ACT-bound interleave traces vs ~73 % with *infinite*
+  visibility — the unbounded model inflates by batching the whole trace. The bounded 64
+  number is the realistic one and matches the earlier ~46 % ACT-bound figure in
+  [[scheduler_adaptive_batching]]. Treat unbounded-visibility busy figures as optimistic.
 - Timing names = `datapath_busy_timing.md §1` + `ddr5_ref.tex`.
 - No contradiction with the committed dynamic / microarch / adaptive-batching docs.
 - pkg values quoted are frozen; no pkg edits.
