@@ -27,6 +27,16 @@ stage port + logic view**; those are the rationale.
   prep.
 - **pkg (frozen):** `BG_BITS=2`, `BANK_BITS=2`, `N_RANKS=1`, `N_BG=4`, `N_BANKS=16`,
   `N_WR_ENTRIES=64`, `N_RD_ENTRIES=32`.
+  **Design intent: `N_RD_ENTRIES=64`** (user decision — read=write=64). Not yet in the
+  frozen pkg; the bump happens in the RTL phase, not now. The `32` above is the current
+  frozen value, annotated pending — do not read it as the final depth.
+- **Depth ≠ scan width.** Buffer *depth* (64 reads) is decoupled from TCAM *scan width*
+  (32). Sizing: latency floor `N = L_miss/(BL/2) = 124/8 ≈ 16` reads to hide a row-miss
+  and keep DQ full; bank-parallel ceiling = `N_BANKS` = 16; **32 = 2× margin, 64 = 4×**
+  (row-hit batching headroom). Refresh (tRFC ≈ 708) is **not** a depth input — it is a
+  rare amortized bubble handled by S0 drain, not buffered. Reads now match writes at 64:
+  overturns the earlier read<write asymmetry — the extra read depth buys row-hit
+  batching, paid for by S1's ping-pong scan (below), not a wider TCAM.
 - **Token is virtual:** a request = a slot in `wr/rd_status_reg` + `wr/rd_tcam` + a
   2-bit `work_state` (`NEED_PRE → NEED_ACT → NEED_CAS → DONE`). The pipeline carries
   the entry **index**, not the token.
@@ -39,6 +49,7 @@ stage port + logic view**; those are the rationale.
 | allocator | `wr/rd_watermark_mgr` | free-slot alloc / retire, full flags |
 | timing values | `timing_reg_file` | nCK per param (tRCD/tRP/…); combinational multi-port read |
 | scoreboard | new thin regs (replaces `per_bank_fsm_table`) | per-bank next_act/next_pre/next_cas + row_open; per-BG/rank next_*; tFAW ring |
+| row-lock | new thin regs (S1, §Stage 1) | per-bank `lock_row`, `demand_count`, `oldest_miss_age`; param `AGE_MAX` |
 | global counter | `gc_counter` | free-running `gc`; age = `gc − status_age[idx]` |
 
 ### The classify table (the heart of S1)
@@ -224,18 +235,50 @@ apply the sibling-tag PRE-defer; nominate ONE PRE. (Not fetch-one; see §0 frame
 
 ### Logic blocks
 
+0. **Ping-pong classify scan** — depth is 64 reads, but the TCAM is **32-wide**
+   (`N_RD_ENTRIES=32` frozen; the 64-deep buffer is scanned in two 32-entry batches).
+   Within a batch all 32 entries are searched **fully in parallel** — that is what a
+   TCAM *is*, one combinational match cycle. The two batches (half A / half B) alternate
+   cycle-to-cycle, sweeping all 64 every **2 cycles**. `work_state` is therefore
+   **registered per entry** (64 b), not recomputed whole-array each cycle: the scan
+   updates one 32-half per cycle, and all three pickers read all 64 `work_state` bits
+   (1 bit each, cheap). Cost: the unscanned half's `hit_bitmap` is **1 cycle stale** —
+   harmless, because a row that just opened can't be CAS'd the same cycle anyway
+   (tRCD ≫ 1), so the other half sees its new hits before they could ever fire. Worst-
+   case classify latency +1 tCK, negligible vs the 124 tCK row-miss the depth hides.
+   *(Alternative — one 64-wide TCAM, all-parallel, 1 cycle — rejected: 2× CAM area and a
+   longer match wordline hurt timing closure. 32-wide ping-pong is the bounded-cost pick.)*
 1. **Classifier** — per valid entry, the TCAM hit-vector tags:
    `open && row==req → NEED_CAS (hit)`, `closed → NEED_ACT (empty)`,
    `open && row!=req → NEED_PRE (miss)`. Writes `work_state`. Emits `s1_hit_bitmap`
    (valid-gated) and `s1_hit_meta[]` per bank.
-2. **Sibling-tag defer** — CIF `burst_splitter` fractures one AXI request into packets
-   sharing `(bank, row)` under one tag. While unretired same-tag siblings still want a
-   bank's open row, that bank is **not** PRE-eligible (the siblings are guaranteed
-   row-hits — drain them first). Reuses the adaptive-batch demand counter, keyed by
-   tag. Applies to reads **and** writes (writes split too; WDB holds the data).
-   Effect: cuts per-request tail latency and raises row-hit rate.
-3. **PRE picker** — among `NEED_PRE` + legal-PRE entries, nominate one, scored by
-   `batch_policy + QoS + age`. `pre_ready` = `work_state` + timing gate clear.
+2. **Per-bank row-lock** *(replaces the old sibling-tag defer — it subsumes it)* — each
+   bank locks to its open row and will not be precharged until the lock releases. This
+   is what protects a **"ready-but-busy"** row-hit: a hit that is classified `NEED_CAS`
+   but blocked this cycle on DQ-free / tCCD / turnaround must not have its row closed out
+   from under it while it waits its DQ turn.
+   ```
+   acquire : on ACT — bank locks to the freshly-opened row (lock_row[bank] = new row)
+   hold    : while demand_count[bank] > 0   (pending row-hits to the open row)
+   release : demand_count[bank] == 0  OR  oldest_miss_age[bank] >= AGE_MAX
+   next    : the oldest NEED_PRE miss on that bank acquires next (FCFS, no QoS timer)
+   break   : s0_override (maintenance) force-breaks the lock (correctness first)
+   ```
+   - `demand_count[bank]` = outstanding row-hits to the open row (the old adaptive-batch
+     demand counter, reused). Siblings from CIF `burst_splitter` are simply demand on the
+     open row — no separate sibling mechanism needed. Reads **and** writes.
+   - **Age cap** (`oldest_miss_age[bank] >= AGE_MAX`) is the one starvation guard: a
+     sustained hot-row stream would keep `demand_count > 0` forever and starve a waiting
+     miss, so the oldest miss force-breaks the lock after `AGE_MAX`. This is the *only*
+     timer in S1 — everything else is demand-driven. `AGE_MAX` default → weights pass.
+   - **Supersedes** three older mechanisms: sibling-tag defer (subsumed above), the S2
+     demand-gate, and the adaptive-batch **stall-flip** — all three collapse into "hold
+     the open row while it has demand, release on drain-or-age." Noted again in S2.
+3. **PRE picker** — a bank is **PRE-eligible iff** its lock is *releasable*
+   (`demand_count==0 OR oldest_miss_age>=AGE_MAX`) **AND** `next_pre` timing is met
+   (tRAS since ACT, tRTP/tWR since the last CAS — the burst must finish). Among eligible
+   `NEED_PRE` entries nominate the **oldest** (the lock's next owner), scored by
+   `batch_policy + QoS + age`. `pre_ready` = releasable-lock + timing gate clear.
 
 ### Output ports
 
@@ -245,8 +288,19 @@ apply the sibling-tag PRE-defer; nominate ONE PRE. (Not fetch-one; see §0 frame
 ← s1_pre_nom      {entry_idx, bank, bg}     nominated PRE (to S4)
 ```
 
+**Row-busy + row-miss (the hard combo).** A request wants `row_R`, the bank has `row_X`
+open (miss) *and* is busy. Its `PRE` is gated by **both**: (a) `next_pre` timing —
+`MAX(ACT+tRAS, last_rd_CAS+tRTP, last_wr_CAS+tWR)`, the burst must finish; and (b) the
+**row-lock** — `row_X`'s hits must drain (`demand_count==0`) or the age cap must fire.
+The miss sits `NEED_PRE`, not nominated, until both clear; then the oldest miss acquires
+the lock and opens `row_R`. This is why "how the next row opens" = **oldest miss wins the
+freed bank** — never precharge an open row that still owes hits, unless age-capped.
+
+New scoreboard state (thin regs): `lock_row[N_BANKS]`, `demand_count[N_BANKS]` (reused),
+`oldest_miss_age[N_BANKS]`, param `AGE_MAX`.
+
 Reuse: `wr/rd_tcam` (search = classify), `wr/rd_status_reg` (+ `work_state` field).
-**OPEN: PRE-picker scoring weights.**
+**OPEN: PRE-picker scoring weights + `AGE_MAX` default (the weights pass).**
 
 ---
 
@@ -275,6 +329,9 @@ burst shadow. ACT is scarce — tFAW caps it at 4 per 32 tCK.
 1. **ACT-legal gate** — `can_act & can_act_bg & can_act_any & can_faw`, and
    maintenance not gating the rank.
 2. **Demand gate** — only banks with `bank_act_count > 0`. No speculative activation.
+   *(The S1 per-bank row-lock now subsumes the PRE-side demand-gate and the batch
+   stall-flip; S2's ACT demand gate stays — it just prevents speculative ACT, a
+   different concern. An ACT here acquires the lock for the row it opens.)*
 3. **Lookahead scorer** — prefer the demanded idle bank whose CAS the current batch
    mode needs soonest (hide tRCD under the already-queued bursts); BG-rotate to
    stretch the tRRD / tFAW budget.
@@ -421,18 +478,22 @@ writes the scoreboard, which the `can_*` gates re-read the next cycle.
 
 ## OPEN items (deferred, non-blocking)
 
-- **S1 PRE + S2 ACT scoring weights** — oldest / newest / QoS / age blend, lookahead
-  ordering, age-boost magnitude. One dedicated "weights" pass.
-- **CIF outstanding depth.** pkg currently gives `N_WR_ENTRIES=64 + N_RD_ENTRIES=32 =
-  96` (and `N_WR_ENTRIES` carries a `TODO: lock 64 vs 96` note). The "256 packets"
-  figure from the S0 discussion does not match the frozen pkg — reconcile before the
-  predictor lookahead depth is fixed. (Not a pkg edit here — flagged only.)
+- **S1 PRE + S2 ACT scoring weights + `AGE_MAX`** — oldest / newest / QoS / age blend,
+  lookahead ordering, age-boost magnitude, and the row-lock age-cap threshold. One
+  dedicated "weights" pass.
+- **CIF outstanding depth — DECIDED: 64 reads + 64 writes = 128.** `N_RD_ENTRIES`
+  intent bumped 32→64 (§0), pkg edit deferred to RTL phase. The earlier "256 packets"
+  figure is **retired** — it never matched the pkg. Predictor lookahead depth `P` keys
+  off 64 reads, not 256.
 
 ## Consistency / verification
 
 - Ports = `RMC_IO_Map.md §19` + `scheduler.sv`, verbatim.
 - Logic = golden model `sched_test.js` — the eventual RTL must match it
-  cycle-for-cycle on the same trace (the bench is the checker).
+  cycle-for-cycle on the same trace (the bench is the checker). **TODO (golden model):**
+  the age-capped per-bank row-lock and the 64-deep / 32-wide ping-pong classify are
+  documented here but **not yet in `sched_test.js`** — add them before this doc is the
+  RTL reference, else the checker lags the spec.
 - Timing names = `datapath_busy_timing.md §1` + `ddr5_ref.tex`.
 - No contradiction with the committed dynamic / microarch / adaptive-batching docs.
 - pkg values quoted are frozen; no pkg edits.
