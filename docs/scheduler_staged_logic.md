@@ -16,10 +16,31 @@ stage port + logic view**; those are the rationale.
 ## 0. Frame (read first)
 
 - **Non-blocking, classify-all.** No marching token. Every cycle all N outstanding
-  entries are visible; the three pickers (PRE / ACT / CAS) nominate in parallel; S4
-  emits ONE. A not-ready request is simply not nominated — it steps aside, staying in
-  its table slot. (Rejected alternative: fetch-one-and-work — a request stalled on
-  tRAS/tRP blocks the picker and idles DQ.)
+  entries are visible; candidates nominate in parallel; S4 emits ONE. A not-ready
+  request is simply not nominated — it steps aside, staying in its table slot. (Rejected
+  alternative: fetch-one-and-work — a request stalled on tRAS/tRP blocks the picker and
+  idles DQ.)
+- **Scheduler width = `N_BANKS` paths.** The **bank** is the unit of independence — its
+  own row buffer, own `next_pre/act/cas`, own row-lock — and it can decode **one**
+  command at a time. So the scheduler is `N_BANKS` **per-bank paths**, each a candidate
+  generator that reads only *its* bank's entries + scoreboard and emits at most **one**
+  head command (the row-lock already serializes intra-bank: locked → serve its hit,
+  releasable → PRE, idle+demand → ACT). The per-class pickers (PRE / ACT / CAS) are not
+  three global scans of all entries — they are the **arbiter's class-priority layer**
+  over the `N_BANKS` bank candidates. Structure:
+  ```
+  N_BANKS per-bank paths (parallel) → each emits 1 candidate {cmd_type, entry_idx, row/col}
+        → classify by type → S4 arbiter: class-priority (CAS>ACT>PRE) + BG-rotate + age
+        → 1 command per CA slot
+  ```
+  Three things to keep straight:
+  1. **Paths ≠ emissions.** `N_BANKS` candidates generate in parallel, but the CA bus is
+     **1 cmd / 2 tCK**. Under one burst (8 tCK, 4 CA slots) the arbiter fills ~4 slots
+     (1 CAS + 3 prep in the shadow) — never `N_BANKS` commands a cycle.
+  2. **Each path merges read + write.** A bank has both rd and wr entries; its single
+     candidate is the batch-mode-selected head (R or W), so the path spans both queues.
+  3. **BG timing is cross-path.** `tCCD_L` / `tRRD_L` / `tFAW` live *between* banks and
+     are applied at the arbiter, not inside a path (a path only knows its own bank).
 - **CA:DQ slot ratio — the core budget.** DDR5 CA is a 2-cycle command → 1 cmd / 2
   tCK. One CAS burst (BL16) = 8 tCK of DQ = **4 CA slots**. The CAS uses 1 slot; the
   other **3 are free** to emit ACT/PRE for *other* banks in the shadow of the burst.
@@ -30,12 +51,21 @@ stage port + logic view**; those are the rationale.
   **Design intent: `N_RD_ENTRIES=64`** (user decision — read=write=64). Not yet in the
   frozen pkg; the bump happens in the RTL phase, not now. The `32` above is the current
   frozen value, annotated pending — do not read it as the final depth.
+  **Bank count — design intent `N_BANKS=32`.** Standard DDR5 x4/x8 = **8 BG × 4 banks =
+  32 banks**; only x16 devices are 4 BG × 4 = 16. The frozen pkg (`N_BG=4`,
+  `N_BANKS=16`, `BG_BITS=2`) is the **x16** config. Targeting standard x8 means the
+  pkg bump `N_BG 4→8`, `BG_BITS 2→3`, `N_BANKS 16→32` (RTL phase, not now — it also
+  widens the TCAM address key and the address map). **This doc is written parameterized
+  as `N_BANKS` / `N_BG`** so it holds for either config; the `=16` figures below are the
+  current-pkg instance, `=32` is the intent.
 - **Depth ≠ scan width.** Buffer *depth* (64 reads) is decoupled from TCAM *scan width*
   (32). Sizing: latency floor `N = L_miss/(BL/2) = 124/8 ≈ 16` reads to hide a row-miss
-  and keep DQ full; bank-parallel ceiling = `N_BANKS` = 16; **32 = 2× margin, 64 = 4×**
-  (row-hit batching headroom). Refresh (tRFC ≈ 708) is **not** a depth input — it is a
-  rare amortized bubble handled by S0 drain, not buffered. Reads now match writes at 64:
-  overturns the earlier read<write asymmetry — the extra read depth buys row-hit
+  and keep DQ full (independent of bank count — it is latency ÷ service). Bank-parallel
+  ceiling = `N_BANKS`: at the x16 pkg (16) depth-64 = 4× the floor / 4× the ceiling; at
+  the x8 intent (32) depth-64 = still 2× the ceiling. Either way 64 clears the floor
+  with margin for row-hit batching. Refresh (tRFC ≈ 708) is **not** a depth input — it
+  is a rare amortized bubble handled by S0 drain, not buffered. Reads now match writes at
+  64: overturns the earlier read<write asymmetry — the extra read depth buys row-hit
   batching, paid for by S1's ping-pong scan (below), not a wider TCAM.
 - **Token is virtual:** a request = a slot in `wr/rd_status_reg` + `wr/rd_tcam` + a
   2-bit `work_state` (`NEED_PRE → NEED_ACT → NEED_CAS → DONE`). The pipeline carries
@@ -474,6 +504,14 @@ The pickers are parallel, not a conveyor: S1/S2/S3 all read the same classified 
 and the scoreboard in the same cycle. S4 serializes to one command per CA slot and
 writes the scoreboard, which the `can_*` gates re-read the next cycle.
 
+**Physical decomposition (see §0).** S1/S2/S3 are named by command *class* (PRE / ACT /
+CAS) for the timing narrative, but the hardware is `N_BANKS` **per-bank paths**: each
+bank emits its one head candidate, and the three "pickers" are really the S4 arbiter's
+class-priority layer selecting across those `N_BANKS` candidates. Read the stages as the
+per-class *rules* a bank-path applies (S1 = classify + row-lock, S2 = ACT-legal +
+lookahead, S3 = CAS-legal + batch) and S4 as the cross-bank arbiter that spends the CA
+slots. The row-lock being per-bank is what makes each path resolve to a single command.
+
 ---
 
 ## OPEN items (deferred, non-blocking)
@@ -485,6 +523,15 @@ writes the scoreboard, which the `can_*` gates re-read the next cycle.
   intent bumped 32→64 (§0), pkg edit deferred to RTL phase. The earlier "256 packets"
   figure is **retired** — it never matched the pkg. Predictor lookahead depth `P` keys
   off 64 reads, not 256.
+- **Bank count — INTENT: `N_BANKS=32` (x8, 8 BG).** pkg currently 16 (x16, 4 BG). Pick
+  the target device width before RTL: x8/x4 → `N_BG=8`, `BG_BITS=3`, `N_BANKS=32` (also
+  widens TCAM key + address map); x16 → keep pkg. Scheduler path count = `N_BANKS`
+  either way (parameterized). S0 predictor's `B_k = {k, k+4, …}` REFsb index math and
+  the `overdue_bitmap[32]` / `last_refsb_gc[32]` widths **assume 32**, but S0's REFsb
+  index math `B_k = {k, k+4, k+8, k+12}` (4 elements) **assumes 4 BG / 16 banks** — a
+  latent mismatch in the S0 spec. Reconcile when the device width is locked: at 8 BG,
+  REFsb-per-index spans one bank per BG = 8 banks, so `B_k = {k + 4·i : i = 0..7}` and
+  the index count stays `BANK_BITS`-wide (4), while the bitmap is per-bank (32).
 
 ## Consistency / verification
 
