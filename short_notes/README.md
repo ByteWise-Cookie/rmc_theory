@@ -140,6 +140,10 @@ The scheduler is `N_BANKS` **per-bank paths** feeding one arbiter. Named by clas
 PRE / S2 ACT / S3 CAS) for the timing story, but the hardware is: **registered scoreboard
 → combinational gates → arbiter → writeback**, all in one 1-cmd/2-tCK loop.
 
+> **Deepest dive — algorithm + full internal wiring:** [`scheduler_deep.md`](scheduler_deep.md)
+> (exact `legal()`/`emit()`/loop pseudocode from the golden model, timing table, worked
+> trace). The summary below is the map; that file is the spec.
+
 ### 6.0 Internal wiring — one cycle, end to end
 
 ```
@@ -296,6 +300,7 @@ the RTL reference.
 
 | topic | file |
 |---|---|
+| **scheduler deep dive (algorithm + wiring)** | [`scheduler_deep.md`](scheduler_deep.md) |
 | front-end block sheet | [`../mcc_v3.1.svg`](../mcc_v3.1.svg) |
 | watermark / allocator | `diagrams/watermark_logic.png` |
 | FSM + arbiter | `diagrams/bank_fsm.png` · [`../docs/scheduler_bank_fsm.md`](../docs/scheduler_bank_fsm.md) |
