@@ -295,7 +295,8 @@ see staged_logic §0.
 ## 7. Hardware view — the eligibility-gate datapath
 
 The FSM (§1) is *behaviour*; the hardware is a **gate-generation datapath with a
-feedback loop**. Diagram: `docs/diagrams/sched_gate_hw.excalidraw`.
+feedback loop**. Diagram: `docs/diagrams/sched_gate_hw.excalidraw`. Block/port/net list
++ placement for drawing it: [[scheduler_wiring_spec]].
 
 The point that answers *"we can't issue a CAS every cycle"*: `can_cas` / `can_act` /
 `can_pre` are **not static wires** — each is a **comparator output over a registered
