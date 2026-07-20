@@ -206,6 +206,46 @@ prep-latency (`tRCD`/`tRP` ≈ 39 tCK) but loses to one that has waited patholog
 
 ---
 
+### 4e. DQ-occupancy servo — the CAS$\leftrightarrow$ACT balance
+
+CAS is the *consumer* of ready rows and the *producer* of DQ traffic; ACT is the
+*producer* of ready rows. The prep (ACT) rate must track the drain (CAS) rate so the
+ready-CAS pool **never empties** (DQ idles) and **never overfills** (ACT wasted, tFAW
+burned, future DQ congested). A closed servo on top of the fixed control weights.
+
+Signals (combinational, per cycle):
+
+```
+dq_free_in = max(0, dqFree − gc)          cycles until DQ frees (0 = free now)
+ready_cas  = popcount(can_cas[N_BANKS])   ready-CAS pool depth
+faw_budget = ACTs left in the tFAW window
+```
+
+`can_cas` already hard-gates on `gc ≥ dqFree`, re-evaluated every cycle — that is the
+**busy/free re-gate** (§3, §7). The servo is a *soft* modulation of the **ACT lane
+weight** (not a hard gate — hard-gating ACT on pool depth could starve prep):
+
+```
+boost ACT : ready_cas < POOL_LOW  AND  dq_free_in <= LOOKAHEAD   (prep now or DQ idles)
+            act_boost  ∝ (POOL_LOW − ready_cas)
+damp  ACT : ready_cas > POOL_HIGH  OR  faw_budget low            (rows already open)
+            act_damp   ∝ (ready_cas − POOL_HIGH) + faw_pressure
+w_act = K·control_act + age + act_boost − act_damp
+```
+
+**Hard guardrail** (prevents the over-correction — *"when DQ is free and something is
+ready, CAS it"*): `dq_free_in == 0 AND ready_cas >= 1  ⇒  CAS wins absolutely`. A boosted
+ACT can never preempt a ready CAS onto a free bus; the servo only spends
+*otherwise-idle* CA slots on prep. **DQ never idles while a CAS is ready.**
+
+Net: the servo holds `ready_cas` in a band `[POOL_LOW, POOL_HIGH]` — below → prep harder,
+above → prep less — while the guardrail guarantees DQ is never starved. This is the
+CAS-first invariant (§4a) **plus a prep-rate governor**; it makes the S2 lookahead
+scorer's "hide tRCD under queued bursts" an explicit occupancy target. It also caps the
+reverse failure: opening rows faster than CAS drains just parks rows (holds tRAS,
+raises refresh / rowhammer exposure) without feeding DQ faster — the damp side bounds it.
+`POOL_LOW` / `POOL_HIGH` / `LOOKAHEAD` = weights-pass knobs.
+
 ## 5. Latency chains — best case + every worst case
 
 First-data latency and DQ occupancy per case, `b4800` (tCK). "First data" = command issue
