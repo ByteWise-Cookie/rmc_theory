@@ -252,7 +252,46 @@ see staged_logic §0.
 
 ---
 
-## 7. Consistency / open items
+## 7. Hardware view — the eligibility-gate datapath
+
+The FSM (§1) is *behaviour*; the hardware is a **gate-generation datapath with a
+feedback loop**. Diagram: `docs/diagrams/sched_gate_hw.excalidraw`.
+
+The point that answers *"we can't issue a CAS every cycle"*: `can_cas` / `can_act` /
+`can_pre` are **not static wires** — each is a **comparator output over a registered
+`next_*` counter**, and the writeback *mutates those counters every issue*, so the gate
+deasserts itself.
+
+```
+REGISTERED (FFs)          COMBINATIONAL gates            ARBITER
+scoreboard next_* ─► (gc ≥ next_*) AND row/lock/faw ─► can_cas/act/pre[N_BANKS] ─► weight
+      ▲                                                                              │
+      └──────────── S4 writeback (feedback = the gate) ◄───────────── 1 winner ◄─────┘
+```
+
+Three pieces + one loop:
+1. **Registered state (FFs)** — the scoreboard: per-bank `next_cas/act/pre`, `row_open`;
+   global `dqFree`, `next_cas_any` (tCCD_S), `next_cas_bg[bg]` (tCCD_L), `tFAW` ring,
+   turnaround window; the `age[lane]` counters; free-running `gc`.
+2. **Combinational gates** — one AND per class per bank: `can_cas[b] = row_open &
+   open_row==R & gc≥next_cas & gc≥next_cas_bg & gc≥next_cas_any & gc≥dqFree & turnaround
+   & !age-cap`; `can_act[b] = !row_open & gc≥next_act & gc≥tRRD & tFAW<4 & !gate_rfc`;
+   `can_pre[b] = (demand==0 | age≥AGE_MAX) & gc≥next_pre`. Outputs three `N_BANKS`-wide
+   bitmaps — the §3 eligibility mask.
+3. **Arbiter** — priority encoder (CAS>ACT>PRE) + aging (§4) over the three bitmaps →
+   one winner → DFI.
+4. **Feedback (the gate).** On a CAS issue the writeback sets `dqFree = gc+lat+BL2`,
+   `next_cas_any = gc+tCCD_S`, `next_cas_bg = gc+tCCD_L`, `next_pre[b] = MAX(…,
+   gc+tRTP/tWR)`. Next cycle `can_cas` **deasserts** for the burst window → 3 of the 4 CA
+   slots (§0, 1 cmd / 2 tCK) are free → the arbiter spends them on ACT/PRE **prep for
+   other banks** → their CAS is legal exactly when DQ frees → **DQ stays full**. That
+   registered-timing feedback *is* the "CAS-first, prep-in-shadow" behaviour, in gates.
+
+Same three `can_*` gates are the S2/S3 input ports in [[scheduler_staged_logic]]
+(`can_cas_out` / `can_cas_bg_out` / `can_cas_any_out`, etc.) — this section is their
+generation + why the loop keeps the bus busy.
+
+## 8. Consistency / open items
 
 - **Logic = golden model** `tools/sched_model/sched_test.js`; the eventual RTL matches it
   cycle-for-cycle. The row-lock, two-sided force-break, ping-pong classify, and windowed
