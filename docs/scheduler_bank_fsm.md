@@ -1,0 +1,268 @@
+# RMC Scheduler — Per-Bank Request FSM + Weight Arbiter
+
+The **per-bank** view of the greedy scheduler: one request's life (a read or write
+arrival → `PRE`/`ACT`/`CAS` → data → retire) as an explicit state machine, plus the
+**4-lane weight arbiter** that decides which command class emits each cycle. `N_BANKS`
+copies of this FSM run independently; the arbiter merges them onto the one CA slot.
+
+Companion to [[scheduler_staged_logic]] (the S0–S4 stage/port view). Same logic, two
+lenses: staged_logic reads by command **class** (S1 PRE / S2 ACT / S3 CAS), this doc
+reads by **bank** — the unit of independence. Both are the golden model
+(`tools/sched_model/sched_test.js`, bench `1d271c33`) in prose. Timing is JEDEC-locked
+per [[datapath_busy_timing]]; numbers below are the model's `b4800` bin (DDR5-4800B,
+`tCK = 0.4167 ns`).
+
+Diagram: `docs/diagrams/bank_fsm.excalidraw`.
+
+---
+
+## 0. What the FSM is (and is not)
+
+- **Per request, per bank.** The state is the request's `work_state`
+  (`NEED_PRE → NEED_ACT → NEED_CAS → DONE`) crossed with the **bank's** open-row state.
+  A request is a table slot (§0 of staged_logic — "token is virtual"); the FSM below is
+  the transition rule that slot obeys. There is **no marching token** — every slot that
+  is `NEED_*` nominates in parallel; the arbiter emits one.
+- **The bank is the independence unit.** Its own open row, own `next_pre/act/cas`, own
+  row-lock, own aging counters. `N_BANKS` FSMs advance in parallel. Cross-bank timing
+  (`tCCD_L`, `tRRD_L`, `tFAW`, DQ bus) is **not** in the FSM — it is applied at the
+  arbiter (§4), because a single bank cannot see it.
+- **Two independent things gate a command:** (1) **timing eligibility** — the DDR
+  constraint countdown (§3), a hard legal/illegal mask; (2) **the weight** — priority
+  among *eligible* lanes (§4). Timing says *may I*; weight says *do I win this cycle*.
+
+---
+
+## 1. The state machine
+
+```
+                         (arrival: RD_REQ or WR_REQ, allocate slot)
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │  CLASSIFY (S1)   │  TCAM: bank open? row match?
+                              └──────────────────┘
+                 closed│idle         open, row==R        open, row!=R
+                (row-empty)          (row-HIT)           (row-MISS)
+                       │                  │                   │
+                       ▼                  │                   ▼
+                 ┌───────────┐            │             ┌───────────┐
+                 │ NEED_ACT  │            │             │ NEED_PRE  │
+                 └───────────┘            │             └───────────┘
+                       │                  │                   │  emit PRE
+                  emit ACT                │                   │  (row-lock releasable
+                  (tRP since PRE,         │                   │   AND next_pre clear)
+                   tRRD/tFAW)             │                   ▼
+                       │                  │             ┌───────────┐
+                       │                  │             │ NEED_ACT  │  (miss re-opens)
+                       ▼                  │             └───────────┘
+                 ┌───────────┐            │                   │  emit ACT (tRP)
+                 │ NEED_CAS  │◄───────────┴───────────────────┘
+                 └───────────┘
+                       │  emit CAS  (row open+match, tRCD since ACT,
+                       │             tCCD, DQ-free, turnaround)
+                       ▼
+                 ┌───────────┐
+                 │   DONE    │  read: data at RL → ROB.  write: drains WDB at WL.
+                 └───────────┘  free slot → watermark.
+```
+
+**Classify is the fork.** Same three cases as staged_logic's classify table:
+
+| bank state | case | command chain | entry `work_state` |
+|---|---|---|---|
+| closed / idle | **row-empty** | `ACT → CAS` | `NEED_ACT` |
+| open, `row == R` | **row-hit** | `CAS` | `NEED_CAS` |
+| open, `row != R` | **row-miss** | `PRE → ACT → CAS` | `NEED_PRE` |
+
+Read and write share the FSM identically — only the CAS flavour (`CAS_RD`/`CAS_WR`) and
+the tail timing differ (write adds `tWR` recovery before the row can PRE; §5).
+
+---
+
+## 2. Command emission per state (the four lanes)
+
+Each `NEED_*` state drives exactly one **emission lane**. Per bank there are three
+request lanes; `REF` is the global maintenance lane (S0), which overrides all banks.
+
+| lane | fires in state | emits | frees the state to |
+|---|---|---|---|
+| **PRE** | `NEED_PRE` | close the open (wrong) row | `NEED_ACT` |
+| **ACT** | `NEED_ACT` | open row `R` | `NEED_CAS` |
+| **CAS** | `NEED_CAS` | read/write burst | `DONE` |
+| **REF** (S0) | — (bank-independent) | REFab/REFsb/RFM/ZQ | (maintenance) |
+
+A lane "wants to emit" iff it has a request in its state **and** that request is
+timing-eligible (§3). Multiple lanes want the slot every cycle — the weight arbiter (§4)
+picks one.
+
+---
+
+## 3. Timing eligibility — the countdown gate (per bank)
+
+Eligibility is a per-lane countdown to the bank's `next_*` scoreboard register. `cd ≤ 0`
+⇒ the command is legal this cycle. This is a **hard mask**, evaluated before weight.
+
+```
+cd_pre = next_pre − gc     next_pre = MAX( ACT_gc + tRAS,            # tRAS ACT→PRE
+                                           last_rdCAS_gc + tRTP,     # tRTP RD→PRE
+                                           last_wrCAS_gc + WL+BL2+tWR)# write recovery
+                            AND  row-lock releasable  (§ below)
+cd_act = next_act − gc     next_act = MAX( PRE_gc + tRP,             # tRP PRE→ACT
+                                           tRRD_L/S spacing, tFAW ring )
+cd_cas = next_cas − gc     next_cas = MAX( ACT_gc + tRCD,            # tRCD ACT→CAS
+                                           tCCD_L/S spacing,
+                                           dqFree, turnaround tRTW / tWTR )
+```
+
+`next_pre = MAX over its writers` (ACT's `tRAS` vs the last CAS's `tRTP`/`tWR`) — the bug
+the golden model caught; the RTL must replicate the MAX. See staged_logic S4 §3.
+
+**Row-lock (the PRE gate).** A bank locks to its freshly-opened row on `ACT` and will not
+`PRE` until the lock releases — this protects a "ready-but-busy" row-hit from being closed
+out from under it while it waits its DQ turn.
+
+```
+acquire : on ACT (lock_row[bank] = new row)
+hold    : while demand_count[bank] > 0        (pending hits to the open row)
+release : demand_count == 0  OR  oldest_miss_age >= AGE_MAX   (starvation cap)
+break   : s0_override (maintenance) force-breaks
+```
+
+The age cap is **two-sided** (golden-model finding): when it fires the bank must also
+**stop serving hits** (gate its CAS), so the in-flight burst finishes, `tRTP`/`tWR`
+clears, and the starved miss's `PRE` can actually issue — permitting the PRE alone is not
+enough. Full treatment in staged_logic S1.
+
+---
+
+## 4. The weight arbiter (emission control)
+
+Every cycle up to four lanes are eligible and want the one CA slot. The arbiter picks the
+**highest total weight**, emits it, and advances the scoreboard.
+
+**Total weight = control weight (SJF, stage-fixed) + aging counter (per lane).**
+
+### 4a. Control weight — shortest-job-first, fixed per class
+
+Shortest job = fewest commands left to deliver data = closest to filling a DQ slot.
+`CAS` is the shortest job (0 prep, data now), so it carries the top control weight.
+
+| lane | control weight | why |
+|---|---|---|
+| **CAS** | highest | 0 prep — feeds DQ **this** burst; keep the bus full |
+| **ACT** | mid | 1 hop from data (`tRCD` then CAS) |
+| **PRE** | low | 2 hops from data (`tRP`, `tRCD`, then CAS) |
+| **REF** | override tier | correctness-first; S0 preempts via `s0_override` |
+
+This is the CAS-first / prep-second priority of staged_logic S4, stated as a weight.
+
+### 4b. Aging counter — one per lane, the fairness layer
+
+```
+each cycle, per lane:
+    if lane has a candidate AND did NOT win this cycle:   age[lane] += 1
+    elif lane won this cycle:                             age[lane]  = 0
+    else (no candidate):                                 age[lane]  = 0
+```
+
+The counter ticks **every cycle the lane waits**, including while timing-blocked (user
+decision) — a command stuck on `tRP`/`tRCD` still banks priority, so the instant it turns
+eligible it already carries the weight it earned waiting. On a win the counter **resets to
+0**. A starved lane therefore climbs until it out-weighs the default CAS-first ordering
+and preempts — **bounded starvation, no hard timer needed** in the common case (the S1
+row-lock age cap is still the backstop for the pathological hot-row).
+
+### 4c. Pick
+
+```
+candidates = { lane : eligible(lane) }              # §3 hard mask
+winner     = argmax over candidates of  ( control_weight[lane] + age[lane] )
+             tie-break: oldest request age, then BG-rotate (bg != last_cas_bg)
+emit winner (1 command per CA slot);  advance scoreboard;  age[winner] = 0
+if s0_override: REF wins regardless (correctness tier)
+```
+
+Per bank this collapses to a single head command (the row-lock already serializes
+intra-bank: locked→its hit, releasable→PRE, idle+demand→ACT). Across banks the arbiter is
+the S4 cross-class + cross-bank layer.
+
+### 4d. ⚠ Scaling caveat (weights pass)
+
+Because the aging counter ticks **every** waiting cycle (§4b) and the control weight is a
+small fixed constant, after enough waiting `age` dominates and the arbiter **degenerates
+to oldest-first** — losing the CAS-first / SJF behaviour that keeps DQ full. The two
+weights must be **relatively scaled** so SJF governs normal waits and aging only breaks
+through for genuine starvation, e.g.
+
+```
+total = K · control_weight[lane] + age[lane]
+```
+
+with `K` sized so a fresh CAS still out-weighs a lane that has waited a typical
+prep-latency (`tRCD`/`tRP` ≈ 39 tCK) but loses to one that has waited pathologically long.
+`K`, the control-weight values, and `AGE_MAX` are one joint **weights-pass** knob-set
+(shared with staged_logic's open weights item). Flagged, not yet tuned.
+
+---
+
+## 5. Latency chains — best case + every worst case
+
+First-data latency and DQ occupancy per case, `b4800` (tCK). "First data" = command issue
+→ first beat at the DRAM; add `BL/2 = 8` tCK for the full 16-beat burst.
+
+| case | command chain | first-data latency (tCK) | notes |
+|---|---|---|---|
+| **row-hit, read** *(best)* | `CAS_RD` | `RL = 40` | back-to-back service = `tCCD_S=8` / `tCCD_L=12` |
+| **row-hit, write** | `CAS_WR` | `WL = 38` | data drains from WDB |
+| **row-empty, read** | `ACT → CAS_RD` | `tRCD + RL = 39+40 = 79` | +8 → 87 full burst |
+| **row-miss, read** *(worst, no ref)* | `PRE → ACT → CAS_RD` | `tRP+tRCD+RL = 39+39+40 = 118` | +8 → **126** full — the sizing driver (`L_miss`) |
+| **row-miss + refresh collision** | `…REF… → PRE → ACT → CAS` | `118 + tRFC` | `tRFC=708` (REFab) or `tRFCsb=312`; rare, S0 drains it |
+| **write tail (recovery)** | `CAS_WR … → PRE` | `WL+BL2+tWR = 38+8+72 = 118` | before that bank can PRE its row |
+| **R→W turnaround** | `CAS_RD → CAS_WR` | `tRTW = RL+BL2−WL+tWPRE = 12` | direction flip cost (adaptive batch amortizes) |
+| **W→R turnaround** | `CAS_WR → CAS_RD` | `WL+BL2+tWTR_L = 38+8+24 = 70` | why writes batch |
+
+**Why 126 is the number that sized the buffer.** `L_miss = 126 tCK`, service = `BL/2 = 8`
+tCK/burst → latency floor `N = L_miss / (BL/2) ≈ 16` in-flight reads to hide one row-miss
+and keep DQ full. Depth is 64 (4× the floor at the x16 pkg, 2× the `N_BANKS=32` ceiling) —
+see staged_logic §0.
+
+---
+
+## 6. `N_BANKS` in parallel
+
+```
+   bank 0 FSM ─┐   (own row-lock, own next_*, own age[PRE/ACT/CAS])
+   bank 1 FSM ─┤
+     …         ├──►  WEIGHT ARBITER  ──►  1 command / 2 tCK (CA bus)  ──► DFI
+   bank N−1 FSM┘        (§4 + cross-bank tCCD_L / tRRD_L / tFAW / DQ)
+   S0 REF lane ─────────►  s0_override (correctness tier)
+```
+
+- Each bank runs §1–§4 on **its own** entries and scoreboard — fully independent up to the
+  arbiter. This is the `N_BANKS` per-bank paths of staged_logic §0.
+- **Paths ≠ emissions.** `N_BANKS` FSMs propose in parallel, but the CA bus is 1 cmd /
+  2 tCK. Under one burst (8 tCK = 4 CA slots) the arbiter fills ~4 slots — 1 CAS + 3 prep
+  in the burst shadow — never `N_BANKS` commands a cycle.
+- **Cross-bank timing is arbiter-only.** `tCCD_L`/`tRRD_L`/`tFAW`/DQ-collision live
+  *between* banks; a single FSM cannot see them, so they gate at §4, not §3-per-bank.
+- **Bank count is parameterized.** `N_BANKS = 16` (x16 pkg, current frozen) or `32` (x8
+  intent, 8 BG). The FSM is identical; only the count of parallel copies changes. See
+  staged_logic §0 / OPEN items.
+
+---
+
+## 7. Consistency / open items
+
+- **Logic = golden model** `tools/sched_model/sched_test.js`; the eventual RTL matches it
+  cycle-for-cycle. The row-lock, two-sided force-break, ping-pong classify, and windowed
+  visibility are already in the model. **The aging-counter arbiter (§4) is a doc-stage
+  refinement of the model's `class-priority + age` pick — the model uses a busy-first +
+  BG-rotate + oldest tie-break today; adding the explicit per-lane aging counter + the
+  `K` scaling (§4d) to `sched_test.js` is a follow-up so the reference stays authoritative.**
+- **Weights pass (deferred, joint with staged_logic):** control-weight values, the `K`
+  SJF-vs-aging scale (§4d), `AGE_MAX`, PRE/ACT scoring. One knob-set.
+- Timing names/values = `datapath_busy_timing.md §1` + model `b4800`; not re-derived here.
+- pkg values are **frozen**; `N_RD_ENTRIES=64` and `N_BANKS=32` are **design intent**
+  (RTL phase), not current pkg. No pkg edit, no RTL — doc phase.
+- No contradiction with staged_logic / dynamic / microarch / adaptive-batching.
