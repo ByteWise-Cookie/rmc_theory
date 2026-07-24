@@ -10,7 +10,8 @@ lenses: staged_logic reads by command **class** (S1 PRE / S2 ACT / S3 CAS), this
 reads by **bank** — the unit of independence. Both are the golden model
 (`tools/sched_model/sched_test.js`, bench `1d271c33`) in prose. Timing is JEDEC-locked
 per [[datapath_busy_timing]]; numbers below are the model's `b4800` bin (DDR5-4800B,
-`tCK = 0.4167 ns`).
+`tCK = 0.4167 ns`). Post-mentor residency rework (TCAM admission + per-bank queues) in
+[[scheduler_queue_arch]] — the FSM/arbiter here is unchanged, it reads queue heads.
 
 Diagram: `docs/diagrams/bank_fsm.excalidraw`.
 

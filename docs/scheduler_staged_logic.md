@@ -10,8 +10,9 @@ Companion docs: [[scheduler_dynamic_design]] (why greedy), [[scheduler_microarch
 (token = table slot, §8 SVG deltas), [[scheduler_adaptive_batching]] (the batch
 policy), [[datapath_busy_timing]] (JEDEC-locked timing), [[scheduler_bank_fsm]] (the
 **per-bank** FSM + weight-arbiter view — same logic by bank instead of by class, with
-the best/worst-case latency chains). This doc is the **stage-by-stage port + logic
-view**; those are the rationale.
+the best/worst-case latency chains), [[scheduler_queue_arch]] (**post-mentor revision** —
+TCAM = short admission, per-bank in-flight queues, RAW = pause). This doc is the
+**stage-by-stage port + logic view**; those are the rationale.
 
 ---
 
