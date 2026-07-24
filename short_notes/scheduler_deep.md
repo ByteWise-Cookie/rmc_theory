@@ -8,7 +8,8 @@ eventual RTL must match it cycle-for-cycle on the same trace.
 
 Timing = `b4800` bin (DDR5-4800B, tCK 0.4167 ns). Companion:
 [`README.md`](README.md) (full MCC), [`../docs/scheduler_wiring_spec.md`](../docs/scheduler_wiring_spec.md)
-(port/net list + Visio placement).
+(port/net list + Visio placement), [`../docs/scheduler_queue_arch.md`](../docs/scheduler_queue_arch.md)
+(post-mentor residency split — the candidate set in §5.1).
 
 ---
 
@@ -140,8 +141,8 @@ while (work remains):
   # --- refresh superstate (S0 override) ---
   if gc >= nextRef:  enter REF: drain open banks → PREA (@ maxPre) → wait tRP → REF → banks nAct=gc+tRFC
 
-  # --- visibility window: first WIN non-done entries by age (the 64-deep buffer) ---
-  vis = first WIN entries with !done                # WIN=64 = realistic; ∞ = optimistic
+  # --- candidate set (§5.1): window OR queue-arch admission+per-bank heads ---
+  vis = first WIN non-done entries by age           # WIN=64 realistic; queueArch → bank heads
 
   # --- ping-pong classify: refresh one 32-half by (gc & 1); wstate registered ---
   for e in vis: if e's half is live this cycle: e.wstate = liveCmd(e)
@@ -180,6 +181,55 @@ when no CAS is legal — they ride the 3 free CA slots in the burst shadow.
 
 ---
 
+## 5.1 Candidate set — window vs queue-arch (admission + per-bank queues)
+
+Only the **candidate set** feeding the §5 scan differs; `legal()`/`emit()`/arbiter are
+byte-identical either way. Two models, both in the golden model (`opts.queueArch`):
+
+**Window model (baseline).** One flat buffer; `vis` = first `WIN=64` non-done entries by
+age. The picker sees up to 64 entries across all banks. This is the old single-residency
+view — a request stays searchable its whole life.
+
+**Queue-arch (post-mentor).** Split residency — see
+[`../docs/scheduler_queue_arch.md`](../docs/scheduler_queue_arch.md):
+
+```
+source (arrival order)
+   │  admit in order, up to TCAM_SIZE (32) slots
+   ▼
+TCAM  = classify station (SHORT residency)
+   │    classify {bg,bank}→bank, row vs open_row→hit/miss, RAW full-addr compare
+   │    EVICT when bank queue has room AND RAW clear      ← frees the TCAM slot
+   ▼
+per-bank FIFO ×N_BANKS  (bankDepth 8)   in-flight home
+   │    HEAD only is active (a bank decodes one command at a time)
+   ▼
+vis = { head of each non-empty bank queue }   → §5 scan (≤ N_BANKS candidates)
+```
+
+Rules the model enforces:
+- **admit** in arrival order until TCAM full (`TCAM_SIZE`);
+- **evict** a classified entry to `bq[rank][bank]` when it has room (`< bankDepth`) and
+  RAW is clear; else it **stays in TCAM** → backpressure (TCAM-full stalls admission);
+- **head-only**: `vis` collects `bq[r][b][0]` per bank — one active request per bank; when
+  its CAS emits (`done`), the queue pops and exposes the next head next cycle;
+- **RAW pause**: a read with an **older, not-yet-emitted write to the same address** in
+  TCAM or its bank queue is held in TCAM (not evicted) until the write drains — no bypass,
+  no reorder. Model proxy = `{rank,bank,row}` (no column), conservative.
+
+**Where the §1 scoreboard state now lives:** timers (`next_*`) stay **per-bank** (a bank
+property — the head reads them); command-progress `state` (`NEED_PRE/ACT/CAS`) rides in
+the **queue entry**; `valid`/occupancy → **queue depth counters** (the relocated
+watermark). Nothing in §2/§4 changes — the gates read the same `next_*`.
+
+**Result (measured):** 0 violations / 0 unscheduled both bins; DQ-busy within **±2pt** of
+the window model (per-bank head visibility is competitive); drains at `tcam=8,
+bankDepth=2`; RAW keeps RD after its WR. Unified per-bank FIFO already program-orders
+same-bank, so `rawPause` is the guard reserved for the **split-R/W-queue** variant — that
+split + exact depth = the deferred sweep (§6, [`../docs/scheduler_queue_arch.md`](../docs/scheduler_queue_arch.md) §6).
+
+---
+
 ## 6. The weight-arbiter upgrade (design; not yet in the model)
 
 The model above uses **busy-first + oldest tie-break**. The design refinement replaces the
@@ -210,7 +260,8 @@ See [`../docs/scheduler_bank_fsm.md`](../docs/scheduler_bank_fsm.md) §4.
 
 | model | block (§README 6) | consumes | produces |
 |---|---|---|---|
-| `liveCmd`/`nextCmd`, vis, ping-pong | **9 classify** | `tcam.match`, `status.valid/age`, `row_open`, `open_row` | `work_state`, `s1_hit_meta`, vis window |
+| `liveCmd`/`nextCmd`, vis, ping-pong / **admit+evict** (queueArch) | **9 classify / admission** | `tcam.match`, `status.valid/age`, `row_open`, `open_row`, RAW compare | `work_state`, `s1_hit_meta`, vis (window OR bank-queue heads §5.1) |
+| `bq[rank][bank]`, head-only, backpressure | **9b per-bank queues** | evicted classified entries, `bankDepth`, `done` | `queue_head[b]`, `queue_full[b]` (relocated watermark) |
 | `legal()` terms | **10 gate_gen** | `next_cas/act/pre`, `dqFree`, `next_cas_bg/any`, `faw`, turnaround, `demand`, `lockAge` | `can_cas/act/pre[N_BANKS]` |
 | per-`t` classify + head | **11 cand_gen** | `work_state` + `can_*` + `batch_policy` | `candidate[b]{cmd,idx,bank,bg,row,col,R/W}` |
 | scan/score/lockAge/gateLoss | **12 arbiter** | `candidate[]`, `can_*[]`, `age[]`, servo(`popcount can_cas`,`dqFree−gc`) | `winner` |
@@ -258,6 +309,9 @@ the DQ gaps t0+56 … t0+144 — that is where throughput comes from.
   `∞` inflates to ~73% by batching the whole trace.
 - **tFAW** caps ACT at 4 / 32 tCK ≈ burst bandwidth — the hard prep ceiling.
 - **`AGE_THR2=256`** (pkg) = `AGE_MAX`.
+- **Queue-arch candidate set** (§5.1): TCAM = short classify station, per-bank FIFOs hold
+  in-flight, pickers see heads only. Same gates/writeback; ±2pt busy. TCAM is **not
+  removed** — still the classify/RAW engine, residency shortened.
 
 ## 10. Map
 
@@ -266,5 +320,6 @@ the DQ gaps t0+56 … t0+144 — that is where throughput comes from.
 | algorithm (authoritative) | [`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js) |
 | full MCC | [`README.md`](README.md) |
 | behaviour (FSM + arbiter) | [`../docs/scheduler_bank_fsm.md`](../docs/scheduler_bank_fsm.md) |
+| residency (admission + queues) | [`../docs/scheduler_queue_arch.md`](../docs/scheduler_queue_arch.md) |
 | ports/nets/placement | [`../docs/scheduler_wiring_spec.md`](../docs/scheduler_wiring_spec.md) |
 | stage/port view | [`../docs/scheduler_staged_logic.md`](../docs/scheduler_staged_logic.md) |
