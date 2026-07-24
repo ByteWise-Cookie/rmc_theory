@@ -74,6 +74,11 @@ front-end (AMU/ROB/WDB)
 window. CAM depth/timing drops hard — the scarce searchable resource is held cycles, not
 hundreds of cycles.
 
+**TCAM is NOT removed.** The read path still owns a TCAM — it is the classify engine
+(search `{bg,bank}`, row-hit compare vs `open_row`, RAW full-addr compare). The rework
+**shortens residency only**: search/classify in TCAM, then evict to the queue. No
+CAM-less read path — every read still transits the TCAM for its one search.
+
 **TCAM keys unchanged:** `{bg,bank}` for classify (per [[scheduler_bank_fsm]] §0). RAW
 adds a full-address compare at admission only (§3) — one search does classify + RAW.
 
@@ -191,8 +196,11 @@ Sizing (numbers to lock in the deferred sweep):
   controller cycle** to fill CA slots (fill the burst shadow) — not per-bank depth. Enough
   ready banks = `tCCD / CA_slot` worth of prep candidates.
 
-Exact depth, ready-bank count = the deferred weights/sizing sweep (with `AGE_MAX`, servo
-`POOL_LOW/HIGH`).
+**Folded into the deferred weights/sizing sweep** (with `AGE_MAX`, servo
+`POOL_LOW/HIGH`):
+- exact **per-bank depth** + total in-flight,
+- ready-bank count for CA-slot fill,
+- **R/W queue organization** — unified-per-bank + tag vs split read/write sets (§7).
 
 ---
 
@@ -202,8 +210,9 @@ Exact depth, ready-bank count = the deferred weights/sizing sweep (with `AGE_MAX
   → front-end credit stall. Per-bank queue **full flag** must feed admission (this is the
   relocated watermark, §4).
 - **Read vs write queues.** Unified per-bank with an R/W tag, or two sets per bank? Row
-  buffer shared; data paths differ (WDB write vs read return). **Open** — lean unified +
-  tag, batch-mode selects head R or W (matches [[scheduler_adaptive_batching]]).
+  buffer shared; data paths differ (WDB write vs read return). Lean unified + tag,
+  batch-mode selects head R or W (matches [[scheduler_adaptive_batching]]). **Folded into
+  the sweep** (§6) — decide with depth.
 - **Global QoS / oldest.** 16 independent queues lose global age order. The arbiter's
   aging counters ([[scheduler_bank_fsm]] §4b) cover fairness; confirm the starvation
   bound `AGE_MAX` still holds across queues.
