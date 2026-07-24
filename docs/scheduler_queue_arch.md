@@ -225,17 +225,27 @@ Sizing (numbers to lock in the deferred sweep):
 
 ---
 
-## 8. Golden-model debt
+## 8. Golden-model status
 
-`tools/sched_model/sched_test.js` still models the single-residency picker. To stay the
-RTL reference it must adopt:
-1. admission stage that evicts classified entries out of the searched set,
-2. 16 per-bank FIFOs with head-only activation,
-3. RAW = block-at-admission (drop any bypass modeling),
-4. backpressure from queue-full to admission.
+`tools/sched_model/sched_test.js` now implements this architecture, opt-gated
+(`opts.queueArch`), so it A/Bs against the window model:
+1. ✅ admission stage — short TCAM (`opts.tcam`, default 32) classifies then **evicts**
+   each entry out of the searched set,
+2. ✅ per-bank FIFOs (`opts.bankDepth`, default 8) with **head-only activation** —
+   pickers see one candidate per bank,
+3. ✅ RAW = block-at-admission (`opts.rawPause`) — older-write-to-same-address holds the
+   read in TCAM; no bypass modeled,
+4. ✅ backpressure — bank-queue-full keeps the entry in TCAM, TCAM-full stalls admission.
 
-Selection logic (legal()/emit()/arbiter) is unchanged — it reoperates on queue heads.
-Flagged for the same sweep pass that adds the aging counter + DQ servo (already deferred).
+Selection logic (`legal()`/`emit()`/arbiter) is **unchanged** — it reoperates on queue
+heads. Verified: 0 violations / 0 unscheduled both bins; DQ-busy within ±2pt of the
+window model; drains at `tcam=8, bankDepth=2`; RAW keeps RD after its WR.
+
+Note: the model's per-bank queue is **unified R/W** (batch-mode selects head R or W). The
+split-R/W-queue variant + exact depth are the sweep's job (§6); `rawPause` is the guard
+reserved for the split case — under the unified FIFO, same-bank program order already
+holds. Remaining model debt: the aging **counter** + DQ **servo** (deferred to the same
+weights sweep).
 
 ---
 

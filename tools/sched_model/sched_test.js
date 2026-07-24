@@ -20,6 +20,14 @@
 //   opts.pingpong  model the 32-wide 2-batch classify: classification is
 //                  registered and refreshed one 32-half per cycle, so a
 //                  just-opened row's other-half hits are seen 1 cycle late.
+//   opts.queueArch post-mentor residency split (docs/scheduler_queue_arch.md): a
+//                  short TCAM classifies then EVICTS each request to a per-bank
+//                  in-flight FIFO. TCAM = opts.tcam slots (default 32), each bank
+//                  queue opts.bankDepth deep (default 8). Pickers see only the
+//                  queue HEADS (one active request per bank). legal()/emit()/arbiter
+//                  are unchanged — only the candidate set changes.
+//   opts.rawPause  (queueArch) hold a RAW read at admission until the older write
+//                  to the same address drains — no bypass, no reorder (default true).
 //
 // Run:  node sched_test.js            (self-test suite)
 //       node sched_test.js --demo     (small worked trace)
@@ -103,6 +111,10 @@ function runScheduler(queue, bin, opts = {}) {
   const lockOn    = opts.lock !== false;               // age-capped row-lock
   const AGE_MAX   = opts.ageMax    || 256;
   const pingpong  = !!opts.pingpong;
+  const queueArch = !!opts.queueArch;                  // admission (short TCAM) + per-bank queues
+  const TCAM_SIZE = opts.tcam      || 32;              // searchable admission slots
+  const bankDepth = opts.bankDepth || 8;               // per-bank in-flight FIFO depth
+  const rawPause  = opts.rawPause !== false;           // block RAW reads at admission (queueArch)
 
   const BGN = 4, BKN = 4, NB = BGN * BKN, NR = 2, bidx = q => q.bg * BKN + q.bank;
   const mk = () => ({open: false, row: -1, nAct: 0, nPre: 0, nCas: 0, lockAge: 0});
@@ -173,6 +185,34 @@ function runScheduler(queue, bin, opts = {}) {
   const jobCost = t => { const b = bk[t.rank][bidx(t)], l = t.dir === "R" ? p.RL : p.WL; return (b.open && b.row === t.row) ? l : b.open ? p.tRP + p.tRCD + l : p.tRCD + l; };
   let head = 0;                                           // first non-done tok (window base)
 
+  // ---- admission (short TCAM) + per-bank in-flight queues (opts.queueArch) --------
+  let adm = 0;                                            // next source tok to admit into TCAM
+  const tcam = [];                                        // admitted, awaiting classify+evict
+  const bq = Array.from({length: NR}, () => Array.from({length: NB}, () => [])); // per-bank FIFO
+  // RAW: read blocked while an OLDER, not-yet-emitted write to the same address is in
+  // flight. Model has no column, so {rank,bank,row} is the same-address proxy (over-blocks
+  // different-column, never reorders — safe for a golden model). Reserved mainly for the
+  // split-R/W-queue variant; the unified per-bank FIFO here already program-orders same-bank.
+  const rawBlocked = t => {
+    if (!(rawPause && t.dir === "R")) return false;
+    const r = t.rank, qi = bidx(t);
+    for (const w of tcam)     if (w.dir === "W" && w.id < t.id && w.rank === r && bidx(w) === qi && w.row === t.row) return true;
+    for (const w of bq[r][qi]) if (w.dir === "W" && w.id < t.id && w.row === t.row) return true;
+    return false;
+  };
+  const admitAndEvict = () => {
+    // retire heads whose CAS has emitted, then top up TCAM in arrival order
+    for (let r = 0; r < NR; r++) for (let bi = 0; bi < NB; bi++) { const q = bq[r][bi]; while (q.length && q[0].done) q.shift(); }
+    while (tcam.length < TCAM_SIZE && adm < toks.length) tcam.push(toks[adm++]);
+    // classify is done at admit; evict to the bank queue when it has room and RAW is clear
+    for (let i = 0; i < tcam.length; ) {
+      const t = tcam[i];
+      if (rawBlocked(t)) { i++; continue; }               // RAW: hold read in TCAM until write drains
+      if (bq[t.rank][bidx(t)].length < bankDepth) { bq[t.rank][bidx(t)].push(t); tcam.splice(i, 1); }
+      else i++;                                            // bank queue full → backpressure, stay in TCAM
+    }
+  };
+
   while ((activeCount > 0 || refPhase !== 0) && guard++ < 20000000) {
     if (gc < G.caFree) { gc = G.caFree; continue; }
     if (refPhase === 0 && gc >= nextRef) refPhase = 1;
@@ -188,18 +228,27 @@ function runScheduler(queue, bin, opts = {}) {
       else { gc++; continue; }
     }
 
-    // ---- build the visible window (first WIN non-done toks by queue order) ----
-    while (head < toks.length && toks[head].done) head++;
-    const vis = [];
-    for (let i = head; i < toks.length && vis.length < WIN; i++) if (!toks[i].done) vis.push(toks[i]);
-
-    // ---- ping-pong classify: refresh one 32-entry half of the window ----
-    if (pingpong) {
-      const half = gc & 1;                               // even→A(0..31), odd→B(32..63)
-      for (let k = 0; k < vis.length; k++) {
-        const inA = k < 32;
-        if ((half === 0) === inA) vis[k].wstate = liveCmd(vis[k]);
-        else if (vis[k].wstate === null) vis[k].wstate = liveCmd(vis[k]); // first-admit seed
+    // ---- build the candidate set ----
+    let vis;
+    if (queueArch) {
+      // admission + per-bank queues: only the HEAD of each bank queue is active (a bank
+      // serves one row-cycle at a time). Classify happened at admission; pickers see heads.
+      admitAndEvict();
+      vis = [];
+      for (let r = 0; r < NR; r++) for (let bi = 0; bi < NB; bi++) { const q = bq[r][bi]; if (q.length) vis.push(q[0]); }
+    } else {
+      // window model: first WIN non-done toks by queue order
+      while (head < toks.length && toks[head].done) head++;
+      vis = [];
+      for (let i = head; i < toks.length && vis.length < WIN; i++) if (!toks[i].done) vis.push(toks[i]);
+      // ping-pong classify: refresh one 32-entry half of the window
+      if (pingpong) {
+        const half = gc & 1;                             // even→A(0..31), odd→B(32..63)
+        for (let k = 0; k < vis.length; k++) {
+          const inA = k < 32;
+          if ((half === 0) === inA) vis[k].wstate = liveCmd(vis[k]);
+          else if (vis[k].wstate === null) vis[k].wstate = liveCmd(vis[k]); // first-admit seed
+        }
       }
     }
 
@@ -230,7 +279,7 @@ function runScheduler(queue, bin, opts = {}) {
       else { if (charge) gateLoss++; stall++; if (batch && stall >= STALL && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip(); else gc++; continue; }
       if (adaptive && gateLoss >= FLIP_COST && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip();
     }
-    if (activeCount * 3 < toks.length - head) toks = toks.filter((t, i) => i < head || !t.done), head = 0;
+    if (!queueArch && activeCount * 3 < toks.length - head) toks = toks.filter((t, i) => i < head || !t.done), head = 0;
   }
 
   let bu = 0, s0 = Infinity, s1 = -Infinity;
@@ -285,6 +334,8 @@ function selfTest() {
       ["greedy +win64", {win: 64}],
       ["greedy +win64 +pingpong", {win: 64, pingpong: true}],
       ["greedy +win64 +pp +lock", {win: 64, pingpong: true, lock: true}],
+      ["greedy +queueArch", {queueArch: true}],
+      ["greedy +queueArch +lock", {queueArch: true, lock: true}],
       ["sjw baseline +win64", {policy: "sjw", win: 64}],
       ["+refresh @2000", {win: 64, refAt: 2000}],
     ]) chk(run(nm, genTrace(3000, {seed: 7}), bin, o));
@@ -325,6 +376,41 @@ function selfTest() {
     const inf = runScheduler(q, "b4800", {});
     const w64 = runScheduler(q, "b4800", {win: 64});
     console.log(`  [info] map=${map.padEnd(10)} win=∞ busy=${inf.busy}%   win=64 busy=${w64.busy}%   Δ=${inf.busy - w64.busy}pt`);
+  }
+
+  console.log("\n== queue-arch: admission + per-bank queues drain fully, DQ-busy retained ==");
+  for (const map of ["interleave", "rowlocal"]) {
+    const q = genTrace(4000, {map, seed: 5});
+    const win = runScheduler(q, "b4800", {win: 64});
+    const qa  = runScheduler(q, "b4800", {queueArch: true});
+    const ok = qa.unscheduled === 0 && !qa.guardHit && validate(qa.cmds, PARAMS.b4800).length === 0;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] map=${map.padEnd(10)} win64 busy=${win.busy}%  queueArch busy=${qa.busy}%  Δ=${win.busy - qa.busy}pt  unsched=${qa.unscheduled}`);
+  }
+
+  console.log("\n== queue-arch backpressure: tiny TCAM + shallow banks still drain (0 unsched) ==");
+  {
+    const q = genTrace(2000, {map: "rowlocal", seed: 6});
+    const qa = runScheduler(q, "b4800", {queueArch: true, tcam: 8, bankDepth: 2});
+    const ok = qa.unscheduled === 0 && !qa.guardHit && validate(qa.cmds, PARAMS.b4800).length === 0;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] tcam=8 bankDepth=2  unsched=${qa.unscheduled}  guardHit=${qa.guardHit}  busy=${qa.busy}%`);
+  }
+
+  console.log("\n== queue-arch RAW: program order preserved — read never precedes its write ==");
+  {
+    // write then a younger read to the SAME address (same bank+row). RAW must resolve
+    // write-before-read: rawPause holds the read at admission; the unified per-bank FIFO
+    // also orders it. Either way the RD must land after the WR — no bypass, no reorder.
+    const raw = [
+      {dir: "W", rank: 0, bg: 0, bank: 0, row: 0},        // id0: the write
+      {dir: "R", rank: 0, bg: 0, bank: 0, row: 0},        // id1: RAW read, must wait
+    ];
+    const qa = runScheduler(raw, "toy", {queueArch: true, rawPause: true});
+    const wr = qa.cmds.find(c => c.type === "WR"), rd = qa.cmds.find(c => c.type === "RD");
+    const ok = wr && rd && rd.cycle > wr.cycle && qa.unscheduled === 0;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] WR@${wr ? wr.cycle : "-"}  RD@${rd ? rd.cycle : "-"}  (RD must follow WR)  unsched=${qa.unscheduled}`);
   }
 
   console.log(`\n== summary: ${pass} pass, ${fail} fail ==\n`);
