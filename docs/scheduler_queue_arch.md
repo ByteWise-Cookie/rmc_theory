@@ -229,13 +229,13 @@ Sizing (numbers to lock in the deferred sweep):
 
 `tools/sched_model/sched_test.js` now implements this architecture, opt-gated
 (`opts.queueArch`), so it A/Bs against the window model:
-1. ✅ admission stage — short TCAM (`opts.tcam`, default 32) classifies then **evicts**
+1. admission stage — short TCAM (`opts.tcam`, default 32) classifies then **evicts**
    each entry out of the searched set,
-2. ✅ per-bank FIFOs (`opts.bankDepth`, default 8) with **head-only activation** —
+2. per-bank FIFOs (`opts.bankDepth`, default 8) with **head-only activation** —
    pickers see one candidate per bank,
-3. ✅ RAW = block-at-admission (`opts.rawPause`) — older-write-to-same-address holds the
+3. RAW = block-at-admission (`opts.rawPause`) — older-write-to-same-address holds the
    read in TCAM; no bypass modeled,
-4. ✅ backpressure — bank-queue-full keeps the entry in TCAM, TCAM-full stalls admission.
+4. backpressure — bank-queue-full keeps the entry in TCAM, TCAM-full stalls admission.
 
 Selection logic (`legal()`/`emit()`/arbiter) is **unchanged** — it reoperates on queue
 heads. Verified: 0 violations / 0 unscheduled both bins; DQ-busy within ±2pt of the

@@ -212,7 +212,7 @@ Cross-bank timing (`tCCD_L/tRRD_L/tFAW`) is **not** here; it applies at the arbi
 `+1` every waiting cycle, `=0` on win → bounded starvation. Pick
 `argmax(K·control + age)`; ties → oldest age, then BG-rotate.
 
-**⚠ K-scaling:** aging every cycle would swamp the fixed control weight → arbiter
+**NOTE K-scaling:** aging every cycle would swamp the fixed control weight → arbiter
 degenerates to oldest-first (loses CAS-first). `K` keeps SJF governing until real
 starvation. Weights-pass knob.
 

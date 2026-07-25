@@ -318,7 +318,7 @@ function run(name, queue, bin, opts) {
   const ok = v.length === 0 && r.unscheduled === 0 && !r.guardHit;
   const tag = ok ? "PASS" : "FAIL";
   console.log(`  [${tag}] ${name.padEnd(34)} busy=${String(r.busy).padStart(3)}%  bursts=${String(r.bursts).padStart(5)}  flips=${String(r.flips).padStart(4)}  viol=${v.length}  unsched=${r.unscheduled}${r.guardHit ? "  GUARD-HIT" : ""}`);
-  if (v.length) for (const x of v.slice(0, 4)) console.log(`         ✗ ${x.b.type}@${x.b.cycle} breaks ${x.name} vs ${x.a.type}@${x.a.cycle}: need ${x.need} have ${x.have}`);
+  if (v.length) for (const x of v.slice(0, 4)) console.log(`         x ${x.b.type}@${x.b.cycle} breaks ${x.name} vs ${x.a.type}@${x.a.cycle}: need ${x.need} have ${x.have}`);
   return {r, v, ok};
 }
 

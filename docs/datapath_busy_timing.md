@@ -18,7 +18,7 @@ scheduler logic stays speed-bin-agnostic; only the numbers move.
 > **Status: FOUNDATION.** Config table + gap model + pairwise matrix + CA budget +
 > sample diagrams. Full worked sequences (RRRR, RRWR, diff-rank chains) and the
 > per-bank scheduler deadline derivation come next, after the numbers below are
-> validated. Params marked ⚠ need a JEDEC/PHY cross-check (see §7).
+> validated. Params marked (warn) need a JEDEC/PHY cross-check (see §7).
 
 ---
 
@@ -33,30 +33,30 @@ That "8" is the heartbeat of the whole analysis: consecutive CAS must be spaced
 | tCK | — | 5 ns | 0.4167 ns | data rate 4800 MT/s |
 | BL | fixed | 16 | 16 | BL16 only |
 | **BL/2** (DQ occupancy/CAS) | BL/2 | **8** | **8** | the heartbeat |
-| RL (=CL) | bin | 3 | 40 | ✓ 4800B bin 40-39-39; toy from §18 |
-| WL (=CWL) | RL−2 | 1 | 38 | ✓ CWL=RL−2 (JEDEC); toy 3−2=1 matches §18 |
-| tRCD | 16 ns @4800 | 4 | 39 | ✓ 16 ns; toy=4 is DDR4-scaled (label) |
-| tRP | 16 ns @4800 | 4 | 39 | ✓ 16 ns; toy=4 is DDR4-scaled |
-| tRAS | 32 ns @4800 | 7 | 77 | ✓ 32 ns; toy=7 is DDR4-scaled |
+| RL (=CL) | bin | 3 | 40 | ok - 4800B bin 40-39-39; toy from §18 |
+| WL (=CWL) | RL−2 | 1 | 38 | ok - CWL=RL−2 (JEDEC); toy 3−2=1 matches §18 |
+| tRCD | 16 ns @4800 | 4 | 39 | ok - 16 ns; toy=4 is DDR4-scaled (label) |
+| tRP | 16 ns @4800 | 4 | 39 | ok - 16 ns; toy=4 is DDR4-scaled |
+| tRAS | 32 ns @4800 | 7 | 77 | ok - 32 ns; toy=7 is DDR4-scaled |
 | tRC = tRAS+tRP | — | 11 | 116 | 48 ns @4800 |
-| **tCCD_S** | 8 nCK | **8** | **8** | ✓ BL16 diff-BG / diff-rank CAS spacing |
-| **tCCD_L** | max(8 nCK, 5 ns) | **8** | **12** | ✓ same-BG read spacing |
-| **tCCD_L_WR** | 32 nCK | **32** | **32** | ✓ same-BG write, consecutive |
-| tCCD_L_WR2 | 16 nCK | 16 | 16 | ✓ same-BG write, non-consecutive/interrupted |
-| **tWTR_S** | max(4 nCK, 2.5 ns) | **4** | **6** | ✓ diff-BG write→read, from write-data-end |
-| **tWTR_L** | max(16 nCK, 10 ns) | **16** | **24** | ✓ same-BG write→read |
-| tRTP | max(12 nCK, 7.5 ns) | 12 | 18 | ✓ read→precharge (same bank) |
-| tWR | 30 ns | 6 | 72 | ✓ write recovery (write-data-end→PRE) |
-| tRRD_S | 8 nCK | 8 | 8 | ✓ diff-BG ACT→ACT |
-| tRRD_L | max(8 nCK, 5 ns) | 8 | 12 | ✓ same-BG ACT→ACT |
-| tFAW | 32 nCK | 32 | 32 | ✓ 4 ACT/window; ⚠ page-size dependent |
-| tPPD | 2 nCK | 2 | 2 | ✓ PRE→PRE |
+| **tCCD_S** | 8 nCK | **8** | **8** | ok - BL16 diff-BG / diff-rank CAS spacing |
+| **tCCD_L** | max(8 nCK, 5 ns) | **8** | **12** | ok - same-BG read spacing |
+| **tCCD_L_WR** | 32 nCK | **32** | **32** | ok - same-BG write, consecutive |
+| tCCD_L_WR2 | 16 nCK | 16 | 16 | ok - same-BG write, non-consecutive/interrupted |
+| **tWTR_S** | max(4 nCK, 2.5 ns) | **4** | **6** | ok - diff-BG write→read, from write-data-end |
+| **tWTR_L** | max(16 nCK, 10 ns) | **16** | **24** | ok - same-BG write→read |
+| tRTP | max(12 nCK, 7.5 ns) | 12 | 18 | ok - read→precharge (same bank) |
+| tWR | 30 ns | 6 | 72 | ok - write recovery (write-data-end→PRE) |
+| tRRD_S | 8 nCK | 8 | 8 | ok - diff-BG ACT→ACT |
+| tRRD_L | max(8 nCK, 5 ns) | 8 | 12 | ok - same-BG ACT→ACT |
+| tFAW | 32 nCK | 32 | 32 | ok - 4 ACT/window; (warn) page-size dependent |
+| tPPD | 2 nCK | 2 | 2 | ok - PRE→PRE |
 | tWPRE | 1–2 tCK | 1 | 2 | write preamble (2tCK mode @4800) |
 | tRPRE | 1–2 tCK | 1 | 2 | read preamble |
-| **tRTR** (diff-rank CAS bubble) | PHY/ODT — NOT JEDEC | 2 | 2 | ⚠ only unpinned param; needs PHY spec |
+| **tRTR** (diff-rank CAS bubble) | PHY/ODT — NOT JEDEC | 2 | 2 | (warn) only unpinned param; needs PHY spec |
 | tRTW (read→write cmd spacing) | RL+BL/2−WL+tWPRE(+1) | 12 | 12–13 | derived, see §2 |
 
-✓ = JEDEC-locked (JESD79-5 / DDR5-4800B bin, pulled 2026-07-16). ⚠ = still open.
+ok = JEDEC-locked (JESD79-5 / DDR5-4800B bin, pulled 2026-07-16). warn = still open.
 Only **tRTR** remains open — it is not a JEDEC-core parameter (rank-to-rank
 turnaround is set by the PHY's DQS driver + ODT handoff), so it must come from the
 PHY spec, not JEDEC. All CAS-spacing / turnaround numbers that drive the gap
@@ -126,7 +126,7 @@ handoff. RW/WR bubbles can never be zero; the goal is to make them **rare**.
 
 > **tWTR is a same-device constraint.** Across **different ranks**, W→R does not pay
 > tWTR (the write and read hit different DRAM dies). A cross-rank W→R costs only bus
-> + ODT turnaround + RL ≈ tRTR + RL — cheaper than same-rank same-BG. ⚠ verify with
+> + ODT turnaround + RL ≈ tRTR + RL — cheaper than same-rank same-BG. (warn) verify with
 > PHY ODT timing. This is a real argument for the 2-rank config.
 
 ---
@@ -170,16 +170,16 @@ remove it.
 | # | From→To | Bank rel | Constraint (symbolic) | Gap toy | Gap 4800B | Avoid? |
 |---|---|---|---|---:|---:|---|
 | 1 | R→R | diff BG | tCCD_S=8 | 0 | 0 | — already 0 |
-| 2 | R→R | same BG | tCCD_L | 0 | 4 | ✅ BG-rotate |
-| 3 | R→R | diff rank | tCCD_S+tRTR ⚠ | 2 | 2 | partial (ODT) |
+| 2 | R→R | same BG | tCCD_L | 0 | 4 | ok - BG-rotate |
+| 3 | R→R | diff rank | tCCD_S+tRTR (warn) | 2 | 2 | partial (ODT) |
 | 4 | W→W | diff BG | tCCD_S=8 | 0 | 0 | — already 0 |
-| 5 | W→W | same BG | tCCD_L_WR=32 | 24 | 24 | ✅ BG-rotate |
-| 6 | W→W | diff rank | tCCD_S+tRTR ⚠ | 2 | 2 | partial (ODT) |
-| 7 | R→W | any, same rank | tRTW ⇒ gap=tWPRE+1 | 2 | 3 | ❌ turnaround |
-| 8 | W→R | same BG | tWTR_L+RL | 19 | 64 | ❌ batch to amortize |
-| 9 | W→R | diff BG | tWTR_S+RL | 7 | 46 | ❌ batch to amortize |
-| 10 | W→R | diff rank | tRTR+RL ⚠ (no tWTR) | ~42 | ~42 | ❌ but cheaper than 8 |
-| 11 | R→W | diff rank | tRTR+... ⚠ | ~2 | ~3 | ❌ turnaround |
+| 5 | W→W | same BG | tCCD_L_WR=32 | 24 | 24 | ok - BG-rotate |
+| 6 | W→W | diff rank | tCCD_S+tRTR (warn) | 2 | 2 | partial (ODT) |
+| 7 | R→W | any, same rank | tRTW ⇒ gap=tWPRE+1 | 2 | 3 | no - turnaround |
+| 8 | W→R | same BG | tWTR_L+RL | 19 | 64 | no - batch to amortize |
+| 9 | W→R | diff BG | tWTR_S+RL | 7 | 46 | no - batch to amortize |
+| 10 | W→R | diff rank | tRTR+RL (warn) (no tWTR) | ~42 | ~42 | no - but cheaper than 8 |
+| 11 | R→W | diff rank | tRTR+... (warn) | ~2 | ~3 | no - turnaround |
 
 Rows 1/4 are the target steady state (gap 0). Rows 2/5 are the avoidable sin —
 scheduler must rotate BG. Rows 7–11 are the permitted turnarounds; minimize their
@@ -199,12 +199,12 @@ Bad — both reads in BG0, spacing forced to tCCD_L=12:
        tCCD_L = 12
       |<--------->|
 CA : R(g0b0) . . . R(g0b1) . . .
-DQ : <burst0 8tCK>····<burst1 8tCK>     bubble = 12-8 = 4 tCK  ✗
+DQ : <burst0 8tCK>····<burst1 8tCK>     bubble = 12-8 = 4 tCK  (bad)
 ```
 Fixed — rotate to BG1, spacing tCCD_S=8:
 ```
 CA : R(g0b0) . . R(g1b0) . . R(g0b1) . .
-DQ : <burst0 8 ><burst1 8 ><burst2 8 >   gap = 0  ✓ gapless
+DQ : <burst0 8 ><burst1 8 ><burst2 8 >   gap = 0  gapless
 ```
 
 ### 5b. W→R same BG — the UNAVOIDABLE turnaround (4800B)
@@ -237,9 +237,9 @@ accumulate here for a single decision pass.
 | # | Settled | New analysis says | Better? (recommendation) | JEDEC status |
 |---|---|---|---|---|
 | C1 | `rmc_pkg.sv`: N_RANKS=1, RANK_BITS=0 | diff-rank cases need N_RANKS=2, RANK_BITS=1 | Bump to 2 — unlocks cheaper cross-rank turnaround (§2b, row 10) | design choice |
-| C2 | §18 / KB: tWTR_L = 4 | JEDEC max(16 nCK,10 ns) ⇒ 16 (toy) / 24 (4800B). **4 is illegal** | Fix to 16/24 | ✓ locked |
-| C3 | §18 implies tRTP = 4 | max(12 nCK,7.5 ns) ⇒ 12/18 | Fix to 12/18 | ✓ locked |
-| C4 | §18 tRCD=tRP=4, tRAS=7 | DDR4-1600-scaled, not DDR5 (4800B = 39/39/77) | Keep for *toy* continuity, label toy-only | ✓ 4800B locked |
+| C2 | §18 / KB: tWTR_L = 4 | JEDEC max(16 nCK,10 ns) ⇒ 16 (toy) / 24 (4800B). **4 is illegal** | Fix to 16/24 | ok - locked |
+| C3 | §18 implies tRTP = 4 | max(12 nCK,7.5 ns) ⇒ 12/18 | Fix to 12/18 | ok - locked |
+| C4 | §18 tRCD=tRP=4, tRAS=7 | DDR4-1600-scaled, not DDR5 (4800B = 39/39/77) | Keep for *toy* continuity, label toy-only | ok - 4800B locked |
 | C5 | timing set single (toy) | need dual (toy + 4800B) as CSR-loadable sets | Add 4800B CSR profile | design choice |
 
 C2/C3/C4 numbers are now JEDEC-verified (pulled 2026-07-16); resolving them = apply
@@ -248,12 +248,12 @@ the locked value. C1/C5 are design choices, still user's call.
 ## 7. Verify List — RESOLVED except one
 
 JEDEC values pulled 2026-07-16 (JESD79-5, DDR5-4800B bin). Now locked in §1:
-- CWL = **RL−2** (= 38 @4800B, 1 @toy). ✓
-- tCCD_L_WR = **32 nCK**; second-write variant tCCD_L_WR2 = **16 nCK**. ✓
-- tWTR_S = **max(4 nCK, 2.5 ns)**, tWTR_L = **max(16 nCK, 10 ns)**. ✓
-- tRRD_S = **8 nCK**, tRRD_L = **max(8 nCK, 5 ns)**, tFAW = **32 nCK** (⚠ page-size
-  dependent — only residual uncertainty, ±a few nCK). ✓
-- tRTP = **max(12 nCK, 7.5 ns)**, tWR = **30 ns**, tPPD = **2 nCK**. ✓
+- CWL = **RL−2** (= 38 @4800B, 1 @toy). ok
+- tCCD_L_WR = **32 nCK**; second-write variant tCCD_L_WR2 = **16 nCK**. ok
+- tWTR_S = **max(4 nCK, 2.5 ns)**, tWTR_L = **max(16 nCK, 10 ns)**. ok
+- tRRD_S = **8 nCK**, tRRD_L = **max(8 nCK, 5 ns)**, tFAW = **32 nCK** (warn page-size
+  dependent — only residual uncertainty, ±a few nCK). ok
+- tRTP = **max(12 nCK, 7.5 ns)**, tWR = **30 ns**, tPPD = **2 nCK**. ok
 
 **Still open — cannot come from JEDEC:**
 - **tRTR (diff-rank CAS bubble)** — rank-to-rank turnaround is a PHY/ODT parameter,
@@ -274,7 +274,7 @@ first, then solving the CA lane, is the mental model for the whole tool.
 The **draggable object is the DQ data burst.** Anchor everything to the **CAS
 command** cycle `N` (the RD/WR that produces the burst). The data box then sits at
 `[N+RL, N+RL+8)` for a read, `[N+WL, N+WL+8)` for a write.
-> ⚠ Assumption to confirm: user's "44" = the CAS **command** cycle N (so ACT =
+> (warn) Assumption to confirm: user's "44" = the CAS **command** cycle N (so ACT =
 > N−tRCD). If instead "44" marks the **data-burst** start, subtract RL/WL: the
 > command is at 44−RL and every deadline below shifts by RL.
 
@@ -348,7 +348,7 @@ bN = bank, gN = bank-group, rN = rank. Per-sequence gap table gives both columns
 ```
 CA : R(g0) R(g1) R(g2) R(g3)
 DQ : <r g0 ><r g1 ><r g2 ><r g3 >     spacing tCCD_S=8 each
-                                       gap 0 everywhere  ✓ gapless
+                                       gap 0 everywhere  gapless
 ```
 | Transition | Constraint | Gap toy | Gap 4800B |
 |---|---|---:|---:|
@@ -409,11 +409,11 @@ DQ : <w r0 ><w r0 >·· ·······<r r1 ><r r1 ><r r1 ><r r1 >
 | Transition | Constraint | Gap toy | Gap 4800B |
 |---|---|---:|---:|
 | W→W diff BG | tCCD_S | 0 | 0 |
-| W→R **diff rank** | tRTR+RL (no tWTR) ⚠ | ~5 | ~42 |
+| W→R **diff rank** | tRTR+RL (no tWTR) (warn) | ~5 | ~42 |
 | R→R diff BG | tCCD_S | 0 | 0 |
 
 Compare to §9.3 same-rank W→R (64): cross-rank saves the full tWTR (24 tCK @4800B).
-**This is the concrete payoff of the 2-rank config** (conflict C1). ⚠ pending tRTR.
+**This is the concrete payoff of the 2-rank config** (conflict C1). (warn) pending tRTR.
 
 ### 9.5 R → (diff rank) W → RRR
 

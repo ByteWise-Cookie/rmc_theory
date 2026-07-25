@@ -188,7 +188,7 @@ Per bank this collapses to a single head command (the row-lock already serialize
 intra-bank: locked→its hit, releasable→PRE, idle+demand→ACT). Across banks the arbiter is
 the S4 cross-class + cross-bank layer.
 
-### 4d. ⚠ Scaling caveat (weights pass)
+### 4d. (warn) Scaling caveat (weights pass)
 
 Because the aging counter ticks **every** waiting cycle (§4b) and the control weight is a
 small fixed constant, after enough waiting `age` dominates and the arbiter **degenerates

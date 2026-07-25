@@ -203,13 +203,13 @@ Instead: QoS is a **priority bump in the arbiter** — the token stays in the po
 
 | # | Your claim | Verdict | Correction |
 |---|---|---|---|
-| 1 | Token per request carrying remaining work + row/col | ✅ right | keep exactly |
-| 2 | Thread shrinks down the pipe, row-hit skips stages | ✅ right | keep |
-| 3 | No need for per-bank / per-rank FSMs at all | ⚠ half | drop the **enums**; keep a thin per-bank/BG/rank **timing scoreboard** (§3.3) |
-| 4 | Token carries its next-legal timestamp | ⚠ | it's a **hint**; re-check live scoreboard at emit (staleness, §3.3) |
-| 5 | One token per stage, stage stalls till legal | ❌ | **non-blocking** per-class pickers + pool; stalling kills DQ-busy (§3.4) |
-| 6 | On QoS, stall the pipeline, no refetch | ⚠ | keep "no refetch" (token stays in pool) but make it a **priority bump**, not a stall (§3.7) |
-| 7 | Upper stage adds delay-stamp, lower stage handles it | ✅ mostly | works as the scoreboard-update + pop; just don't trust the stamp blindly (#4) |
+| 1 | Token per request carrying remaining work + row/col | ok - right | keep exactly |
+| 2 | Thread shrinks down the pipe, row-hit skips stages | ok - right | keep |
+| 3 | No need for per-bank / per-rank FSMs at all | (warn) half | drop the **enums**; keep a thin per-bank/BG/rank **timing scoreboard** (§3.3) |
+| 4 | Token carries its next-legal timestamp | (warn) | it's a **hint**; re-check live scoreboard at emit (staleness, §3.3) |
+| 5 | One token per stage, stage stalls till legal | no | **non-blocking** per-class pickers + pool; stalling kills DQ-busy (§3.4) |
+| 6 | On QoS, stall the pipeline, no refetch | (warn) | keep "no refetch" (token stays in pool) but make it a **priority bump**, not a stall (§3.7) |
+| 7 | Upper stage adds delay-stamp, lower stage handles it | ok - mostly | works as the scoreboard-update + pop; just don't trust the stamp blindly (#4) |
 
 Net: your architecture survives, minus the blocking pipeline and the "zero shared
 state" claim. What you actually built is **demand tokens over a thin timing

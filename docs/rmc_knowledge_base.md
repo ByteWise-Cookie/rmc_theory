@@ -92,7 +92,7 @@ A[11:2]  = Column   (10b, 1024 columns)
 A[1:0]   = Offset   (2b,  byte within 4B beat)
 ```
 
-**Capacity check:** 2^15 × 2^10 × 2^2 × 2^5 bytes = 2^32 = 4GB ✓
+**Capacity check:** 2^15 × 2^10 × 2^2 × 2^5 bytes = 2^32 = 4GB ok
 
 ### Multi-Config Address Map (parameterized)
 
