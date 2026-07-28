@@ -43,11 +43,62 @@ A new ME sub-FSM, **MR_Write FSM**, accepts a single outstanding software-issued
 
 MR_Poll (MR4/TUF polling) keeps its existing state machine, poll interval, TUF parsing, and tREFI-adjustment logic entirely unchanged. It receives exactly one narrow modification: its `REQUEST_MRR`/`WAIT_RDDATA` states now go through the same shared MR-read arbiter MR_Write uses, rather than assuming sole ownership of the sideband return path — necessary because two independent FSMs can now issue MRRs, and rank alone is not a sufficient response tag once that's true. MR_Write remains a new peer sub-FSM, not a restructuring of MR_Poll — the two stay functionally distinct (periodic read vs. on-demand write), consistent with the existing one-concern-per-sub-FSM pattern (Refresh / ZQcal / RFM / PwrMgmt / MR_Poll are all separate for the same reason).
 
+## Diagram — Mode Register Programming: End-to-End Flow
+
+```mermaid
+flowchart TD
+    SW["Software: CSR write mr_wr_req + MR_WR_ADDR/DATA/RANK/flags"]
+    IDLE["IDLE: wait for init_done"]
+    WAITREQ["WAIT_REQ: latch request fields, assert mr_wr_busy"]
+    GATECHECK["GATE_CHECK: gate_pwr[r]==0 AND (bank_act_count[r]==0 if MR_WR_REQUIRE_IDLE)"]
+    ISSUE["ISSUE_MRW: assert mr_write_req"]
+    STAGE0["Stage 0: mr_access_req arbitration (mr_write_req > mrr_due)"]
+    STAGE4["Stage 4: command emission"]
+    DFI["DFI: dfi_address / dfi_wrdata / dfi_cs_n / dfi_act_n"]
+    WAITMRD["WAIT_tMRD: hold gate_mr[rank] for T_MRD cycles"]
+    VERIFYDEC{"MR_WR_VERIFY=1 OR MR_WR_AFFECTS_TIMING=1?"}
+    VERIFYMRR["VERIFY_MRR: request MR Read Arbiter grant"]
+    MRPOLL["MR_Poll FSM: REQUEST_MRR (periodic MR4/TUF poll)"]
+    ARBITER["MR Read Arbiter (shared, write > poll priority)"]
+    WAITRD["WAIT_RDDATA: mrr_data_valid AND mrr_requester==WRITE"]
+    CHECKMATCH["CHECK_MATCH: compare mrr_data to MR_WR_DATA"]
+    MATCHDEC{"Match?"}
+    ERR["Set mr_wr_error"]
+    AFFECTSDEC{"MR_WR_AFFECTS_TIMING=1?"}
+    APPLYTIMING["APPLY_TIMING: pulse timing_apply_en"]
+    COMMIT["timing_reg_file: live_val[param_id] <- shadow_val"]
+    DONE["DONE: clear gate_mr[rank], set mr_wr_done, clear mr_wr_busy"]
+
+    SW --> WAITREQ
+    IDLE --> WAITREQ
+    WAITREQ --> GATECHECK
+    GATECHECK --> ISSUE
+    ISSUE --> STAGE0
+    STAGE0 --> STAGE4
+    STAGE4 --> DFI
+    DFI --> WAITMRD
+    WAITMRD --> VERIFYDEC
+    VERIFYDEC -->|No| DONE
+    VERIFYDEC -->|Yes| VERIFYMRR
+    VERIFYMRR --> ARBITER
+    MRPOLL --> ARBITER
+    ARBITER --> WAITRD
+    WAITRD --> CHECKMATCH
+    CHECKMATCH --> MATCHDEC
+    MATCHDEC -->|Mismatch| ERR
+    MATCHDEC -->|Match| AFFECTSDEC
+    ERR --> DONE
+    AFFECTSDEC -->|Yes| APPLYTIMING
+    AFFECTSDEC -->|No| DONE
+    APPLYTIMING --> COMMIT
+    COMMIT --> DONE
+```
+
 ## A.3 New Block: MR_Write FSM (ME Sub-FSM 7)
 
 ```
 IDLE → WAIT_REQ → GATE_CHECK → ISSUE_MRW → WAIT_tMRD →
-  [VERIFY_MRR → WAIT_RDDATA → CHECK_MATCH] (optional, MR_WR_VERIFY=1) →
+  [VERIFY_MRR → WAIT_RDDATA → CHECK_MATCH] (performed if MR_WR_VERIFY=1 or MR_WR_AFFECTS_TIMING=1) →
   [APPLY_TIMING] (optional, MR_WR_AFFECTS_TIMING=1) →
 DONE → IDLE
 ```
@@ -56,7 +107,7 @@ DONE → IDLE
 - **GATE_CHECK**: waits until `gate_pwr[MR_WR_RANK]==0` (rank not in power-down/self-refresh — see §B) and, if `MR_WR_REQUIRE_IDLE=1`, until `bank_act_count[MR_WR_RANK][*]==0` for all 16 banks. No forced eviction of in-flight traffic is performed — this is a bounded wait, not an override of Scheduler activity. **Rationale for `MR_WR_REQUIRE_IDLE` as a per-request software field, not a fixed hardware policy:** different DDR5 mode registers have genuinely different safety requirements — registers that only affect status/monitoring behavior are typically safe to write with the rank active, while registers that affect latency, drive strength, or other timing-adjacent behavior generally require full rank quiescence. RMC has no built-in knowledge of what a given `MR_WR_ADDR` value means in DDR5 terms; only software, which does know the target register's semantics, is in a position to decide this correctly on a per-write basis. A fixed hardware policy (always-idle or never-idle) would either be unnecessarily conservative for registers that don't need it, or unsafe for the ones that do.
 - **ISSUE_MRW**: requests the Stage-0 bypass lane (`mr_write_req`, new signal, see §A.9) with `me_cmd_type = MRW`, `me_cmd_rank = MR_WR_RANK`, plus `mr_wr_addr`/`mr_wr_data` carried alongside for Stage 4 to place on `dfi_address`/`dfi_wrdata`.
 - **WAIT_tMRD**: holds `gate_mr[rank]=1` (new gate, see §A.9) for `T_MRD` cycles (already present in `timing_reg_file`).
-- **VERIFY_MRR** (optional): requests the shared **MR Read Arbiter** (§A.9, new — a small arbitration point shared with MR_Poll, since both FSMs can independently need to issue an MRR and rank alone does not disambiguate which one a given response belongs to). The arbiter grants at most one requester at a time; if MR_Poll already holds it mid-transaction, MR_Write's request simply waits until MR_Poll's response completes (no preemption of an in-flight read). If both request in the same idle cycle, MR_Write is granted first (reusing the existing `mr_write_req > mrr_due` tie-break from §A.7) — MR_Poll's routine poll tolerates a short additional delay far more easily than a deliberate software verification step. Once granted, MR_Write issues an MRR to the just-written register number and waits on the sideband return path (`mrr_data_valid`/`mrr_data`/`mrr_rank`/`mrr_requester`) tagged for it. `CHECK_MATCH` compares `mrr_data` to `MR_WR_DATA` and sets `mr_wr_error` on mismatch.
+- **VERIFY_MRR** (conditionally executed): This state is entered whenever MR_WR_VERIFY=1 or MR_WR_AFFECTS_TIMING=1. It requests the shared **MR Read Arbiter** (§A.9, new — a small arbitration point shared with MR_Poll, since both FSMs can independently need to issue an MRR and rank alone does not disambiguate which one a given response belongs to). The arbiter grants at most one requester at a time; if MR_Poll already holds it mid-transaction, MR_Write's request simply waits until MR_Poll's response completes (no preemption of an in-flight read). If both request in the same idle cycle, MR_Write is granted first (reusing the existing `mr_write_req > mrr_due` tie-break from §A.7) — MR_Poll's routine poll tolerates a short additional delay far more easily than a deliberate software verification step. Once granted, MR_Write issues an MRR to the just-written register number and waits on the sideband return path (`mrr_data_valid`/`mrr_data`/`mrr_rank`/`mrr_requester`) tagged for it. `CHECK_MATCH` compares `mrr_data` to `MR_WR_DATA` and sets `mr_wr_error` on mismatch.
 - **APPLY_TIMING** (optional): pulses `timing_apply_en` into `timing_reg_file` (§A.4), committing the single staged timing value.
 - **DONE**: clears `gate_mr[rank]`, sets `mr_wr_done` (sticky until next `mr_wr_req`), clears `mr_wr_busy`.
 
@@ -167,7 +218,7 @@ MR Read Arbiter (new, small shared resource — not a counted sub-FSM)
 |`MR_WR_RANK`|—|Target rank `[RANK_BITS-1:0]`|
 |`MR_WR_REQUIRE_IDLE`|1|Wait for target rank's banks idle before issuing (per-request policy — see rationale in §A.3)|
 |`MR_WR_AFFECTS_TIMING`|0|If 1, pulse `timing_apply_en` on successful completion|
-|`MR_WR_VERIFY`|0|If 1, MRR read-back and compare after write|
+|`MR_WR_VERIFY`|0|Requests MRR read-back verification after write. Verification is always performed when MR_WR_AFFECTS_TIMING=1; otherwise it follows this bit.|
 |`MR_WR_BUSY`|— (RO)|FSM currently executing a request|
 |`MR_WR_DONE`|— (RO, sticky)|Last request completed; cleared by next `MR_WR_REQ`|
 |`MR_WR_ERROR`|— (RO)|Verify mismatch, or gate-check timeout in implementations that choose to detect it (see §A.13)|
@@ -191,7 +242,7 @@ MR Read Arbiter (new, small shared resource — not a counted sub-FSM)
 
 - **Target rank enters self-refresh while an MR write is in `WAIT_REQ`/`GATE_CHECK`.** Since SR exit is an externally-controlled `sr_exit` signal (§B), `GATE_CHECK` can stall indefinitely. This is an accepted trade-off, not a bug: software is expected not to schedule MR writes to a rank it knows is (or may soon be) in self-refresh. Gate-check timeout detection is intentionally not part of the baseline architecture — consistent with no other gate (`gate_rfc`, `gate_zq`, `gate_pwr`) having a documented watchdog either — so this stall has no hardware-enforced upper bound; implementations that choose to add a watchdog may report it through `MR_WR_ERROR`, but this addendum does not require one.
 - **MR write targets a rank in power-down (not self-refresh).** Power-down is documented as exiting automatically the moment real traffic arrives (§B.7); a deliberate MR write request is treated the same as REF — see §B.8 for the PD-preemption rule that lets a pending `mr_write_req` similarly force `PDX_WAIT` rather than stalling behind an idle-only exit condition. This keeps MR_Write's worst-case latency bounded whenever the blocking condition is PD (only SR is unbounded, per the point above).
-- **`MR_WR_VERIFY=1` and the read-back mismatches.** `mr_wr_error` is set, FSM still completes (goes to DONE) — it does not retry automatically. Software is responsible for deciding whether to retry, escalate, or treat it as fatal; the architecture doesn't presume the right policy for a verification failure this deep in the maintenance path.
+- Verification fails (whether requested explicitly via MR_WR_VERIFY or implicitly because MR_WR_AFFECTS_TIMING=1). `mr_wr_error` is set, FSM still completes (goes to DONE) — it does not retry automatically. Software is responsible for deciding whether to retry, escalate, or treat it as fatal; the architecture doesn't presume the right policy for a verification failure this deep in the maintenance path.
 - **`MR_WR_AFFECTS_TIMING=1` but the write itself fails verification.** `APPLY_TIMING` is skipped whenever `mr_wr_error` is set (verify runs before apply in the FSM order precisely so this is possible) — the staged shadow value is never committed to live if the DRAM never confirmed it took.
 - **MR_Poll's periodic poll comes due while MR_Write holds the MR Read Arbiter.** MR_Poll's `REQUEST_MRR` simply waits for the grant; its poll interval (`MRR_POLL_INTERVAL`, default 32×tREFI) is large enough relative to any plausible MR_Write verify sequence that this delay has no material effect on thermal-monitoring responsiveness.
 
