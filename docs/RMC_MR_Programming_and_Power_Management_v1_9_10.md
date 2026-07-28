@@ -10,7 +10,9 @@ This document extends the v1.9.8 architecture (`RMC_Full_Knowledge_v1.9.8.md`, `
 
 Both features are handled inside the **Maintenance Engine (ME)**, consistent with the project's existing model: ME is a peer to the Scheduler, writes into FSM tables directly for maintenance events, and never issues CAS. Both features route their DRAM-facing commands through the existing **Stage-0 override → Stage-4 emission** path — no new command path is introduced into the Scheduler.
 
-**Changes from v1.9.9** (all from an independent architecture review; no new features beyond what the review agreed to):
+Implementation note: This document captures architectural intent only. Any new signals, CSRs, parameters, interface-width changes, or package updates described here are design proposals for future integration and do not imply modification of the currently frozen package definitions.
+
+Changes from the previous architecture review iteration:
 
 - Section A now states explicitly, up front, that runtime MR write is an inferred extension, not a stated requirement.
 - `MR_WR_REQUIRE_IDLE`'s rationale as a per-request field (not a fixed policy) is now stated.
@@ -208,7 +210,8 @@ MR Read Arbiter (new, small shared resource — not a counted sub-FSM)
 - **Config Registers table**: append the 10 registers in §A.10.
 - **Block List (Handoff §5)**: ME entry gains "+ MR_Write FSM (7th sub-FSM), + MR Read Arbiter (shared, uncounted internal resource)".
 - **MR_Poll FSM (existing block, narrow amendment)**: `REQUEST_MRR` and `WAIT_RDDATA` exit conditions are amended to acquire the MR Read Arbiter grant and check the `mrr_requester` tag, respectively. No states are added or removed; poll interval, TUF parsing, and tREFI-adjustment logic are unchanged.
-- **`timing_reg_file` field list**: add a single `{shadow_val, shadow_param_id}` register pair alongside existing `live_val[]` (renaming the current unnamed register bank to `live_val[]` for clarity), and the `timing_apply_en` port. (Supersedes the full-table shadow copy described in v1.9.9.)
+- **`timing_reg_file` field list**: add a single `{shadow_val, shadow_param_id}` register pair alongside existing `live_val[]` (renaming the current unnamed register bank to `live_val[]` for clarity), and the `timing_apply_en` port. (Supersedes the full-table shadow copy proposed in the previous review iteration.)
+- `timing_reg_file` ownership table: update the ownership row to reflect that runtime writes to `live_val[]` occur only through `timing_apply_en` after `init_done`; CSR remains the sole direct writer before `init_done`.
 
 ---
 
@@ -310,9 +313,9 @@ New gate, added to the Legal Check Matrix alongside `gate_rfc`/`gate_zq`:
 |---|---|---|
 |`gate_pwr[r]`|Per-rank, Power Mgmt FSM|Rank is in `POWER_DOWN` or `SELF_REFRESH` (PD and SR share one gate — both fully block rank command issue identically; they're already distinguished at the state/deadline level via `can_xp`/`can_xs`, so a shared entry gate doesn't lose any information)|
 
-**Automatic PD wake**: Power Mgmt FSM already has `bank_act_count[N_RANKS][16]` as an input (existing port, unused for this purpose today). This addendum uses it directly: the moment any bank's `bank_act_count` for a gated-PD rank goes non-zero (i.e., the Watermark Manager allocates a new TCAM entry targeting that rank), `PDX_WAIT` is triggered automatically. No new signal is required — this reuses an existing input port for a new purpose, which is why it's called out as a datapath decision worth documenting rather than treated as free.
+**Automatic PD wake**: Power Mgmt FSM already has `bank_act_count[N_RANKS][16]` as an input (existing port, unused for this purpose today). This addendum uses it directly: the moment any bank's `bank_act_count` for a gated-PD rank goes non-zero (i.e., the Watermark Manager allocates a new per-bank queue entry targeting that rank), `PDX_WAIT` is triggered automatically. No new signal is required — this reuses an existing input port for a new purpose, which is why it's called out as a datapath decision worth documenting rather than treated as free.
 
-This transition only _triggers entry into_ `PDX_WAIT` — it does not itself permit command issue. `gate_pwr[r]` remains asserted for the entire `PDX_WAIT` duration and only clears once `T_XP` has elapsed and `dfi_cke[r]` has been reasserted (§B.5). TCAM allocation for a PD-gated rank is intentional, not a gap: allocation is unaffected by `gate_pwr` by design, identical to the already-documented self-refresh case below — this is the same accepted allocate-then-gate model already used for REF and ZQ elsewhere in this architecture (a rank can accumulate pending, allocated requests while gated; only _selection_ is blocked, never allocation).
+This transition only _triggers entry into_ `PDX_WAIT` — it does not itself permit command issue. `gate_pwr[r]` remains asserted for the entire `PDX_WAIT` duration and only clears once `T_XP` has elapsed and `dfi_cke[r]` has been reasserted (§B.5). Queue allocation for a PD-gated rank is intentional, not a gap: allocation is unaffected by `gate_pwr` by design, identical to the already-documented self-refresh case below — this is the same accepted allocate-then-gate model already used for REF and ZQ elsewhere in this architecture (a rank can accumulate pending, allocated requests while gated; only _selection_ is blocked, never allocation).
 
 **SR does not auto-wake on traffic.** Consistent with the existing "system signal" framing, new requests to an SR-gated rank simply queue normally in WR_TCAM/RD_TCAM (allocation is unaffected by `gate_pwr` — only Scheduler _selection_ is gated) and wait for `sr_exit`. This is an accepted, pre-existing design choice this addendum preserves rather than changes; see §B.13 for the starvation-interaction note this implies.
 
@@ -374,7 +377,7 @@ Refresh FSM (existing ports unchanged, new one added)
 
 ## B.13 Corner Cases
 
-- **New request arrives for a rank in self-refresh.** Allocation proceeds normally (TCAM entry created, status register updated, `age` starts accumulating) but Stage 2/3 cannot select it while `gate_pwr[r]==1`. Because SR has no auto-wake, this request's age can grow past `RD_STARVATION_THR`/`WR_STARVATION_THR` without the staggered starvation mechanism being able to fire — Stage 3 simply can't select a gated bank regardless of `STARVED_MISS` priority. This composes correctly (the existing mechanism already tolerates unbounded gating from REFab/ZQcal the same way); no new starvation-handling logic is required, but it's worth stating explicitly since SR's gating duration is the least bounded of any gate in the system.
+- **New request arrives for a rank in self-refresh.** Allocation proceeds normally (per-bank queue entry created, status register updated, `age` starts accumulating) but Stage 2/3 cannot select it while `gate_pwr[r]==1`. Because SR has no auto-wake, this request's age can grow past `RD_STARVATION_THR`/`WR_STARVATION_THR` without the staggered starvation mechanism being able to fire — Stage 3 simply can't select a gated bank regardless of `STARVED_MISS` priority. This composes correctly (the existing mechanism already tolerates unbounded gating from REFab/ZQcal the same way); no new starvation-handling logic is required, but it's worth stating explicitly since SR's gating duration is the least bounded of any gate in the system.
 - **PD entry check passes, then a request lands in the same cycle Stage 4 is committing the broadcast `POWER_DOWN` write.** Ordering rule: `bank_act_count` incrementing (new allocation) and the broadcast write are both synchronous to the MC clock; the Watermark Manager's allocation is defined to complete before Stage 4 in a given pipeline cycle (per existing pipeline ordering), so the auto-wake condition in §B.7 (`bank_act_count[r][*]` going non-zero) will be visible the cycle _after_ entry commits, correctly triggering `PDX_WAIT` on the very next cycle rather than missing the transition. No new arbitration logic needed — this falls out of `bank_act_count` already being a registered, one-cycle- visible signal.
 - **`ACTIVE_PD` is unreachable** (§B.5) — not a corner case in the sense of needing a fix, but flagged so it isn't mistaken for a wiring bug when the tables are read later.
 
@@ -390,7 +393,7 @@ Refresh FSM (existing ports unchanged, new one added)
 - **Legal Check Matrix**: add row `gate_pwr[r] | Power Mgmt FSM | PD or SELF_REFRESH in progress`.
 - **Per-Bank FSM Table**: no field changes — `POWER_DOWN`/`SELF_REFRESH` encodings already existed; this addendum adds the write path that finally drives them, which requires widening the table's write-enable decoder from one-hot to 16 parallel AND-OR terms per rank (§B.4) — a structural modification to existing decode logic, not merely a new control bit.
 - **`timing_reg_file` Params list**: add `T_CKSRE`, `T_CKSRX`.
-- **Config Registers table**: no addition required for Power Management in this revision (`PD_FORCE_EXIT_ON_REF` from v1.9.9 is retracted — see §B.8/§B.12-5).
+- **Config Registers table**: no addition required for Power Management in this revision (`PD_FORCE_EXIT_ON_REF` from the previous review iteration is retracted).
 - **Block List (Handoff §5)**: Maintenance Engine entry gains "+ CKE Mux", ME sub-FSM 5 description gains "N_RANKS instances (corrected)".
 
 ---
@@ -407,7 +410,7 @@ Unchanged from v1.9.8 except for the new `mr_access_req` tier at the bottom (§A
 
 ## C.2 `me_cmd_type` Width
 
-Existing 3-bit (`[2:0]`) encoding already carries REFab, REFsb, ZQCAL (start/latch), RFM, and MRR — five to seven values depending on sub-state encoding, close to the 8-value ceiling. This addendum adds `MRW`, `PD_ENTRY`, `PD_EXIT`, `SR_ENTRY`, `SR_EXIT` — five more. **Required change**: widen `me_cmd_type` from `[2:0]` to `[3:0]` throughout (Scheduler Stage 4 input, Maintenance Engine outputs for all six — now seven — sub-FSMs that drive it). This is a pure width bump with no semantic change to any existing encoding value; it is the only place in this addendum where an existing port's width changes.
+Existing 3-bit (`[2:0]`) encoding already carries REFab, REFsb, ZQCAL (start/latch), RFM, and MRR — five to seven values depending on sub-state encoding, close to the 8-value ceiling. This addendum adds `MRW`, `PD_ENTRY`, `PD_EXIT`, `SR_ENTRY`, `SR_EXIT` — five more. Required change: first decouple me_cmd_type from the shared BURST_WIDTH parameter by introducing a dedicated parameter (e.g. ME_CMD_W), then widen only me_cmd_type from [2:0] to [3:0]. This avoids unintentionally widening unrelated interfaces that also use BURST_WIDTH (e.g. AWSIZE/ARSIZE and FSM state fields). Existing encoding semantics remain unchanged; only the maintenance-command encoding space is extended.
 
 ## C.3 Summary of All New Cross-Block Signals
 
