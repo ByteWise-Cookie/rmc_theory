@@ -1,3 +1,11 @@
+> **Version note — shared across v1.9.8 / v1.9.9.** This I/O map is the port reference for
+> both KB versions. The v1.9.9 scheduler rework (residency split, per-bank queues, RAW
+> pause, weight arbiter — see `RMC_Full_Knowledge_v1.9.9.md` / `RMC_Handoff_v1.9.9.md`)
+> adds and repurposes scheduler-internal ports; those are captured as **design intent** in
+> §19 below (marked `[v1.9.9]`). Port names/widths firm up at the RTL phase, and the pkg
+> stays **frozen** until the sizing sweep (OQ-20) is done — nothing here authorizes a pkg
+> edit. External boundaries (AXI, DFI, CDC FIFOs) are unchanged.
+
 ## 0. Parameter Definitions
 
 All widths are compile-time parameters. No hardcoded bit-widths anywhere.
@@ -737,6 +745,26 @@ write: CSR only (slow path, init time)
 ---
 
 ## 19. Scheduler (5 Stages)
+
+> **[v1.9.9] Scheduler-internal port deltas (design intent — firm at RTL).** The 5-stage
+> skeleton and external ports below are unchanged; the rework repurposes internal nets:
+> ```
+> Stage 1 (admission):   ← s1_evict_en      1b          entry classified + RAW-clear → queue
+>                        ← s1_evict_bank    [BANK_BITS]
+>                        ← s1_evict_entry   {rw,seqnum,bg,bank,row,col,state,blocked}  (§9E)
+>                        → queue_full[N_BANKS]           backpressure: bank queue has no room
+>                        → tcam_full        1b           admission stall
+>                        ← raw_block_en     1b           read held (blocked), not evicted (§11)
+> Per-bank queues:       → queue_head[N_BANKS]  {cmd-class-ready per §9E head}
+>                        → queue_depth[N_BANKS] [$clog2(BANK_DEPTH+1)]  relocated watermark
+> Stage 3 (arbiter):     → age[N_BANKS]        aging counter (weight term)
+>                        → servo_mod           DQ-occupancy servo (ACT boost/damp)
+>                        (winner = argmax weight; guardrail: never idle DQ)
+> ```
+> `merge_pending`/`wdb_entry_idx` (RD status) and the RAW forward mux / 2nd hold slot are
+> **retired** with the pause model. `rd/wr_partition_mask` are retired with adaptive
+> batching. Candidate set feeding Stage 2/3 = the 16 `queue_head`s, not the flat TCAM
+> bitmap. None of this changes the `can_*` gate ports or the Stage-4 writeback ports.
 
 ### Stage 0 — Maintenance Override
 ```
