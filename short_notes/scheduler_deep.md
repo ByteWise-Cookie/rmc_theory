@@ -246,9 +246,18 @@ winner = argmax weight over legal candidates ; ties → oldest age → BG-rotate
 ```
 
 `K` scales control vs age so SJF governs normal waits and aging only breaks real
-starvation (else it degenerates to oldest-first). `K`, control values, `AGE_MAX`,
-`POOL_LOW/HIGH/LOOKAHEAD` = one **weights pass** vs the golden model.
-See [`../docs/scheduler_bank_fsm.md`](../docs/scheduler_bank_fsm.md) §4.
+starvation (else it degenerates to oldest-first).
+
+**Sweep result (OQ-20/OQ-21, `tools/sched_model/SWEEP_RESULTS.md`).** The weighted
+arbiter is now in the model (`opts.arbiter="weighted"`). Swept against the golden model:
+**the weights are second-order — the never-idle-DQ guardrail + queue sizing dominate**;
+suite-mean DQ-busy holds ~35.2% flat across `K`/control/servo (only bank *heads* are
+reorderable, so `age` has little leverage — the §5.1 per-bank-FIFO order caveat). Recorded
+design point: **control CAS/ACT/PRE = 2/1/0**, **K=5000** (control-led, age = starvation
+backstop), **guardrail ON**, **DQ servo retained but default-OFF** (no synthetic gain;
+revisit on real traces), **AGE_MAX=256**. Sizing: **bankDepth=8, tcam=32** (in-flight
+≤128, throughput plateau; tcam<32 costs 3–7pt). `POOL_LOW/HIGH/LOOKAHEAD` only bind when
+the servo is enabled. See [`../docs/scheduler_bank_fsm.md`](../docs/scheduler_bank_fsm.md) §4.
 
 ![arbiter](diagrams/bank_fsm.png)
 

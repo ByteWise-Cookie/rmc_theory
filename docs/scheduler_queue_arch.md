@@ -196,11 +196,12 @@ Sizing (numbers to lock in the deferred sweep):
   controller cycle** to fill CA slots (fill the burst shadow) — not per-bank depth. Enough
   ready banks = `tCCD / CA_slot` worth of prep candidates.
 
-**Folded into the deferred weights/sizing sweep** (with `AGE_MAX`, servo
-`POOL_LOW/HIGH`):
-- exact **per-bank depth** + total in-flight,
-- ready-bank count for CA-slot fill,
-- **R/W queue organization** — unified-per-bank + tag vs split read/write sets (§7).
+**Sweep result (OQ-20 — `../tools/sched_model/SWEEP_RESULTS.md`):**
+- **per-bank depth = 8, tcam = 32** → total in-flight ≤128 (throughput plateau; tcam<32
+  costs 3–7pt DQ-busy). Depth past ~8 gains <0.3pt/step for +50% storage.
+- **R/W organization = unified per-bank + tag** — `rawPause` on/off was negligible
+  (35.2 vs 35.0%); the guard is reserved for the split variant (§7).
+- ready-bank count for CA-slot fill: governed by the DFI gear ratio, not depth (above).
 
 ---
 
@@ -242,10 +243,16 @@ heads. Verified: 0 violations / 0 unscheduled both bins; DQ-busy within ±2pt of
 window model; drains at `tcam=8, bankDepth=2`; RAW keeps RD after its WR.
 
 Note: the model's per-bank queue is **unified R/W** (batch-mode selects head R or W). The
-split-R/W-queue variant + exact depth are the sweep's job (§6); `rawPause` is the guard
-reserved for the split case — under the unified FIFO, same-bank program order already
-holds. Remaining model debt: the aging **counter** + DQ **servo** (deferred to the same
-weights sweep).
+split-R/W-queue variant is left as a documented option; `rawPause` is the guard reserved
+for it — under the unified FIFO, same-bank program order already holds.
+
+**Sweep closed (OQ-20/OQ-21).** The weighted arbiter (`K·control + age + servo`, never-
+idle-DQ guardrail) + aging counter are now in the model (`opts.arbiter="weighted"`),
+retiring the model debt. Swept: **weights are second-order — guardrail + sizing dominate**
+(DQ-busy flat ~35.2% across `K`/control/servo, since only bank heads are reorderable).
+Recorded design point: control 2/1/0, K=5000, guardrail ON, servo retained default-OFF,
+AGE_MAX=256, depth=8, tcam=32, unified+tag. Full tables:
+[`../tools/sched_model/SWEEP_RESULTS.md`](../tools/sched_model/SWEEP_RESULTS.md).
 
 ---
 

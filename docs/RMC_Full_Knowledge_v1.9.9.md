@@ -422,14 +422,13 @@ A few sizing decisions are worth remembering the *reasoning* for, not just the v
   because it only searches 2 fields (bank-group + bank) ternary, versus WR_TCAM's full
   4-field exact match — a direct payoff of splitting the two TCAMs by search semantics
   instead of using one general-purpose CAM for both jobs.
-- **Per-bank queue depth ≈ 4–8 (v1.9.9).** A bank serializes, so few entries are
-  concurrently useful — depth is set by how many requests arrive during one bank
-  round-trip so the head never starves waiting for the next. Cross-check: read floor
-  `N ≈ L_miss/BL2 = 118/8 ≈ 16`; total in-flight `= N_BANKS × depth`, targeting the
-  depth-64 buffer decision → ~4/bank. The DFI gear ratio (1:2 / 1:4) governs how many
-  banks must present a ready head each controller cycle to fill CA slots — *not* per-bank
-  depth. Exact depth, ready-bank count, and unified-vs-split R/W queue organization are
-  the deferred sweep (§10).
+- **Per-bank queue depth = 8 (v1.9.9, swept — OQ-20).** A bank serializes, so few entries
+  are concurrently useful — depth is set by how many requests arrive during one bank
+  round-trip so the head never starves. The sweep put DQ-busy on a plateau at depth ≈8
+  (total in-flight ≤128); past that, gains are <0.3pt/step for +50% storage. `tcam=32`
+  admission depth is worth keeping (dropping to 16/8 costs 3–7pt). The DFI gear ratio
+  (1:2 / 1:4) governs how many banks must present a ready head each controller cycle to
+  fill CA slots — *not* per-bank depth. R/W organization = unified per-bank + tag.
 - **TCAM admission depth (v1.9.9) is now the burst+classify window, not the latency
   window.** Because entries evict to the per-bank queues after classify, the searched set
   is small and short-lived; the golden model still drains correctly at `tcam=8`.
@@ -507,8 +506,8 @@ discipline:
 | ID | Item | Status |
 |---|---|---|
 | OQ-19b | Channel-interleave granularity (4KB / 8KB / 16KB) | Needs a Python traffic-trace script; CSR-configurable once decided |
-| OQ-20 | **Scheduler weights/sizing sweep (v1.9.9)** | One joint pass vs the golden model: `K` (control-vs-age scale), control-weight values, `AGE_MAX`, DQ-servo `POOL_LOW/POOL_HIGH/LOOKAHEAD`, per-bank queue **depth** + total in-flight, ready-bank count for CA-slot fill, and R/W queue **organization** (unified-per-bank+tag vs split read/write sets). Blocks RTL. |
-| OQ-21 | **Golden-model debt (v1.9.9)** | The weighted arbiter (model still busy-first + oldest tie-break) and the DQ servo/aging counter are not yet in `sched_test.js`; to be added with OQ-20. |
+| OQ-20 | **Scheduler weights/sizing sweep (v1.9.9)** | **DONE** — swept vs the golden model (`tools/sched_model/sweep.js`, `SWEEP_RESULTS.md`). Finding: weights are second-order; the never-idle-DQ guardrail + queue sizing dominate. Recorded design point: control CAS/ACT/PRE = 2/1/0, K = 5000, guardrail ON, DQ servo retained but default-OFF (no synthetic gain), AGE_MAX = 256, bankDepth = 8 / tcam = 32 (in-flight ≤128), unified per-bank+tag. Recorded as intent; pkg still frozen until RTL go. |
+| OQ-21 | **Golden-model debt (v1.9.9)** | **DONE** — the weighted arbiter + aging counter are now in `sched_test.js` (`opts.arbiter="weighted"`, `maxWait`/`meanWait` metrics); self-tests 26/26. |
 
 Every other open question raised across the v1.0–v1.9.8 history (RAW hold-forward
 collision limits, starvation thresholds, FIFO credit depths, ZQcal instancing, TCAM area

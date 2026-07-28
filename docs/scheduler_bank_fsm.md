@@ -202,8 +202,16 @@ total = K · control_weight[lane] + age[lane]
 
 with `K` sized so a fresh CAS still out-weighs a lane that has waited a typical
 prep-latency (`tRCD`/`tRP` ≈ 39 tCK) but loses to one that has waited pathologically long.
-`K`, the control-weight values, and `AGE_MAX` are one joint **weights-pass** knob-set
-(shared with staged_logic's open weights item). Flagged, not yet tuned.
+
+**Weights-pass result (OQ-20/OQ-21 — `../tools/sched_model/SWEEP_RESULTS.md`).** Swept
+against the golden model (`opts.arbiter="weighted"`): **the weights are second-order**.
+Suite-mean DQ-busy is flat (~35.2%) across `K` ∈ {50…100000}, control tiers, and servo —
+because only the 16 bank *heads* are reorderable (per-bank FIFO fixes the rest), so `age`
+has little throughput leverage. What matters is the guardrail (§4e) and queue sizing.
+Recorded design point: **control `CAS/ACT/PRE = 2/1/0`**, **`K = 5000`** (control leads
+normal ops; `age` is a pure starvation backstop), **`AGE_MAX = 256`**, sizing
+**`bankDepth = 8`, `tcam = 32`** (in-flight ≤128, throughput plateau). Recorded as design
+intent — pkg frozen until the RTL go.
 
 ---
 
@@ -246,6 +254,12 @@ scorer's "hide tRCD under queued bursts" an explicit occupancy target. It also c
 reverse failure: opening rows faster than CAS drains just parks rows (holds tRAS,
 raises refresh / rowhammer exposure) without feeding DQ faster — the damp side bounds it.
 `POOL_LOW` / `POOL_HIGH` / `LOOKAHEAD` = weights-pass knobs.
+
+**Sweep verdict (OQ-20).** The **guardrail is the essential, kept-ON part** — it is what
+holds DQ-busy. The **pool servo showed no measurable gain** on the synthetic suite, so it
+is **retained but default-OFF**, to be revisited against real (non-synthetic) traffic
+traces where the CAS↔ACT balance can actually bind. `POOL_LOW/HIGH/LOOKAHEAD` only take
+effect when the servo is enabled.
 
 ## 5. Latency chains — best case + every worst case
 

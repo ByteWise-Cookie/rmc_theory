@@ -528,7 +528,7 @@ order preserved (natural row-locality). Only the **head** is active in the comma
 | blocked | 1b | RAW-held (read waiting on a write drain, §11); set at admission |
 
 ```
-depth per bank : ~4–8 (deferred sweep §22) ; total in-flight = N_BANKS × depth
+depth per bank : 8 (swept, OQ-20) ; total in-flight = N_BANKS × depth ≤ 128 ; tcam=32
 head-only      : head asserts one ready-bit per class → can_pre/act/cas[16] to arbiter
                  timers (next_cas/pre/act) are PER-BANK scoreboard props, NOT per-entry —
                  the head reads them; deeper entries just wait
@@ -988,8 +988,8 @@ queues are FIFOs, not state machines — the head's command-progress lives in th
 | ID | Item | Status |
 |---|---|---|
 | OQ-19b | Ch interleave granularity | Needs Python script + traffic trace; CSR configurable |
-| OQ-20 | **Scheduler weights/sizing sweep [v1.9.9]** | One joint pass vs the golden model: `K`, control-weight values, `AGE_MAX`, DQ-servo `POOL_LOW/POOL_HIGH/LOOKAHEAD`, per-bank queue **depth** + total in-flight, ready-bank count for CA-slot fill, R/W queue **organization** (unified+tag vs split). Blocks RTL; pkg frozen until done. |
-| OQ-21 | **Golden-model debt [v1.9.9]** | Weighted arbiter + DQ servo/aging counter not yet in `sched_test.js` (still busy-first + oldest tie-break); add with OQ-20. |
+| OQ-20 | **Scheduler weights/sizing sweep [v1.9.9]** | **DONE** — `tools/sched_model/sweep.js` + `SWEEP_RESULTS.md`. Weights second-order; guardrail + sizing dominate. Design point: control 2/1/0, K=5000, guardrail ON, servo retained default-OFF, AGE_MAX=256, bankDepth=8, tcam=32 (in-flight ≤128), unified per-bank+tag. Recorded as intent; pkg frozen until RTL go. |
+| OQ-21 | **Golden-model debt [v1.9.9]** | **DONE** — weighted arbiter + aging counter in `sched_test.js` (`opts.arbiter="weighted"`); self-tests 26/26. |
 
 **[v1.9.9]** Retired by the RAW-pause rework: the old RAW hold-forward collision-limit
 question (only one response source remains).

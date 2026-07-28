@@ -115,6 +115,18 @@ function runScheduler(queue, bin, opts = {}) {
   const TCAM_SIZE = opts.tcam      || 32;              // searchable admission slots
   const bankDepth = opts.bankDepth || 8;               // per-bank in-flight FIFO depth
   const rawPause  = opts.rawPause !== false;           // block RAW reads at admission (queueArch)
+  // ---- weight arbiter (OQ-20/OQ-21 sweep; default "busy" = the baseline pick order) ----
+  // weight(lane) = K·control[lane] + age + (lane==ACT ? servo_mod : 0); argmax over legal.
+  // GUARDRAIL: DQ free now AND a legal CAS exists ⇒ CAS wins absolutely (never idle DQ).
+  const arbiter   = opts.arbiter   || "busy";          // "busy" | "weighted"
+  const K         = opts.K         ?? 1000;            // control-vs-age scale
+  const wCtl      = opts.control   || {CAS: 2, ACT: 1, PRE: 0};   // SJF tiers
+  const servoOn   = opts.servo !== false;              // DQ-occupancy servo on ACT
+  const POOL_LOW  = opts.poolLow   ?? 2;               // ready-CAS pool thin threshold
+  const POOL_HIGH = opts.poolHigh  ?? 6;               // ready-CAS pool deep threshold
+  const LOOKAHEAD = opts.lookahead ?? 12;             // DQ-freeing horizon (≈tCCD_L)
+  const SERVO_BOOST = opts.servoBoost ?? K;           // one control tier of ACT boost
+  const SERVO_DAMP  = opts.servoDamp  ?? K;           // one control tier of ACT damp
 
   const BGN = 4, BKN = 4, NB = BGN * BKN, NR = 2, bidx = q => q.bg * BKN + q.bank;
   const mk = () => ({open: false, row: -1, nAct: 0, nPre: 0, nCas: 0, lockAge: 0});
@@ -123,7 +135,8 @@ function runScheduler(queue, bin, opts = {}) {
   const rkS = Array.from({length: NR}, () => ({nActAny: 0, faw: [], nRdWr: 0, nWrRd: 0}));
   const G = {nCasAny: 0, dqFree: 0, caFree: 0, nPreAny: 0, lastCasBg: -1};
 
-  let toks = queue.map((q, i) => ({...q, id: i, done: false, gid: null, wstate: null}));
+  let toks = queue.map((q, i) => ({...q, id: i, done: false, gid: null, wstate: null, firstSeen: null}));
+  let maxWait = 0, sumWait = 0, doneCount = 0;         // fairness metric (waiting tCK to service)
   let activeCount = toks.length;
   let pendR = toks.reduce((a, t) => a + (t.dir === "R" ? 1 : 0), 0), pendW = activeCount - pendR;
   const demand = Array.from({length: NR}, () => Array.from({length: NB}, () => ({})));
@@ -174,6 +187,7 @@ function runScheduler(queue, bin, opts = {}) {
       else { b.nPre = Math.max(b.nPre, gc + p.WL + BL2 + p.tWR); rk.nWrRd = gc + p.WL + BL2 + p.tWTR_L; }
       t.done = true; activeCount--; if (t.dir === "R") pendR--; else pendW--;
       demand[r][bidx(t)][t.row]--;
+      const w = gc - (t.firstSeen ?? gc); if (w > maxWait) maxWait = w; sumWait += w; doneCount++;
     }
   }
 
@@ -203,7 +217,7 @@ function runScheduler(queue, bin, opts = {}) {
   const admitAndEvict = () => {
     // retire heads whose CAS has emitted, then top up TCAM in arrival order
     for (let r = 0; r < NR; r++) for (let bi = 0; bi < NB; bi++) { const q = bq[r][bi]; while (q.length && q[0].done) q.shift(); }
-    while (tcam.length < TCAM_SIZE && adm < toks.length) tcam.push(toks[adm++]);
+    while (tcam.length < TCAM_SIZE && adm < toks.length) { const t = toks[adm++]; if (t.firstSeen === null) t.firstSeen = gc; tcam.push(t); }  // aging clock starts at admission (total in-system wait)
     // classify is done at admit; evict to the bank queue when it has room and RAW is clear
     for (let i = 0; i < tcam.length; ) {
       const t = tcam[i];
@@ -258,16 +272,18 @@ function runScheduler(queue, bin, opts = {}) {
       if (picked) emit(picked, pcmd, gc); else { gc++; continue; }
     } else {                                             // greedy busy-first + batch + rotate
       if (batch) { if (mode === "R" && pendR === 0 && pendW > 0) doFlip(); else if (mode === "W" && pendW === 0 && pendR > 0) doFlip(); }
-      let cas = null, casScore = Infinity, act = null, pre = null, oppCas = false;
+      let cas = null, casScore = Infinity, act = null, pre = null, oppCas = false, readyCas = 0;
       const missWait = Array.from({length: NR}, () => new Array(NB).fill(false));
       for (const t of vis) {
+        if (t.firstSeen === null) t.firstSeen = gc;      // waiting clock starts when first visible
         const c = nextCmd(t);
         if (c === "PRE") { const b = bk[t.rank][bidx(t)]; if ((demand[t.rank][bidx(t)][b.row] || 0) > 0) missWait[t.rank][bidx(t)] = true; }
         if (!legal(t, c, gc)) continue;
-        if (c === "CAS") { if (batch && t.dir !== mode) { oppCas = true; continue; } const s = (t.bg === G.lastCasBg ? 1e9 : 0) + t.id; if (s < casScore) { cas = t; casScore = s; } }
+        if (c === "CAS") { if (batch && t.dir !== mode) { oppCas = true; continue; } readyCas++; const s = (t.bg === G.lastCasBg ? 1e9 : 0) + t.id; if (s < casScore) { cas = t; casScore = s; } }
         else if (c === "ACT") { if (!act || t.id < act.id) act = t; }
         else { if (!pre || t.id < pre.id) pre = t; }
       }
+      const age = t => gc - (t.firstSeen ?? gc);
       // age the per-bank lock: a bank with an open row still owing demand while a
       // miss waits is holding the lock — count it toward the AGE_MAX force-break.
       if (lockOn) for (let r = 0; r < NR; r++) for (let bi = 0; bi < NB; bi++) {
@@ -275,7 +291,27 @@ function runScheduler(queue, bin, opts = {}) {
         if (b.open && missWait[r][bi] && (demand[r][bi][b.row] || 0) > 0) b.lockAge++; else b.lockAge = 0;
       }
       const charge = (oppCas && !cas && gc >= G.dqFree);
-      if (cas || act || pre) { if (charge) gateLoss += 2; stall = 0; if (cas) emit(cas, "CAS", gc); else if (act) emit(act, "ACT", gc); else emit(pre, "PRE", gc); }
+      // --- pick the command: baseline busy-first, or the weighted arbiter (§6) ---
+      let picked = null, pickCmd = null;
+      if (arbiter === "weighted") {
+        const dqFreeIn = G.dqFree - gc;
+        if (cas && dqFreeIn <= 0 && readyCas >= 1) { picked = cas; pickCmd = "CAS"; }   // GUARDRAIL
+        else {
+          let servoMod = 0;
+          if (servoOn) {
+            if (readyCas <= POOL_LOW && dqFreeIn > 0 && dqFreeIn <= LOOKAHEAD) servoMod = SERVO_BOOST;
+            else if (readyCas >= POOL_HIGH) servoMod = -SERVO_DAMP;
+          }
+          const cand = [];
+          if (cas) cand.push({t: cas, c: "CAS", w: K * wCtl.CAS + age(cas)});
+          if (act) cand.push({t: act, c: "ACT", w: K * wCtl.ACT + age(act) + servoMod});
+          if (pre) cand.push({t: pre, c: "PRE", w: K * wCtl.PRE + age(pre)});
+          if (cand.length) { cand.sort((a, b) => b.w - a.w || a.t.id - b.t.id); picked = cand[0].t; pickCmd = cand[0].c; }
+        }
+      } else if (cas) { picked = cas; pickCmd = "CAS"; }
+      else if (act) { picked = act; pickCmd = "ACT"; }
+      else if (pre) { picked = pre; pickCmd = "PRE"; }
+      if (picked) { if (charge) gateLoss += 2; stall = 0; emit(picked, pickCmd, gc); }
       else { if (charge) gateLoss++; stall++; if (batch && stall >= STALL && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip(); else gc++; continue; }
       if (adaptive && gateLoss >= FLIP_COST && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip();
     }
@@ -285,7 +321,8 @@ function runScheduler(queue, bin, opts = {}) {
   let bu = 0, s0 = Infinity, s1 = -Infinity;
   for (const c of out) if (isCAS(c.type)) { bu++; const ds = c.cycle + lat(c.type, p); if (ds < s0) s0 = ds; if (ds + BL2 > s1) s1 = ds + BL2; }
   const span = bu ? s1 - s0 : 0, busy = span ? Math.round(100 * bu * BL2 / span) : 0;
-  return {cmds: out, busy, span, bursts: bu, flips, refs, unscheduled: activeCount, guardHit: guard >= 20000000};
+  const meanWait = doneCount ? Math.round(sumWait / doneCount) : 0;
+  return {cmds: out, busy, span, bursts: bu, flips, refs, unscheduled: activeCount, guardHit: guard >= 20000000, maxWait, meanWait};
 }
 
 // ------------------------------ trace generator ---------------------------
@@ -413,6 +450,25 @@ function selfTest() {
     console.log(`  [${ok ? "PASS" : "FAIL"}] WR@${wr ? wr.cycle : "-"}  RD@${rd ? rd.cycle : "-"}  (RD must follow WR)  unsched=${qa.unscheduled}`);
   }
 
+  console.log("\n== weight arbiter: legal + drains, both bins (queueArch) ==");
+  for (const bin of ["toy", "b4800"]) {
+    const q = genTrace(4000, {map: "interleave", seed: 11});
+    const r = runScheduler(q, bin, {queueArch: true, arbiter: "weighted"});
+    const ok = validate(r.cmds, PARAMS[bin]).length === 0 && r.unscheduled === 0 && !r.guardHit;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] bin=${bin.padEnd(6)} busy=${r.busy}%  maxWait=${r.maxWait}  meanWait=${r.meanWait}  viol=${validate(r.cmds, PARAMS[bin]).length}`);
+  }
+
+  console.log("\n== weight arbiter: low K (age-led) cuts tail-wait vs high K (SJF-led) ==");
+  {
+    const q = genTrace(4000, {map: "rowlocal", seed: 13, hot: 0.15, random: 0.1, linear: 0.55, strided: 0.2});
+    const hiK = runScheduler(q, "b4800", {queueArch: true, arbiter: "weighted", K: 100000});
+    const loK = runScheduler(q, "b4800", {queueArch: true, arbiter: "weighted", K: 50});
+    const ok = loK.maxWait <= hiK.maxWait && validate(loK.cmds, PARAMS.b4800).length === 0 && loK.unscheduled === 0;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] K=100000 maxWait=${hiK.maxWait} busy=${hiK.busy}%   K=50 maxWait=${loK.maxWait} busy=${loK.busy}%`);
+  }
+
   console.log(`\n== summary: ${pass} pass, ${fail} fail ==\n`);
   process.exit(fail ? 1 : 0);
 }
@@ -424,7 +480,9 @@ function demo() {
   for (const c of r.cmds.slice(0, 24)) console.log(`  @${String(c.cycle).padStart(4)}  ${c.type.padEnd(4)} g${c.bg}b${c.bank} row${c.row}`);
 }
 
-if (process.argv.includes("--demo")) demo();
-else selfTest();
-
 module.exports = {runScheduler, genTrace, validate, PARAMS};
+
+if (require.main === module) {                          // only when run directly, not on require()
+  if (process.argv.includes("--demo")) demo();
+  else selfTest();
+}
