@@ -115,6 +115,14 @@ function runScheduler(queue, bin, opts = {}) {
   const TCAM_SIZE = opts.tcam      || 32;              // searchable admission slots
   const bankDepth = opts.bankDepth || 8;               // per-bank in-flight FIFO depth
   const rawPause  = opts.rawPause !== false;           // block RAW reads at admission (queueArch)
+  const promote   = !!opts.promote;                    // row-hit promotion: cluster same-row entries
+                                                       // in the bank queue (insert after the last
+                                                       // same-row entry, not the tail) so a later
+                                                       // same-row request batches with its siblings
+                                                       // instead of stranding behind an intervening
+                                                       // different-row miss. Reorders only across
+                                                       // DIFFERENT rows (different addresses → no
+                                                       // hazard); same-row order preserved (RAW/WAW).
   // ---- weight arbiter (OQ-20/OQ-21 sweep; default "busy" = the baseline pick order) ----
   // weight(lane) = K·control[lane] + age + (lane==ACT ? servo_mod : 0); argmax over legal.
   // GUARDRAIL: DQ free now AND a legal CAS exists ⇒ CAS wins absolutely (never idle DQ).
@@ -222,7 +230,15 @@ function runScheduler(queue, bin, opts = {}) {
     for (let i = 0; i < tcam.length; ) {
       const t = tcam[i];
       if (rawBlocked(t)) { i++; continue; }               // RAW: hold read in TCAM until write drains
-      if (bq[t.rank][bidx(t)].length < bankDepth) { bq[t.rank][bidx(t)].push(t); tcam.splice(i, 1); }
+      const q = bq[t.rank][bidx(t)];
+      if (q.length < bankDepth) {
+        if (promote) {                                     // insert after the last same-row entry
+          let ins = q.length;
+          for (let k = q.length - 1; k >= 0; k--) if (q[k].row === t.row) { ins = k + 1; break; }
+          q.splice(ins, 0, t);
+        } else q.push(t);                                  // strict FIFO: tail
+        tcam.splice(i, 1);
+      }
       else i++;                                            // bank queue full → backpressure, stay in TCAM
     }
   };
@@ -467,6 +483,56 @@ function selfTest() {
     const ok = loK.maxWait <= hiK.maxWait && validate(loK.cmds, PARAMS.b4800).length === 0 && loK.unscheduled === 0;
     if (ok) pass++; else fail++;
     console.log(`  [${ok ? "PASS" : "FAIL"}] K=100000 maxWait=${hiK.maxWait} busy=${hiK.busy}%   K=50 maxWait=${loK.maxWait} busy=${loK.busy}%`);
+  }
+
+  console.log("\n== row-hit promotion: the hit,miss,hit(same row) case ==");
+  {
+    // one bank, three requests: rowA, rowB(miss), rowA again. Strict FIFO strands the
+    // 2nd rowA behind the rowB miss — the miss closes rowA, so the 2nd rowA reopens it
+    // (extra ACT), and the row-lock even stalls the miss's PRE to AGE_MAX. Promotion
+    // clusters the two rowA requests, so rowA opens once and the miss follows.
+    const q = [
+      {dir: "R", rank: 0, bg: 0, bank: 0, row: 0},   // rowA
+      {dir: "R", rank: 0, bg: 0, bank: 0, row: 1},   // rowB — the miss
+      {dir: "R", rank: 0, bg: 0, bank: 0, row: 0},   // rowA again (arrives behind the miss)
+    ];
+    const acts = r => r.cmds.filter(c => c.type === "ACT").length;
+    const strict  = runScheduler(q, "toy", {queueArch: true, lock: true});
+    const promo   = runScheduler(q, "toy", {queueArch: true, lock: true, promote: true});
+    // promotion must: emit fewer ACTs (rowA opened once) AND finish sooner (no AGE_MAX stall),
+    // both legal, both fully drained.
+    const legal = r => validate(r.cmds, PARAMS.toy).length === 0 && r.unscheduled === 0;
+    const ok = legal(strict) && legal(promo) && acts(promo) < acts(strict) && promo.span < strict.span;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] strict FIFO : ACTs=${acts(strict)}  span=${strict.span}  maxWait=${strict.maxWait}`);
+    console.log(`         promotion  : ACTs=${acts(promo)}  span=${promo.span}  maxWait=${promo.maxWait}   (fewer ACTs + shorter span)`);
+  }
+
+  console.log("\n== row-hit promotion: row-local trace keeps locality (busy up, tail down) ==");
+  for (const seed of [21, 22]) {
+    const q = genTrace(4000, {map: "rowlocal", readPct: 75, seed, linear: 0.7, strided: 0.15, random: 0.15});
+    const strict = runScheduler(q, "b4800", {queueArch: true, lock: true});
+    const promo  = runScheduler(q, "b4800", {queueArch: true, lock: true, promote: true});
+    const legal = r => validate(r.cmds, PARAMS.b4800).length === 0 && r.unscheduled === 0;
+    const ok = legal(strict) && legal(promo) && promo.busy >= strict.busy;
+    if (ok) pass++; else fail++;
+    console.log(`  [${ok ? "PASS" : "FAIL"}] seed=${seed}  strict busy=${strict.busy}% tail=${strict.maxWait}   promo busy=${promo.busy}% tail=${promo.maxWait}`);
+  }
+  {
+    // adversarial: one bank, hits to rowA interleaved with misses to other rows —
+    // the pattern promotion is built for (strict FIFO keeps stranding the rowA hits).
+    const adv = [];
+    for (let i = 0; i < 900; i++) {
+      adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 0});         // rowA hit
+      if (i % 3 === 0) adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 100 + i}); // a miss, interleaved
+      adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 0});         // another rowA hit behind it
+    }
+    const strict = runScheduler(adv, "b4800", {queueArch: true, lock: true});
+    const promo  = runScheduler(adv, "b4800", {queueArch: true, lock: true, promote: true});
+    const actS = strict.cmds.filter(c => c.type === "ACT").length, actP = promo.cmds.filter(c => c.type === "ACT").length;
+    const okA = validate(promo.cmds, PARAMS.b4800).length === 0 && promo.unscheduled === 0 && promo.busy >= strict.busy && actP <= actS;
+    if (okA) pass++; else fail++;
+    console.log(`  [${okA ? "PASS" : "FAIL"}] adversarial interleave:  strict busy=${strict.busy}% ACTs=${actS}   promo busy=${promo.busy}% ACTs=${actP}`);
   }
 
   console.log(`\n== summary: ${pass} pass, ${fail} fail ==\n`);

@@ -174,11 +174,45 @@ next entry becomes head:
        row empty-> NEED_ACT
 ```
 
-Only one active request per bank at a time (physically correct). The queue behind the
-head is a dumb FIFO of pending work. Row-lock (from [[scheduler_bank_fsm]]) sits at the
-head: hold while `demand_count[bank] > 0`, release on drain or `AGE_MAX`.
+Only one active request per bank at a time (physically correct). Row-lock (from
+[[scheduler_bank_fsm]]) sits at the head: hold while `demand_count[bank] > 0`, release on
+drain or `AGE_MAX`.
+
+**Not a strictly-dumb FIFO — row-hit promotion (§5.2).** A pure tail-push FIFO strands a
+row-hit that arrives *behind* a same-bank miss: the miss closes the open row, so the
+stranded hit re-opens it (extra ACT), and the row-lock even stalls the miss's PRE to
+`AGE_MAX` (the trailing hit's demand blocks it). Fix: on admission, **cluster same-row
+entries** — insert a request after the last queued entry to the same row, not at the
+absolute tail. Reorders only across *different* rows (different addresses → no hazard);
+same-row order is preserved (RAW/WAW). One insertion point per bank, no downstream CAM.
 
 ---
+
+## 5.2 Row-hit promotion — why not per-command sub-FIFOs
+
+The alternative considered: split the depth-8 per-bank budget into per-command sub-FIFOs
+(cas / act / miss). Rejected — it costs more for the same arbiter feed:
+
+- **Class is live state, not a stored label.** A request's next command
+  (`NEED_PRE/ACT/CAS`) is a function of the bank's *current* open row, which changes under
+  it. A stored "hit" goes stale when the row closes → emitting it is an **illegal CAS**.
+  So class must be **recomputed at the head** each cycle (`liveCmd`, §5) — physically
+  bucketing by class forces entry **migration** between sub-FIFOs and a head re-check
+  anyway.
+- **"Purge on ACT" is a content match a FIFO can't do.** When a row opens, misses to it in
+  the miss sub-FIFO should promote to hits — but a FIFO can't selectively extract, so the
+  miss buffer would need to be a small **CAM**. Per-command split *relocates* the CAM, it
+  doesn't remove it.
+- **Static depth partition wastes the 8.** A hit-heavy bank overflows a shallow cas-FIFO
+  while the miss-FIFO idles.
+
+The per-command win is a ready-bit per class to the arbiter — already obtained from the
+**unified** queue via the head's live class driving `can_pre/act/cas[16]` (§2). So: keep
+one depth-8 FIFO per bank, recompute class at the head, expose the per-class ready bitmap,
+and add **row-hit promotion** (§5) for locality. Measured (golden model, `opts.promote`):
+focused `hit,miss,hit` 3→2 ACTs and span 294→36 (kills the AGE_MAX stall); adversarial
+same-bank interleave **11% → 24% DQ-busy**, ACTs 601→343; neutral on already-row-clustered
+traffic. Self-tests cover all three.
 
 ## 6. Queue depth — round-trip / gear ratio
 
