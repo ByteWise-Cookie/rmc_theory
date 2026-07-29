@@ -209,7 +209,8 @@ The alternative considered: split the depth-8 per-bank budget into per-command s
 The per-command win is a ready-bit per class to the arbiter — already obtained from the
 **unified** queue via the head's live class driving `can_pre/act/cas[16]` (§2). So: keep
 one depth-8 FIFO per bank, recompute class at the head, expose the per-class ready bitmap,
-and add **row-hit promotion** (§5) for locality. Measured (golden model, `opts.promote`):
+and add **row-hit promotion** (§5) for locality — now the adopted default in the golden
+model (`opts.promote`, default-on). Measured:
 focused `hit,miss,hit` 3→2 ACTs and span 294→36 (kills the AGE_MAX stall); adversarial
 same-bank interleave **11% → 24% DQ-busy**, ACTs 601→343; neutral on already-row-clustered
 traffic. Self-tests cover all three.

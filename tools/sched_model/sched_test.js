@@ -28,6 +28,11 @@
 //                  are unchanged — only the candidate set changes.
 //   opts.rawPause  (queueArch) hold a RAW read at admission until the older write
 //                  to the same address drains — no bypass, no reorder (default true).
+//   opts.promote   (queueArch) row-hit promotion (default true). On eviction, cluster
+//                  same-row entries (insert after the last same-row entry, not the tail)
+//                  so a row-hit that arrives behind a same-bank miss batches with its
+//                  siblings instead of stranding — reopening the row + stalling the
+//                  miss's PRE to AGE_MAX. Reorders only across different rows (no hazard).
 //
 // Run:  node sched_test.js            (self-test suite)
 //       node sched_test.js --demo     (small worked trace)
@@ -115,7 +120,7 @@ function runScheduler(queue, bin, opts = {}) {
   const TCAM_SIZE = opts.tcam      || 32;              // searchable admission slots
   const bankDepth = opts.bankDepth || 8;               // per-bank in-flight FIFO depth
   const rawPause  = opts.rawPause !== false;           // block RAW reads at admission (queueArch)
-  const promote   = !!opts.promote;                    // row-hit promotion: cluster same-row entries
+  const promote   = opts.promote !== false;            // row-hit promotion: ON by default. cluster same-row
                                                        // in the bank queue (insert after the last
                                                        // same-row entry, not the tail) so a later
                                                        // same-row request batches with its siblings
@@ -497,7 +502,7 @@ function selfTest() {
       {dir: "R", rank: 0, bg: 0, bank: 0, row: 0},   // rowA again (arrives behind the miss)
     ];
     const acts = r => r.cmds.filter(c => c.type === "ACT").length;
-    const strict  = runScheduler(q, "toy", {queueArch: true, lock: true});
+    const strict  = runScheduler(q, "toy", {queueArch: true, lock: true, promote: false});
     const promo   = runScheduler(q, "toy", {queueArch: true, lock: true, promote: true});
     // promotion must: emit fewer ACTs (rowA opened once) AND finish sooner (no AGE_MAX stall),
     // both legal, both fully drained.
@@ -511,7 +516,7 @@ function selfTest() {
   console.log("\n== row-hit promotion: row-local trace keeps locality (busy up, tail down) ==");
   for (const seed of [21, 22]) {
     const q = genTrace(4000, {map: "rowlocal", readPct: 75, seed, linear: 0.7, strided: 0.15, random: 0.15});
-    const strict = runScheduler(q, "b4800", {queueArch: true, lock: true});
+    const strict = runScheduler(q, "b4800", {queueArch: true, lock: true, promote: false});
     const promo  = runScheduler(q, "b4800", {queueArch: true, lock: true, promote: true});
     const legal = r => validate(r.cmds, PARAMS.b4800).length === 0 && r.unscheduled === 0;
     const ok = legal(strict) && legal(promo) && promo.busy >= strict.busy;
@@ -527,7 +532,7 @@ function selfTest() {
       if (i % 3 === 0) adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 100 + i}); // a miss, interleaved
       adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 0});         // another rowA hit behind it
     }
-    const strict = runScheduler(adv, "b4800", {queueArch: true, lock: true});
+    const strict = runScheduler(adv, "b4800", {queueArch: true, lock: true, promote: false});
     const promo  = runScheduler(adv, "b4800", {queueArch: true, lock: true, promote: true});
     const actS = strict.cmds.filter(c => c.type === "ACT").length, actP = promo.cmds.filter(c => c.type === "ACT").length;
     const okA = validate(promo.cmds, PARAMS.b4800).length === 0 && promo.unscheduled === 0 && promo.busy >= strict.busy && actP <= actS;
