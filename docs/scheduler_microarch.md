@@ -191,9 +191,9 @@ not a token handoff.
 |---|---|---|
 | `async_request_buffer stack (CIF→MCC)`, rd/wr `*FIFO` | intake | reuse as-is |
 | `incoming cmd/req router *logic` | intake demux | reuse as-is |
-| `valid_field` → `inv_lsb_priority_encoder` → `next_free_slot_idx`, `full_flag` | watermark allocator | **same block**, drawing names it by function, `rtl/mc_core/{wr,rd}_watermark_mgr.sv` names it by module |
+| `valid_field` → `inv_lsb_priority_encoder` → `next_free_slot_idx`, `full_flag` | watermark allocator | **same block**, drawing names it by function, `rtl/mc_core/{wr,rd}_watermark_mgr.sv` names it by module. **[v1.9.9]** occupancy = queue head/tail pointers (depth = pointer delta), **no valid_field bit** |
 | `wr/rd_reg_tcam_reg_array *reg` | token address / row-hit classify | reuse — see 8.3 D1 |
-| `write_valid_register *reg {VALID, status, timestamp}` | token metadata + age | reuse **+ add work-state** — see 8.3 D2 |
+| `write_valid_register *reg {status, timestamp}` | token metadata + age | reuse **+ add work-state**; **[v1.9.9] no valid bit** — occupancy = head/tail pointers — see 8.3 D2 |
 | `global_32b_counter` → timestamp field | age / starvation source | **already exists** — no new counter needed for age-boost |
 | `wr_data_buffer *sram`, `rd_request_buffer *sram` | payload | reuse as-is |
 | `*_rd_idx` / `*_rd_data` port pairs everywhere | index-passing | the drawing is **already** index-addressed, not token-passing |
@@ -240,8 +240,8 @@ Unavoidable — searchable row is what makes classify single-cycle.
 Per §6 the shrinking work-list is per-entry state:
 
 ```
-write_valid_register *reg N_WR_ENTRIES x1 { VALID, status, timestamp, work_state[2] }
-read_valid_register  *reg N_RD_ENTRIES x1 { RD_VALID, rd_status, rd_timestamp, work_state[2] }
+write_status_register *reg N_WR_ENTRIES x1 { status, timestamp, work_state[2] }  [v1.9.9] no valid bit
+read_status_register  *reg N_RD_ENTRIES x1 { rd_status, rd_timestamp, work_state[2] }  occupancy = head/tail
                                              work_state: NEED_PRE | NEED_ACT | NEED_CAS | DONE
 ```
 

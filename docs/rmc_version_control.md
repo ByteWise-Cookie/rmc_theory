@@ -341,7 +341,7 @@ entry_idx    $clog2(N_RD_ENTRIES)
 ```
 
 **No valid/ts in TCAM entries.**
-Valid gating: TCAM match[i] AND status_reg[i].valid
+[v1.9.9] Occupancy gating: TCAM/RAW match[i] AND wr_occupied[i] (write-buffer head/tail range, no valid bit); RD pre-filter retired → queue heads
 Multi-hit: argmax(status_reg[age]) via entry_idx lookup
 
 **Power benefit:** invalid rows dark → dynamic power reduction at low occupancy.

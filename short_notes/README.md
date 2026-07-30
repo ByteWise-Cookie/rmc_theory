@@ -148,7 +148,7 @@ PRE / S2 ACT / S3 CAS) for the timing story, but the hardware is: **registered s
 
 ```
  gc, scoreboard.next_*/row_open ─► gate_gen ─► can_cas/act/pre[N_BANKS]
- tcam.match, status.valid/age, row_open ─► classify ─► work_state, s1_hit_meta
+ tcam.match, wr_occupied/age (no valid bit), row_open ─► classify ─► work_state, s1_hit_meta
  classify + can_* ─► cand_gen ─► candidate[b]{cmd,idx,bank,bg,row,col,R/W}
  candidate[], can_*[], age[lane], servo(popcount can_cas, dqFree−gc, tFAW) ─► arbiter ─► winner
  winner, s0_override ─► s4_mux ─► final_cmd

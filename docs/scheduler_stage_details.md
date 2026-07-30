@@ -65,7 +65,7 @@ flowchart LR
         M1b["wr_tcam_hit_meta (per bank)"]
         M1c["rd_tcam_hit_bitmap [N_RD_ENTRIES]"]
         M1d["rd_tcam_hit_meta (per bank)"]
-        M1e["wr_status_valid / rd_status_valid"]
+        M1e["wr_occupied (head/tail · no valid bit)<br/>rd pre-filter retired [v1.9.9]"]
     end
     subgraph LOG1["Stage 1 logic"]
         direction TB
