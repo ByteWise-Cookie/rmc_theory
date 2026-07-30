@@ -994,7 +994,8 @@ queues are FIFOs, not state machines — the head's command-progress lives in th
 |---|---|---|
 | OQ-19b | Ch interleave granularity | Needs Python script + traffic trace; CSR configurable |
 | OQ-20 | **Scheduler weights/sizing sweep [v1.9.9]** | **DONE** — `tools/sched_model/sweep.js` + `SWEEP_RESULTS.md`. Weights second-order; guardrail + sizing dominate. Design point: control 2/1/0, K=5000, guardrail ON, servo retained default-OFF, AGE_MAX=256, bankDepth=8, tcam=32 (in-flight ≤128), unified per-bank+tag. Recorded as intent; pkg frozen until RTL go. |
-| OQ-21 | **Golden-model debt [v1.9.9]** | **DONE** — weighted arbiter + aging counter in `sched_test.js` (`opts.arbiter="weighted"`); self-tests 26/26. |
+| OQ-21 | **Golden-model debt [v1.9.9]** | **DONE** — weighted arbiter + aging counter in `sched_test.js` (`opts.arbiter="weighted"`); self-tests 33/33. |
+| OQ-22 | **Timing-wheel alternative [v1.9.9]** | **CLOSED — rejected.** Ring/spin-around queue prototyped in `sched_test.js` (`opts.wheel`, event-driven gc advance). Matches per-bank FIFO on 1 saturated bank (busy 24=24, ACTs 343, ~70% fewer iters) but loses 4–6 pt DQ-busy on multi-bank (skips freshly-evicted row-hits under dynamic admission). `timing_reg_file` already O(1) per cycle → FIFO + row-hit promotion kept. See `scheduler_queue_arch.md` §5.3. |
 
 **[v1.9.9]** Retired by the RAW-pause rework: the old RAW hold-forward collision-limit
 question (only one response source remains).

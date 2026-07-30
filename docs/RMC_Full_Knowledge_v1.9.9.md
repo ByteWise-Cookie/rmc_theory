@@ -59,6 +59,10 @@ this document carries the consolidated narrative.
    R/W queue organization (unified+tag vs split), plus `K`, control weights, `AGE_MAX`,
    and servo `POOL_LOW/HIGH/LOOKAHEAD` are resolved in one joint pass against the golden
    model before RTL. (§10)
+9. **Timing wheel — prototyped, rejected.** The spin-around/ring alternative to the per-bank
+   FIFO was built in the model (`opts.wheel`) and lost 4–6 pt DQ-busy on multi-bank traffic
+   (matches only on a single saturated bank); the per-cycle scan already O(1), so FIFO +
+   row-hit promotion stays. (§5, `scheduler_queue_arch.md` §5.3)
 
 ---
 
@@ -436,6 +440,17 @@ A few sizing decisions are worth remembering the *reasoning* for, not just the v
 - **TCAM admission depth (v1.9.9) is now the burst+classify window, not the latency
   window.** Because entries evict to the per-bank queues after classify, the searched set
   is small and short-lived; the golden model still drains correctly at `tcam=8`.
+- **Timing wheel — prototyped and rejected (v1.9.9).** The "spin-around buffer" idea
+  (a ring where slot = the cycle a command becomes legal; head is always legal-now, no
+  per-tCK scan) was built in the golden model (`opts.wheel`, event-driven `gc` advance) and
+  raced vs the per-bank FIFO. On a single saturated bank it **matches** the FIFO exactly
+  (busy 24%=24%, ACTs 343=343) with ~70% fewer scheduler iterations; but under **dynamic
+  admission** on multi-bank traffic it **loses 4–6 pt DQ-busy** (interleave 46→40, rowlocal
+  29→23) — jumping past a cycle skips a freshly-evicted **row-hit that became legal there**,
+  which the per-tCK scan catches. `timing_reg_file` already gives O(1) per-cycle legality, so
+  there is no scan bottleneck to remove — the FIFO + row-hit promotion + per-cycle scan wins.
+  Same shape as OQ-20: structure/scan tricks don't move the CA/tFAW/BG ceiling. Details in
+  `docs/scheduler_queue_arch.md` §5.3 and `docs/diagrams/scheduler_queue_ideas.md`.
 
 ---
 
