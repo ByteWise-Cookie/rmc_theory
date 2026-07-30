@@ -9,8 +9,9 @@ there and runs the 5-stage scheduler all the way to **command (CM) emission on D
 Signal names on the wires are the frozen external ports from `RMC_IO_Map.md §19` (Stage 0–4),
 annotated with the `[v1.9.9]` internal-rework nets (per-bank queues, weight arbiter,
 row-hit promotion, never-idle-DQ guardrail). Renders inline on GitHub. Golden reference:
-[`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js). Stitched
-overview: [`scheduler_full_diagram.md`](scheduler_full_diagram.md).
+[`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js). Per-stage zoom
+views (S0–S4, net level): [`scheduler_stage_details.md`](scheduler_stage_details.md).
+Stitched overview: [`scheduler_full_diagram.md`](scheduler_full_diagram.md).
 
 ```mermaid
 flowchart TB
