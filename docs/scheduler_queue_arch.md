@@ -234,6 +234,33 @@ focused `hit,miss,hit` 3→2 ACTs and span 294→36 (kills the AGE_MAX stall); a
 same-bank interleave **11% → 24% DQ-busy**, ACTs 601→343; neutral on already-row-clustered
 traffic. Self-tests cover all three.
 
+## 5.3 Timing wheel — prototyped, rejected
+
+The other alternative considered (the "spin-around buffer"): replace the per-bank FIFO +
+per-cycle legality scan with a **timing wheel** — a ring where slot position = the cycle a
+command becomes legal (`gc + delay`); the wheel rotates one slot/cycle, so the head is always
+legal-now and you never scan. Reframes the "8-deep, 0-1 PRE / 2-3 ACT / 4-5 CAS, roles
+rotate" idea (see [[scheduler_queue_ideas]] for the drawing). Prototyped in the golden model
+(`opts.wheel`, event-driven: jump `gc` to the soonest ready-time among the bank heads) and
+raced vs the FIFO. **Rejected — it trades throughput for scan cost:**
+
+| trace | busy FIFO → wheel | ACTs | scheduler iters |
+|---|---|---|---|
+| adversarial (1 saturated bank) | 24% → **24%** (Δ0) | 343 = 343 | **73% fewer** |
+| interleave (16 banks) | 46% → **40%** (Δ−6) | 4000 = 4000 | 47% fewer |
+| rowlocal (16 banks) | 29% → **23%** (Δ−6) | 4000 = 4000 | 60% fewer |
+
+On a single saturated bank the wheel matches the FIFO exactly with ~70% fewer iterations. But
+under **dynamic admission** on multi-bank traffic it **loses 4–6 pt DQ-busy**: jumping past a
+cycle skips a **freshly-evicted row-hit that became legal there**, which the per-tCK scan
+catches. Since `timing_reg_file` already gives **O(1) per-cycle legality** — there is no scan
+bottleneck to remove — the wheel's only benefit is moot while its throughput cost is real.
+Same shape as the OQ-20 weights sweep: structure/scan tricks don't move the CA / tFAW /
+BG-rotation ceiling; *which cycle you issue* does. **Keep the per-bank FIFO + per-cycle scan +
+row-hit promotion.** (Aside: `lock:false` deadlocks a saturated bank — row-hits stuck in the
+TCAM keep `demand > 0`, so the demand-gated PRE never fires — confirming the age-capped lock
+is load-bearing, §5.)
+
 ## 6. Queue depth — round-trip / gear ratio
 
 Sizing (numbers to lock in the deferred sweep):
@@ -294,7 +321,9 @@ Sizing (numbers to lock in the deferred sweep):
 
 Selection logic (`legal()`/`emit()`/arbiter) is **unchanged** — it reoperates on queue
 heads. Verified: 0 violations / 0 unscheduled both bins; DQ-busy within ±2pt of the
-window model; drains at `tcam=8, bankDepth=2`; RAW keeps RD after its WR.
+window model; drains at `tcam=8, bankDepth=2`; RAW keeps RD after its WR. A **timing-wheel**
+variant (`opts.wheel`) is also in the model for the A/B in §5.3 — event-driven `gc` advance,
+kept as a rejected-alternative datapoint (matches FIFO on 1 bank, loses 4–6 pt on multi-bank).
 
 Note: the model's per-bank queue is **unified R/W** (batch-mode selects head R or W). The
 split-R/W-queue variant is left as a documented option; `rawPause` is the guard reserved
