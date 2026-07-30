@@ -7,6 +7,7 @@ residency split, per-bank queues, weight arbiter, row-hit promotion, never-idle-
 
 | File | Scope | Detail level |
 |---|---|---|
+| [`full_arch_diagram.md`](full_arch_diagram.md) | **Whole chip** — AXI/CIF → CDC → MCC front-end → scheduler → DFI/PHY, one stitched picture | system overview |
 | [`mcc_v3.1_diagram.md`](mcc_v3.1_diagram.md) | **MCC front-end** — request buffers + RAW engine (mermaid recreation of the `mcc_v3.1.vsdx` Visio drawing) | full block + signal + ports |
 | [`scheduler_cmd_pipeline_detailed.md`](scheduler_cmd_pipeline_detailed.md) | **Scheduler**, mcc_v3.1-style — every sub-block, signal, port + glossary + signal dictionary | maximum |
 | [`scheduler_cmd_pipeline_diagram.md`](scheduler_cmd_pipeline_diagram.md) | Scheduler — MCC handoff → DFI emission, 5-stage | high |
