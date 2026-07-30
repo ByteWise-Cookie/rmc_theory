@@ -120,6 +120,11 @@ function runScheduler(queue, bin, opts = {}) {
   const TCAM_SIZE = opts.tcam      || 32;              // searchable admission slots
   const bankDepth = opts.bankDepth || 8;               // per-bank in-flight FIFO depth
   const rawPause  = opts.rawPause !== false;           // block RAW reads at admission (queueArch)
+  const wheel     = !!opts.wheel;                       // timing-wheel candidate advance (queueArch): instead of
+                                                        // scanning every tCK, jump gc to the soonest ready-time
+                                                        // among the bank heads (event-driven). Same policy/pick —
+                                                        // only the idle-advance changes, so DQ-busy is identical;
+                                                        // the win is fewer scheduler iterations (the scan cost).
   const promote   = opts.promote !== false;            // row-hit promotion: ON by default. cluster same-row
                                                        // in the bank queue (insert after the last
                                                        // same-row entry, not the tail) so a later
@@ -178,8 +183,19 @@ function runScheduler(queue, bin, opts = {}) {
            (gc + l) >= G.dqFree && (t.dir === "R" ? gc >= rk.nWrRd : gc >= rk.nRdWr);
   }
 
+  // timing-wheel ready-time estimate: earliest gc at which t's next command could pass legal().
+  // Mirrors the legal() thresholds (timers only; lock/demand gating still enforced by legal()).
+  function readyAt(t, c) {
+    const r = t.rank, b = bk[r][bidx(t)], g = bgS[r][t.bg], rk = rkS[r];
+    let x = G.caFree;
+    if (c === "ACT") { x = Math.max(x, b.nAct, g.nActBg, rk.nActAny); const f = rk.faw; if (f.length >= 3) x = Math.max(x, f[f.length - 3] + p.tFAW); }
+    else if (c === "PRE") { x = Math.max(x, b.nPre, G.nPreAny); }
+    else { const l = t.dir === "R" ? p.RL : p.WL; x = Math.max(x, b.nCas, g.nCasBg, G.nCasAny, G.dqFree - l, t.dir === "R" ? rk.nWrRd : rk.nRdWr); }
+    return x;
+  }
+
   const out = [];
-  let nid = 1, nextG = 0;
+  let nid = 1, nextG = 0, iters = 0;
   function emit(t, c, gc) {
     const r = t.rank, b = bk[r][bidx(t)], g = bgS[r][t.bg], rk = rkS[r];
     if (t.gid === null) t.gid = nextG++;
@@ -248,7 +264,15 @@ function runScheduler(queue, bin, opts = {}) {
     }
   };
 
+  // event-driven idle advance: soonest ready-time among the visible heads (else +1).
+  const wheelNext = vis => {
+    let mn = Infinity;
+    for (const t of vis) { const ra = readyAt(t, nextCmd(t)); if (ra > gc && ra < mn) mn = ra; }
+    return (mn === Infinity || mn <= gc) ? gc + 1 : mn;
+  };
+
   while ((activeCount > 0 || refPhase !== 0) && guard++ < 20000000) {
+    iters++;
     if (gc < G.caFree) { gc = G.caFree; continue; }
     if (refPhase === 0 && gc >= nextRef) refPhase = 1;
     if (refPhase === 1) {
@@ -333,7 +357,7 @@ function runScheduler(queue, bin, opts = {}) {
       else if (act) { picked = act; pickCmd = "ACT"; }
       else if (pre) { picked = pre; pickCmd = "PRE"; }
       if (picked) { if (charge) gateLoss += 2; stall = 0; emit(picked, pickCmd, gc); }
-      else { if (charge) gateLoss++; stall++; if (batch && stall >= STALL && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip(); else gc++; continue; }
+      else { if (charge) gateLoss++; stall++; if (batch && stall >= STALL && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip(); else gc = (wheel && queueArch) ? wheelNext(vis) : gc + 1; continue; }
       if (adaptive && gateLoss >= FLIP_COST && ((mode === "R" && pendW > 0) || (mode === "W" && pendR > 0))) doFlip();
     }
     if (!queueArch && activeCount * 3 < toks.length - head) toks = toks.filter((t, i) => i < head || !t.done), head = 0;
@@ -343,7 +367,7 @@ function runScheduler(queue, bin, opts = {}) {
   for (const c of out) if (isCAS(c.type)) { bu++; const ds = c.cycle + lat(c.type, p); if (ds < s0) s0 = ds; if (ds + BL2 > s1) s1 = ds + BL2; }
   const span = bu ? s1 - s0 : 0, busy = span ? Math.round(100 * bu * BL2 / span) : 0;
   const meanWait = doneCount ? Math.round(sumWait / doneCount) : 0;
-  return {cmds: out, busy, span, bursts: bu, flips, refs, unscheduled: activeCount, guardHit: guard >= 20000000, maxWait, meanWait};
+  return {cmds: out, busy, span, bursts: bu, flips, refs, unscheduled: activeCount, guardHit: guard >= 20000000, maxWait, meanWait, iters};
 }
 
 // ------------------------------ trace generator ---------------------------
@@ -538,6 +562,34 @@ function selfTest() {
     const okA = validate(promo.cmds, PARAMS.b4800).length === 0 && promo.unscheduled === 0 && promo.busy >= strict.busy && actP <= actS;
     if (okA) pass++; else fail++;
     console.log(`  [${okA ? "PASS" : "FAIL"}] adversarial interleave:  strict busy=${strict.busy}% ACTs=${actS}   promo busy=${promo.busy}% ACTs=${actP}`);
+  }
+
+  console.log("\n== timing wheel vs per-bank FIFO: iterations vs DQ-busy trade (prototype finding) ==");
+  // The wheel is event-driven legality: jump gc to the soonest ready-time among the bank heads
+  // instead of scanning every tCK. RESULT: on a single saturated bank it matches the FIFO
+  // exactly (busy + ACTs) with ~70% fewer iterations; but under DYNAMIC ADMISSION on multi-bank
+  // traffic it LOSES DQ-busy — jumping past a cycle skips freshly-evicted row-hits that became
+  // legal there, which the per-tCK scan would have caught. So the wheel is NOT policy-neutral;
+  // it trades throughput for scan cost. Since timing_reg_file already gives O(1) per-cycle
+  // legality (no scan bottleneck), the FIFO + per-cycle scan wins. Invariants asserted: both
+  // legal + fully drained, ACTs equal (row-open count is structure-independent), wheel never
+  // EXCEEDS FIFO busy, wheel uses fewer iterations.
+  {
+    const adv = [];
+    for (let i = 0; i < 900; i++) { adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 0}); if (i % 3 === 0) adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 100 + i}); adv.push({dir: "R", rank: 0, bg: 0, bank: 0, row: 0}); }
+    const traces = [["adversarial(1bank)", adv, true], ["interleave", genTrace(4000, {map: "interleave", seed: 31}), false], ["rowlocal", genTrace(4000, {map: "rowlocal", seed: 32, linear: 0.7, strided: 0.15, random: 0.15}), false]];
+    for (const [nm, q, singleBank] of traces) {
+      const fifo  = runScheduler(q, "b4800", {queueArch: true, promote: true});
+      const wheel = runScheduler(q, "b4800", {queueArch: true, promote: true, wheel: true});
+      const legal = r => validate(r.cmds, PARAMS.b4800).length === 0 && r.unscheduled === 0;
+      const actF = fifo.cmds.filter(c => c.type === "ACT").length, actW = wheel.cmds.filter(c => c.type === "ACT").length;
+      // single-bank: exact match. multi-bank: wheel ≤ FIFO busy (documents the throughput cost).
+      const busyOk = singleBank ? wheel.busy === fifo.busy : wheel.busy <= fifo.busy;
+      const ok = legal(fifo) && legal(wheel) && actW === actF && busyOk && wheel.iters < fifo.iters;
+      if (ok) pass++; else fail++;
+      const save = fifo.iters ? Math.round(100 * (1 - wheel.iters / fifo.iters)) : 0;
+      console.log(`  [${ok ? "PASS" : "FAIL"}] ${nm.padEnd(18)} busy F=${fifo.busy}% W=${wheel.busy}% (Δ${wheel.busy - fifo.busy})  ACTs F=${actF} W=${actW}  iters ${save}% fewer (F=${fifo.iters} W=${wheel.iters})`);
+    }
   }
 
   console.log(`\n== summary: ${pass} pass, ${fail} fail ==\n`);

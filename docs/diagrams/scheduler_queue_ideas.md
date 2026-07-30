@@ -123,5 +123,29 @@ because the wheel spins, not because you re-assign roles.
   FIFO+`next_*`-compare — but the `timing_reg_file` already gives O(1) legality, so the wheel
   wins only if the scan/scheduling cost is the bottleneck.
 
-Next step if you like it: prototype the timing wheel in `sched_test.js` beside the FIFO and
-compare DQ-busy % + ACT count on the adversarial trace (same harness that proved promotion).
+---
+
+## Prototype result (timing wheel is in the model — `opts.wheel`)
+
+Built the wheel beside the FIFO in `sched_test.js` (event-driven: jump `gc` to the soonest
+ready-time among the bank heads instead of scanning every tCK) and raced them, same harness
+that proved promotion. Both stay legal and fully drained; ACT count is identical (row-open
+count is structure-independent). DDR5-4800B:
+
+| trace | busy FIFO | busy wheel | ACTs | scheduler iters |
+|---|---|---|---|---|
+| adversarial (1 bank, hit/miss/hit) | 24% | **24%** (Δ0) | 343 = 343 | **73% fewer** (70016 → 19063) |
+| interleave (16 banks) | 46% | **40%** (Δ−6) | 4000 = 4000 | 47% fewer |
+| rowlocal (16 banks) | 29% | **23%** (Δ−6) | 4000 = 4000 | 60% fewer |
+
+**Verdict — the wheel is not free.** On a single saturated bank it matches the FIFO exactly
+with ~70% fewer iterations. But under **dynamic admission** on multi-bank traffic it **loses
+4–6 pt DQ-busy**: jumping past a cycle skips freshly-evicted **row-hits that became legal
+there**, which the per-tCK scan catches. The wheel trades throughput for scan cost — and since
+`timing_reg_file` already gives **O(1) per-cycle legality** (there is no scan bottleneck to
+remove), the **per-bank FIFO + per-cycle scan wins**. Same shape as the weights sweep:
+structure/scan tricks don't move the CA/tFAW/BG-rotation ceiling; correctness of *which cycle
+you issue* does. Keep the FIFO + row-hit promotion.
+
+*(To reproduce: `opts.wheel:true` on the queueArch model; see the "timing wheel vs per-bank
+FIFO" block in `sched_test.js` selfTest.)*
