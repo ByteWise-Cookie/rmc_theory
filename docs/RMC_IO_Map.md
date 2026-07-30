@@ -286,7 +286,7 @@ data_buf_idx [$clog2(WR_BUF_DEPTH)]                    optional, → Write Data 
 → wr_alloc_idx   [$clog2(N_WR_ENTRIES)]
 
 → raw_search_key [BG_BITS+BANK_BITS+ROW_BITS+COL_BITS]
-← raw_hit_vector [N_WR_ENTRIES-1:0]   masked by wr_status_valid
+← raw_hit_vector [N_WR_ENTRIES-1:0]   masked by wr_occupied (head/tail range, no valid bit) [v1.9.9]
 ← raw_hit_entry  [entry width]        newest age winner
 
 → sched_search_key [BG_BITS+BANK_BITS]   ternary
@@ -297,7 +297,8 @@ data_buf_idx [$clog2(WR_BUF_DEPTH)]                    optional, → Write Data 
 → retire_en
 ```
 
-**valid gating: raw_hit_vector[i] AND wr_status_reg[i].valid**
+**[v1.9.9] occupancy gating: raw_hit_vector[i] AND wr_occupied[i]** — `wr_occupied` is
+decoded from the write buffer's head/tail pointer range; **no per-entry valid bit** (mentor).
 
 ---
 
@@ -328,7 +329,9 @@ entry_idx    [$clog2(N_RD_ENTRIES)]   → indexes rd_status_reg
 → retire_en
 ```
 
-**valid gating: sched_hit_bitmap[i] AND rd_status_reg[i].valid**
+**[v1.9.9] retired.** The RD_TCAM `{BG,bank}` bank pre-filter (and its `rd_status_valid`
+gate) is superseded — that role moved to the per-bank queue heads (`can_pre/act/cas[16]`).
+No valid gate here.
 
 ---
 
@@ -393,7 +396,7 @@ scheduler: READ ONLY
 ## 9. Write Watermark Buffer Manager
 
 ```
-→ wr_status_valid  [N_WR_ENTRIES-1:0]   from WR status reg
+→ wr_occupied      [N_WR_ENTRIES-1:0]   [v1.9.9] write-buffer head/tail range (no valid bit)
 → wr_status_age    [N_WR_ENTRIES-1:0][GC_WIDTH-1:0]
 → global_cycle     [GC_WIDTH]
 → new_wr_req_valid
@@ -416,8 +419,7 @@ scheduler: READ ONLY
 ## 10. Read Watermark Buffer Manager
 
 ```
-→ rd_status_valid  [N_RD_ENTRIES-1:0]
-→ rd_status_age    [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]
+→ rd_status_age    [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]   [v1.9.9] rd_status_valid retired (pre-filter → queue heads)
 → global_cycle     [GC_WIDTH]
 → new_rd_req_valid
 → sched_ack_rd     1b
@@ -787,10 +789,10 @@ write: CSR only (slow path, init time)
 → wr_tcam_hit_meta    per bank
 → rd_tcam_hit_bitmap  [N_RD_ENTRIES-1:0]
 → rd_tcam_hit_meta    per bank
-→ wr_status_valid     [N_WR_ENTRIES-1:0]
-→ rd_status_valid     [N_RD_ENTRIES-1:0]
+→ wr_occupied         [N_WR_ENTRIES-1:0]   [v1.9.9] write-buffer head/tail range (no valid bit; RAW mask)
+                                            [v1.9.9] rd_status_valid retired — RD pre-filter → queue heads
 
-← s1_hit_bitmap    [N_BANKS-1:0]    gated by valid
+← s1_hit_bitmap    [N_BANKS-1:0]    gated by wr_occupied (RAW); candidate set = queue heads [v1.9.9]
 ← s1_hit_meta[]    per bank: {row, col, req_type, entry_idx, axi_id}
 ```
 
@@ -1172,7 +1174,7 @@ combinational, one cycle at dram_valid
 → new_rd_age       GC_WIDTH
 
 → wr_tcam_hit_vector  N_WR_ENTRIES
-→ wr_status_valid     N_WR_ENTRIES
+→ wr_occupied         N_WR_ENTRIES   [v1.9.9] head/tail range (no valid bit)
 → wr_status_age       N_WR_ENTRIES × GC_WIDTH
 → wdb_data            DATA_WIDTH
 → wdb_mask            STRB_WIDTH

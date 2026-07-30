@@ -159,6 +159,18 @@ The old reg_arr `status` conflated two roles. After the split:
 Answer to "status useless": it was doing two jobs in one register; the split gives each a
 home. Nothing lost.
 
+**No valid bit — extends to the TCAM / RAW match gate.** The v1.8 design AND-ed every CAM
+match with a per-entry `status.valid` (occupancy + power-gate). Under no-valid-bit that gate
+becomes pointer-range, not a flag:
+- **`rd_status_valid` retired.** It gated the RD_TCAM `{BG,bank}` bank pre-filter — a role
+  that **moved entirely to the per-bank queue heads**. No consumer, no signal.
+- **`wr_status_valid` → write-buffer occupied range.** The RAW search (a read matches
+  *pending writes* by address) still needs "which writes are live", but that is the write
+  buffer's **head/tail pointer range**, not a per-entry valid: `raw_hit_vector[i]` is masked
+  by `wr_occupied[i]` (decoded from head..tail).
+- **Power gating survives** as a pointer decode — rows outside head..tail are empty and can
+  be clock/power-gated without a valid bit.
+
 ---
 
 ## 5. Thread model — carry on its own

@@ -112,7 +112,7 @@ All bit-widths expressed as compile-time parameters:
 | Starvation | Staggered: age >= THR + entry_idx | At most one starved miss fires per cycle |
 | WR buffer larger | N_WR = 2–3× N_RD | Better RD latency, same bandwidth |
 | RAW hit valid | wr_age <= rd_age (write same cycle or earlier) | Prevents stale data forwarding |
-| TCAM valid gating | status_reg[i].valid gates TCAM match[i] | Power saving, single source of truth |
+| TCAM occupancy gating [v1.9.9] | wr_occupied[i] (head/tail range) gates RAW match[i] — **no valid bit**; RD pre-filter gate retired (→ queue heads) | Power-gate by pointer decode |
 | RD/WR partition | Banks split into RD half / WR half, rotate WINDOW_SIZE | Eliminates tRTW/tWTR within window |
 | Speculative ACT | NOP-cycle only, TCAM-confirmed, bank+1 same row | Zero mispredict path |
 | Opportunity REFsb | NOP-cycle, idle bank, most overdue | Zero traffic disruption |
@@ -153,8 +153,8 @@ All bit-widths expressed as compile-time parameters:
 
 ### MC Core (MC clock, all intra-MC = valid-credit)
 9. **Write Data Buffer** — SRAM, index-addressed (not FIFO), WR_BUF_DEPTH entries
-10. **WR_TCAM** — full address search {BG,bank,row,col}; N_WR_ENTRIES; no valid/ts in entry; gated by WR_status.valid
-11. **RD_TCAM** — ternary search {BG,bank}; N_RD_ENTRIES; row/col carried not matched; gated by RD_status.valid
+10. **WR_TCAM** — full address search {BG,bank,row,col}; N_WR_ENTRIES; RAW match masked by **wr_occupied** (write-buffer head/tail range, **no valid bit** [v1.9.9])
+11. **RD_TCAM** — ternary search {BG,bank}; N_RD_ENTRIES; row/col carried not matched; **[v1.9.9] pre-filter gate retired — role moved to per-bank queue heads**
 12. **WR Status Reg** — fields: valid, status, age; owner: WR Watermark Mgr; scheduler READ ONLY
 13. **RD Status Reg** — fields: valid, status, age, merge_pending, wdb_entry_idx; owner: RD Watermark Mgr; scheduler READ ONLY
 14. **WR Watermark Buffer Manager** — owns WR_TCAM + WR_status_reg; manages alloc/retire/watermarks
@@ -205,7 +205,7 @@ entry fields:
   entry_idx    [$clog2(N_WR_ENTRIES)]   → WR status reg
   data_buf_idx [$clog2(WR_BUF_DEPTH)]  optional → Write Data Buffer
 
-valid gating:  match[i] AND wr_status_reg[i].valid
+occupancy gating [v1.9.9]:  match[i] AND wr_occupied[i]   (head/tail range, no valid bit)
 multi-hit:     winner = argmax(age[i]) via status reg lookup
 cell count:    N_WR_ENTRIES × 32b × 12T = 24,576T baseline
 ```
@@ -223,7 +223,7 @@ entry fields:
   axi_id       [AXI_ID_WIDTH]
   entry_idx    [$clog2(N_RD_ENTRIES)]   → RD status reg
 
-valid gating:  match[i] AND rd_status_reg[i].valid
+[v1.9.9] pre-filter gate retired — candidate set is the per-bank queue heads, not a valid-gated bitmap
 multi-hit:     winner = argmax(age[i]) via status reg lookup
 cell count:    N_RD_ENTRIES × 5b × 12T = 1,920T baseline
 ```
@@ -239,24 +239,27 @@ total TCAM+CAM:   38,784T ≈ 6,464 SRAM bits equivalent
 
 ## 7. Status Register Fields
 
-### WR Status Reg
+*Note [v1.9.9]: the v1.8 status regs are shown for provenance; under the queue rework the
+`valid` bit is gone (occupancy = queue head/tail pointers), `status` (command-progress)
+moved into the queue entry, and `merge_pending`/`wdb_entry_idx` are retired with the RAW
+bypass. Only `age` survives here (multi-hit tie-break / starvation / SJF).*
+
+### WR Status Reg (v1.8 baseline)
 ```
-valid          1b
-status         STATUS_WIDTH    00=PENDING 01=ISSUED 10=DONE 11=ERROR
+status         STATUS_WIDTH    00=PENDING 01=ISSUED 10=DONE 11=ERROR   (moved → queue entry)
 age            GC_WIDTH        allocation timestamp (gc at alloc)
+                               [v1.9.9] no valid bit — occupancy = write-buffer head/tail
 ```
 
-### RD Status Reg
+### RD Status Reg (v1.8 baseline)
 ```
-valid          1b
-status         STATUS_WIDTH    00=PENDING 01=ISSUED 10=DONE 11=ERROR
+status         STATUS_WIDTH    (moved → queue entry `state`)
 age            GC_WIDTH        allocation timestamp
-merge_pending  1b              RAW partial overlap: DRAM fetch pending
-wdb_entry_idx  $clog2(WR_BUF_DEPTH)   valid when merge_pending=1
+                               [v1.9.9] no valid bit; merge_pending/wdb_entry_idx retired (RAW pause)
 ```
 
 **Key properties:**
-- `valid` = single source of truth for occupancy; gates TCAM match output
+- occupancy [v1.9.9] = FIFO **head/tail pointers** (no valid bit); RAW mask = `wr_occupied`
 - `age` = used for multi-hit newest-wins, starvation check, SJF cost
 - Owner: respective watermark manager (R/W). Scheduler: READ ONLY.
 
@@ -286,7 +289,7 @@ REFsb: gate_rfcpb[rank][bank]=1, one bank blocked tRFCsb
 ```
 search RD_TCAM + WR_TCAM simultaneously (multi-port)
 outputs per bank: hit, row, col, req_type, entry_idx, axi_id
-valid gating: hit[i] AND status_reg[i].valid
+[v1.9.9] no valid gate — RAW match masked by wr_occupied (head/tail); RD pre-filter → queue heads
 multi-hit same bank: winner = argmax(age[i])
 
 [v1.9.9] this stage now also ADMITS + CLASSIFIES + EVICTS:
@@ -816,7 +819,7 @@ bank_act_count dual use:
 13. SJF: lowest remaining_cost wins in MISS_SET
 14. Stage 2 reads only registered can_* flags — no subtractor in critical path
 15. WR_TCAM RAW hit valid only if wr_age <= rd_age
-16. TCAM match suppressed when status_reg[i].valid==0 (power gating)
+16. [v1.9.9] TCAM/RAW match suppressed outside the write-buffer head/tail range (wr_occupied); power-gate by pointer decode — no valid bit
 17. Speculative ACT fires ONLY on true NOP cycles (winner_valid==0)
 18. Speculative ACT requires RD_TCAM confirmation (not blind)
 19. Speculative ACT requires bank_act_count[next_bank] > 0

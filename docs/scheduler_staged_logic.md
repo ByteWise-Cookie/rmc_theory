@@ -78,7 +78,7 @@ TCAM = short admission, per-bank in-flight queues, RAW = pause). This doc is the
 
 | resource | block | holds |
 |---|---|---|
-| outstanding tables | `wr/rd_tcam`, `wr/rd_status_reg` | addr {rank,bg,bank,row}, valid, age, work_state |
+| outstanding tables | `wr/rd_tcam`, `wr/rd_status_reg` | addr {rank,bg,bank,row}, age, work_state — **[v1.9.9] no valid bit** (occupancy = head/tail) |
 | allocator | `wr/rd_watermark_mgr` | free-slot alloc / retire, full flags |
 | timing values | `timing_reg_file` | nCK per param (tRCD/tRP/…); combinational multi-port read |
 | scoreboard | new thin regs (replaces `per_bank_fsm_table`) | per-bank next_act/next_pre/next_cas + row_open; per-BG/rank next_*; tFAW ring |
@@ -259,8 +259,8 @@ apply the sibling-tag PRE-defer; nominate ONE PRE. (Not fetch-one; see §0 frame
 → wr_tcam_hit_bitmap  [N_WR_ENTRIES]    row-hit per write entry
 → rd_tcam_hit_bitmap  [N_RD_ENTRIES]    row-hit per read entry
 → wr/rd_tcam_hit_meta  per bank          {row, col, req_type, entry_idx, axi_id}
-→ wr_status_valid     [N_WR_ENTRIES]
-→ rd_status_valid     [N_RD_ENTRIES]
+→ wr_occupied         [N_WR_ENTRIES]    [v1.9.9] write-buffer head/tail range (no valid bit; RAW mask)
+                                        [v1.9.9] rd_status_valid retired — pre-filter → queue heads
 → new_rd_bank/row/col/axi_id/age         newest-arrival fast path (axi_id masked)
 → batch_policy_reg                       current mode R/W + QoS (from adaptive batch)
 → demand_count[bank]                     outstanding reqs on the open row (sibling/PRE gate)
@@ -281,10 +281,10 @@ apply the sibling-tag PRE-defer; nominate ONE PRE. (Not fetch-one; see §0 frame
    case classify latency +1 tCK, negligible vs the 124 tCK row-miss the depth hides.
    *(Alternative — one 64-wide TCAM, all-parallel, 1 cycle — rejected: 2× CAM area and a
    longer match wordline hurt timing closure. 32-wide ping-pong is the bounded-cost pick.)*
-1. **Classifier** — per valid entry, the TCAM hit-vector tags:
-   `open && row==req → NEED_CAS (hit)`, `closed → NEED_ACT (empty)`,
+1. **Classifier** — per occupied entry (head/tail range, **no valid bit** [v1.9.9]), the
+   TCAM hit-vector tags: `open && row==req → NEED_CAS (hit)`, `closed → NEED_ACT (empty)`,
    `open && row!=req → NEED_PRE (miss)`. Writes `work_state`. Emits `s1_hit_bitmap`
-   (valid-gated) and `s1_hit_meta[]` per bank.
+   (RAW masked by `wr_occupied`) and `s1_hit_meta[]` per bank.
 2. **Per-bank row-lock** *(replaces the old sibling-tag defer — it subsumes it)* — each
    bank locks to its open row and will not be precharged until the lock releases. This
    is what protects a **"ready-but-busy"** row-hit: a hit that is classified `NEED_CAS`
@@ -322,7 +322,7 @@ apply the sibling-tag PRE-defer; nominate ONE PRE. (Not fetch-one; see §0 frame
 ### Output ports
 
 ```
-← s1_hit_bitmap  [N_BANKS]     classified, valid-gated
+← s1_hit_bitmap  [N_BANKS]     classified; RAW masked by wr_occupied [v1.9.9] (no valid bit)
 ← s1_hit_meta[]   per bank      {row, col, req_type, entry_idx, axi_id}
 ← s1_pre_nom      {entry_idx, bank, bg}     nominated PRE (to S4)
 ```

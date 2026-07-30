@@ -15,7 +15,7 @@ flowchart TB
 
     subgraph SCH["Scheduler (read-only vs state, writes only at 15)"]
         direction TB
-        ADM["9 · classify / admission<br/>short TCAM: {bg,bank} search,<br/>row vs open_row, RAW compare,<br/>evict to bank queue"]
+        ADM["9 · classify / admission<br/>short TCAM: {bg,bank} search,<br/>row vs open_row, RAW compare<br/>(mask = wr_occupied, no valid bit),<br/>evict to bank queue"]
         Q["9b · per-bank queues ×16<br/>FIFO (head/tail ptr, no valid bit)<br/>head-only active"]
         GATE["10 · gate_gen<br/>can_cas / can_act / can_pre"]
         CAND["11 · cand_gen<br/>one candidate per bank"]
@@ -52,7 +52,7 @@ flowchart LR
     A["arrivals<br/>(arrival order)"] --> T
 
     subgraph ADMIT["TCAM admission (short residency)"]
-        T["classify {bg,bank}<br/>row-hit vs miss<br/>RAW full-addr compare"]
+        T["classify {bg,bank}<br/>row-hit vs miss<br/>RAW full-addr compare<br/>(mask = wr_occupied · no valid bit)"]
     end
     T -- "RAW: older write<br/>same addr → hold" --> T
 

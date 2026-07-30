@@ -270,7 +270,7 @@ the servo is enabled. See [`../docs/scheduler_bank_fsm.md`](../docs/scheduler_ba
 
 | model | block (§README 6) | consumes | produces |
 |---|---|---|---|
-| `liveCmd`/`nextCmd`, vis, ping-pong / **admit+evict** (queueArch) | **9 classify / admission** | `tcam.match`, `status.valid/age`, `row_open`, `open_row`, RAW compare | `work_state`, `s1_hit_meta`, vis (window OR bank-queue heads §5.1) |
+| `liveCmd`/`nextCmd`, vis, ping-pong / **admit+evict** (queueArch) | **9 classify / admission** | `tcam.match`, `wr_occupied`/`age` (no valid bit), `row_open`, `open_row`, RAW compare | `work_state`, `s1_hit_meta`, vis (window OR bank-queue heads §5.1) |
 | `bq[rank][bank]`, head-only, backpressure | **9b per-bank queues** | evicted classified entries, `bankDepth`, `done` | `queue_head[b]`, `queue_full[b]` (relocated watermark) |
 | `legal()` terms | **10 gate_gen** | `next_cas/act/pre`, `dqFree`, `next_cas_bg/any`, `faw`, turnaround, `demand`, `lockAge` | `can_cas/act/pre[N_BANKS]` |
 | per-`t` classify + head | **11 cand_gen** | `work_state` + `can_*` + `batch_policy` | `candidate[b]{cmd,idx,bank,bg,row,col,R/W}` |

@@ -24,7 +24,7 @@ sheet those two describe behaviourally.
 | — | *CIF boundary (context)* | `axi_rd/wr_port`, `burst_splitter`, `merge_logic`, `amu`, `rob`, `wdb` | request in / data out | A |
 | 1 | `gc_ctr` | `gc_counter` | free-running `gc` [32] | C |
 | 2 | `rd_tcam` / `wr_tcam` | `rd_tcam` / `wr_tcam` | row-match search (classify) | B |
-| 3 | `rd_stat` / `wr_stat` | `rd_status_reg` / `wr_status_reg` | outstanding table: valid/status/age/**work_state** | B |
+| 3 | `rd_stat` / `wr_stat` | `rd_status_reg` / `wr_status_reg` | outstanding table: age/**work_state** — **[v1.9.9] no valid bit** (occupancy = head/tail; RAW mask = `wr_occupied`) | B |
 | 4 | `rd_wm` / `wr_wm` | `rd_watermark_mgr` / `wr_watermark_mgr` | slot alloc / retire, full flags | B |
 | 5 | `timing_rf` | `timing_reg_file` | nCK per param [16], multi-port comb read | C |
 | 6 | `scoreboard` | *(new thin regs)* → `bank_fsm_t[N_BANKS]` | `next_cas/pre/act`, `row_open`, `state`, **row-lock** (`lock_row/demand_count/oldest_miss_age`), **`age[lane]`**, globals (`dqFree/next_cas_any/next_cas_bg[bg]`, tFAW ring) | C |
@@ -88,8 +88,8 @@ gc            [32]        : gc_ctr           → gate_gen, arbiter(aging), write
 rd_tcam_hit_bitmap [32]   : rd_tcam  → classify
 wr_tcam_hit_bitmap [64]   : wr_tcam  → classify
 rd/wr_tcam_hit_meta       : rd/wr_tcam → classify, cand_gen   {row[17],col[10],req_type,entry_idx,axi_id}
-rd_status_valid    [32]   : rd_stat  → classify
-wr_status_valid    [64]   : wr_stat  → classify
+wr_occupied        [64]   : wr_stat  → classify (RAW mask; head/tail range, no valid bit) [v1.9.9]
+                                       rd_status_valid retired — pre-filter → queue heads
 status.age, work_state    : rd/wr_stat → classify, arbiter(age tie-break)
 new_rd_bank/row/col/id/age : burst_splitter → classify   (newest-arrival fast path)
 batch_policy_reg          : (adaptive batch) → classify, cand_gen   (R/W mode + QoS)

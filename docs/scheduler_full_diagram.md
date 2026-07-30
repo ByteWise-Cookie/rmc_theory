@@ -23,7 +23,7 @@ flowchart TB
     %% ---------------- admission ----------------
     subgraph ADM["Admission — short TCAM (classify station)"]
         direction TB
-        TCAM["classify<br/>{bg,bank} search<br/>row vs open_row → hit/miss"] --> RAW{"RAW:<br/>older write to<br/>same addr in flight?"}
+        TCAM["classify<br/>{bg,bank} search<br/>row vs open_row → hit/miss"] --> RAW{"RAW: older write<br/>same addr in flight?<br/>(match masked by wr_occupied,<br/>head/tail range · no valid bit)"}
         RAW -- yes --> HOLD["hold in TCAM<br/>(entry blocked)"]
         RAW -- no --> EV["evict when the<br/>bank queue has room"]
         HOLD -. write drains .-> RAW

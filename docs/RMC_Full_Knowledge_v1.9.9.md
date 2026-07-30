@@ -173,11 +173,12 @@ The two TCAMs are deliberately different animals:
   per-bank pre-filter (Stage 1), which only needs to know "is there a request waiting for
   this bank," not the exact address.
 
-Occupancy for both is tracked in separate **status registers** (`valid | status | age`,
-plus `merge_pending` for reads) — these are the single source of truth for whether a TCAM
-row is live (TCAM `match` output is gated by `status.valid`, which is also a power trick:
-invalid rows go electrically dark, cutting dynamic power at low occupancy). `age` is the
-allocation timestamp and is reused for three purposes: multi-hit tie-breaking (newest wins),
+Occupancy was tracked in v1.8 by per-entry status registers (`valid | status | age`). **In
+v1.9.9 there is no `valid` bit** (mentor): occupancy is the buffer's **head/tail pointer
+range**, the RAW CAM match is masked by `wr_occupied` (decoded from those pointers), and the
+power trick (empty rows go electrically dark) is driven by the pointer decode instead of a
+valid flag. `age` survives — the allocation timestamp, reused for three purposes: multi-hit
+tie-breaking (newest wins),
 starvation detection, and SJF cost. Two **Watermark Buffer Managers** (one write, one read)
 own their respective TCAM + status register pair outright — the scheduler only ever reads
 them.
@@ -259,10 +260,10 @@ properties the head consults — deeper queue entries just wait.
 - **Stage 0 — Maintenance Override.** Priority order `ref_urgent > ref_due > rfm_req >
   zq_due`. If any fires, Stages 1–3 are bypassed entirely and the maintenance command goes
   straight to Stage 4.
-- **Stage 1 — TCAM Search.** RD_TCAM and WR_TCAM are searched in the same cycle (multi-port),
-  producing a per-bank hit bitmap plus metadata (row, column, request type, entry index),
-  gated by each entry's `status.valid`. A multi-hit within a bank is resolved by
-  `argmax(age)` — newest wins — via a status-register lookup, not a TCAM field.
+- **Stage 1 — TCAM Search / Admission.** The WR_TCAM RAW search runs at admission, its match
+  masked by `wr_occupied` (the write-buffer head/tail range — **no `valid` bit**, v1.9.9).
+  The RD_TCAM bank pre-filter is retired — the candidate set is the per-bank queue heads. A
+  multi-hit is resolved by `argmax(age)` — newest wins — via the age field, not a TCAM field.
 - **Stage 2 — can_\* Gate Check + SJF Cost Classification.** Reads only the pre-computed
   registered `can_*` flags (per-bank, per-BG, per-rank, global, plus the partition mask from
   the Bank Partition Controller) and classifies every candidate bank into a cost bucket:
