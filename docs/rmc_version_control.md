@@ -348,7 +348,7 @@ Multi-hit: argmax(status_reg[age]) via entry_idx lookup
 
 #### Status Register Fields (final, minimal)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   STATUS_WIDTH   00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      GC_WIDTH
 ```

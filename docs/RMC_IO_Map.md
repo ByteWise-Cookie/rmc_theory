@@ -339,7 +339,7 @@ No valid gate here.
 
 ### Entry fields (N_WR_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   2b    00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]    allocation timestamp = gc at alloc
 ```
@@ -354,7 +354,7 @@ age      [GC_WIDTH]    allocation timestamp = gc at alloc
 → update_status  [RESP_WIDTH]
 → update_en
 
-← rd_valid       [N_WR_ENTRIES-1:0]   all valid bits (scheduler reads)
+← (rd_valid port retired [v1.9.9] — occupancy = head/tail pointers, not a valid-bit read)
 ← rd_status      [N_WR_ENTRIES-1:0][RESP_WIDTH]
 ← rd_age         [N_WR_ENTRIES-1:0][GC_WIDTH-1:0]
 
@@ -368,7 +368,7 @@ scheduler: READ ONLY
 
 ### Entry fields (N_RD_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   2b    00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]
 ```
@@ -383,7 +383,7 @@ age      [GC_WIDTH]
 → update_status  [RESP_WIDTH]
 → update_en
 
-← rd_valid       [N_RD_ENTRIES-1:0]
+← (rd_valid port retired [v1.9.9])
 ← rd_status      [N_RD_ENTRIES-1:0][RESP_WIDTH]
 ← rd_age         [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]
 
@@ -1011,7 +1011,7 @@ write: CSR only (slow path, init time)
 → rd_entry_idx     [$clog2(N_RD_ENTRIES)]   expected return tag
 
 ← rd_data_out      [DATA_WIDTH-1:0]
-← rd_data_valid    1b
+← rd_data_(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 ← rd_axi_id        [AXI_ID_WIDTH]
 ← ecc_err_flag     1b   → error handler
 ← crc_err_flag     1b   → error handler

@@ -142,7 +142,7 @@ entry fields:
   entry_idx    [$clog2(N_WR_ENTRIES)]  → WR status reg
   data_buf_idx [4:0]                   optional → Write Data Buffer
 
-valid gating: WR_TCAM match[i] AND wr_status_reg[i].valid
+[v1.9.9] occupancy gating: WR_TCAM match[i] AND wr_occupied[i] (head/tail, no valid bit)
 ```
 
 ### RD_TCAM
@@ -158,7 +158,7 @@ entry fields:
   axi_id       [AXI_ID_WIDTH]
   entry_idx    [$clog2(N_RD_ENTRIES)]  → RD status reg
 
-valid gating: RD_TCAM match[i] AND rd_status_reg[i].valid
+[v1.9.9] RD pre-filter retired — candidates = per-bank queue heads (no valid gate)
 multi-hit: winner = argmax(age[i]) via status reg
 ```
 
@@ -168,20 +168,20 @@ multi-hit: winner = argmax(age[i]) via status reg
 
 ### WR Status Reg (N_WR_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   STATUS_WIDTH   00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]   allocation timestamp
 ```
 
 ### RD Status Reg (N_RD_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   STATUS_WIDTH   00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]   allocation timestamp
 ```
 
 **owner: watermark managers (R/W). scheduler: READ ONLY.**
-**valid gates TCAM match output — single source of truth for occupancy.**
+**[v1.9.9] no valid bit — occupancy = write-buffer head/tail pointers; RAW match masked by wr_occupied.**
 **age used for: multi-hit newest-wins, starvation check, SJF cost.**
 
 ---
@@ -198,7 +198,7 @@ if write arrived AFTER read → not a hit → normal mem_read
 ### Stage A — WR_TCAM search
 ```
 search key: {BG, bank, row, col}
-hit vector gated by wr_status_reg[i].valid
+hit vector gated by wr_occupied (head/tail, no valid bit) [v1.9.9]
 multi-hit: newest age wins (argmax via status reg)
 ```
 
@@ -456,7 +456,7 @@ PD entry: bank_act.count==0 AND no pending maintenance
 13. SJF: lowest remaining_cost wins in MISS_SET
 14. Stage 2 reads only can_* flags, no subtractor in critical path
 15. WR_TCAM RAW hit valid only if wr_age <= rd_age
-16. TCAM match suppressed when status_reg[i].valid==0
+16. [v1.9.9] TCAM/RAW match suppressed outside write-buffer head/tail range (wr_occupied) — no valid bit
 ```
 
 ---
@@ -486,7 +486,7 @@ PD entry: bank_act.count==0 AND no pending maintenance
 
 ```
 Stage A: exact match {BG,bank,row,col} via WR_TCAM
-         gated by wr_status_reg[i].valid
+         gated by wr_occupied (head/tail, no valid bit) [v1.9.9]
          multi-hit: argmax(age[i])
 
 Stage B: mask coverage check
@@ -774,7 +774,7 @@ cost: trivial combinational
 
 ### RD Status Reg (updated fields)
 ```
-valid          1b
+(valid bit retired [v1.9.9] — occupancy = head/tail pointers)
 status         STATUS_WIDTH
 age            GC_WIDTH
 merge_pending  1b                      NEW

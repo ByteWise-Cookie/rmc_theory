@@ -121,7 +121,7 @@ The two TCAMs are deliberately different animals:
 
 Occupancy for both is tracked in separate **status registers** (`valid | status | age`,
 plus `merge_pending` for reads) — these are the single source of truth for whether a TCAM
-row is live (TCAM `match` output is gated by `status.valid`, which is also a power trick:
+row is live (TCAM `match` output is gated by `wr_occupied` (head/tail, no valid bit [v1.9.9]), which is also a power trick:
 invalid rows go electrically dark, cutting dynamic power at low occupancy). `age` is the
 allocation timestamp and is reused for three purposes: multi-hit tie-breaking (newest wins),
 starvation detection, and SJF cost. Two **Watermark Buffer Managers** (one write, one read)
@@ -165,7 +165,7 @@ rules" (see §9).
   straight to Stage 4.
 - **Stage 1 — TCAM Search.** RD_TCAM and WR_TCAM are searched in the same cycle (multi-port),
   producing a per-bank hit bitmap plus metadata (row, column, request type, entry index),
-  gated by each entry's `status.valid`. A multi-hit within a bank is resolved by
+  gated by each entry's occupancy (head/tail, no valid bit [v1.9.9]). A multi-hit within a bank is resolved by
   `argmax(age)` — newest wins — via a status-register lookup, not a TCAM field.
 - **Stage 2 — can_\* Gate Check + SJF Cost Classification.** Reads only the pre-computed
   registered `can_*` flags (per-bank, per-BG, per-rank, global, plus the partition mask from

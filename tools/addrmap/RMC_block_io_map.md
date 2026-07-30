@@ -196,7 +196,7 @@ data_buf_idx [4:0]                    optional, → Write Data Buffer
 → wr_alloc_idx   [$clog2(N_WR_ENTRIES)]
 
 → raw_search_key [BG_BITS+BANK_BITS+ROW_BITS+COL_BITS]
-← raw_hit_vector [N_WR_ENTRIES-1:0]   masked by wr_status_valid
+← raw_hit_vector [N_WR_ENTRIES-1:0]   masked by wr_occupied (head/tail, no valid bit) [v1.9.9]
 ← raw_hit_entry  [entry width]        newest age winner
 
 → sched_search_key [BG_BITS+BANK_BITS]   ternary
@@ -207,7 +207,7 @@ data_buf_idx [4:0]                    optional, → Write Data Buffer
 → retire_en
 ```
 
-**valid gating: raw_hit_vector[i] AND wr_status_reg[i].valid**
+**[v1.9.9] occupancy gating: raw_hit_vector[i] AND wr_occupied[i] (head/tail, no valid bit)**
 
 ---
 
@@ -238,7 +238,7 @@ entry_idx    [$clog2(N_RD_ENTRIES)]   → indexes rd_status_reg
 → retire_en
 ```
 
-**valid gating: sched_hit_bitmap[i] AND rd_status_reg[i].valid**
+**[v1.9.9] RD pre-filter retired — candidates = per-bank queue heads (no valid gate)**
 
 ---
 
@@ -246,7 +246,7 @@ entry_idx    [$clog2(N_RD_ENTRIES)]   → indexes rd_status_reg
 
 ### Entry fields (N_WR_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   2b    00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]    allocation timestamp = gc at alloc
 ```
@@ -261,7 +261,7 @@ age      [GC_WIDTH]    allocation timestamp = gc at alloc
 → update_status  [1:0]
 → update_en
 
-← rd_valid       [N_WR_ENTRIES-1:0]   all valid bits (scheduler reads)
+← (rd_valid port retired [v1.9.9] — occupancy = head/tail pointers, not a valid-bit read)
 ← rd_status      [N_WR_ENTRIES-1:0][1:0]
 ← rd_age         [N_WR_ENTRIES-1:0][GC_WIDTH-1:0]
 
@@ -275,7 +275,7 @@ scheduler: READ ONLY
 
 ### Entry fields (N_RD_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   2b    00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]
 ```
@@ -290,7 +290,7 @@ age      [GC_WIDTH]
 → update_status  [1:0]
 → update_en
 
-← rd_valid       [N_RD_ENTRIES-1:0]
+← (rd_valid port retired [v1.9.9])
 ← rd_status      [N_RD_ENTRIES-1:0][1:0]
 ← rd_age         [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]
 
@@ -303,7 +303,7 @@ scheduler: READ ONLY
 ## 9. Write Watermark Buffer Manager
 
 ```
-→ wr_status_valid  [N_WR_ENTRIES-1:0]   from WR status reg
+→ wr_occupied      [N_WR_ENTRIES-1:0]   [v1.9.9] head/tail range (no valid bit)
 → wr_status_age    [N_WR_ENTRIES-1:0][GC_WIDTH-1:0]
 → global_cycle     [GC_WIDTH]
 → new_wr_req_valid
@@ -326,7 +326,7 @@ scheduler: READ ONLY
 ## 10. Read Watermark Buffer Manager
 
 ```
-→ rd_status_valid  [N_RD_ENTRIES-1:0]
+→ (rd_status_valid retired [v1.9.9] — pre-filter → queue heads)
 → rd_status_age    [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]
 → global_cycle     [GC_WIDTH]
 → new_rd_req_valid
@@ -677,8 +677,8 @@ write: CSR only (slow path, init time)
 → wr_tcam_hit_meta    per bank
 → rd_tcam_hit_bitmap  [N_RD_ENTRIES-1:0]
 → rd_tcam_hit_meta    per bank
-→ wr_status_valid     [N_WR_ENTRIES-1:0]
-→ rd_status_valid     [N_RD_ENTRIES-1:0]
+→ wr_occupied         [N_WR_ENTRIES-1:0]   [v1.9.9] head/tail range (no valid bit)
+→ (rd_status_valid retired [v1.9.9])
 
 ← s1_hit_bitmap    [N_BANKS-1:0]    gated by valid
 ← s1_hit_meta[]    per bank: {row, col, req_type, entry_idx, axi_id}
@@ -899,7 +899,7 @@ write: CSR only (slow path, init time)
 → rd_entry_idx     [$clog2(N_RD_ENTRIES)]   expected return tag
 
 ← rd_data_out      [511:0]
-← rd_data_valid    1b
+← rd_data_(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 ← rd_axi_id        [AXI_ID_WIDTH]
 ← ecc_err_flag     1b   → error handler
 ← crc_err_flag     1b   → error handler
@@ -1155,7 +1155,7 @@ data_buf_idx [4:0]                    optional, → Write Data Buffer
 → wr_alloc_idx   [$clog2(N_WR_ENTRIES)]
 
 → raw_search_key [BG_BITS+BANK_BITS+ROW_BITS+COL_BITS]
-← raw_hit_vector [N_WR_ENTRIES-1:0]   masked by wr_status_valid
+← raw_hit_vector [N_WR_ENTRIES-1:0]   masked by wr_occupied (head/tail, no valid bit) [v1.9.9]
 ← raw_hit_entry  [entry width]        newest age winner
 
 → sched_search_key [BG_BITS+BANK_BITS]   ternary
@@ -1166,7 +1166,7 @@ data_buf_idx [4:0]                    optional, → Write Data Buffer
 → retire_en
 ```
 
-**valid gating: raw_hit_vector[i] AND wr_status_reg[i].valid**
+**[v1.9.9] occupancy gating: raw_hit_vector[i] AND wr_occupied[i] (head/tail, no valid bit)**
 
 ---
 
@@ -1197,7 +1197,7 @@ entry_idx    [$clog2(N_RD_ENTRIES)]   → indexes rd_status_reg
 → retire_en
 ```
 
-**valid gating: sched_hit_bitmap[i] AND rd_status_reg[i].valid**
+**[v1.9.9] RD pre-filter retired — candidates = per-bank queue heads (no valid gate)**
 
 ---
 
@@ -1205,7 +1205,7 @@ entry_idx    [$clog2(N_RD_ENTRIES)]   → indexes rd_status_reg
 
 ### Entry fields (N_WR_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   2b    00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]    allocation timestamp = gc at alloc
 ```
@@ -1220,7 +1220,7 @@ age      [GC_WIDTH]    allocation timestamp = gc at alloc
 → update_status  [1:0]
 → update_en
 
-← rd_valid       [N_WR_ENTRIES-1:0]   all valid bits (scheduler reads)
+← (rd_valid port retired [v1.9.9] — occupancy = head/tail pointers, not a valid-bit read)
 ← rd_status      [N_WR_ENTRIES-1:0][1:0]
 ← rd_age         [N_WR_ENTRIES-1:0][GC_WIDTH-1:0]
 
@@ -1234,7 +1234,7 @@ scheduler: READ ONLY
 
 ### Entry fields (N_RD_ENTRIES)
 ```
-valid    1b
+(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 status   2b    00=PENDING 01=ISSUED 10=DONE 11=ERROR
 age      [GC_WIDTH]
 ```
@@ -1249,7 +1249,7 @@ age      [GC_WIDTH]
 → update_status  [1:0]
 → update_en
 
-← rd_valid       [N_RD_ENTRIES-1:0]
+← (rd_valid port retired [v1.9.9])
 ← rd_status      [N_RD_ENTRIES-1:0][1:0]
 ← rd_age         [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]
 
@@ -1262,7 +1262,7 @@ scheduler: READ ONLY
 ## 9. Write Watermark Buffer Manager
 
 ```
-→ wr_status_valid  [N_WR_ENTRIES-1:0]   from WR status reg
+→ wr_occupied      [N_WR_ENTRIES-1:0]   [v1.9.9] head/tail range (no valid bit)
 → wr_status_age    [N_WR_ENTRIES-1:0][GC_WIDTH-1:0]
 → global_cycle     [GC_WIDTH]
 → new_wr_req_valid
@@ -1285,7 +1285,7 @@ scheduler: READ ONLY
 ## 10. Read Watermark Buffer Manager
 
 ```
-→ rd_status_valid  [N_RD_ENTRIES-1:0]
+→ (rd_status_valid retired [v1.9.9] — pre-filter → queue heads)
 → rd_status_age    [N_RD_ENTRIES-1:0][GC_WIDTH-1:0]
 → global_cycle     [GC_WIDTH]
 → new_rd_req_valid
@@ -1636,8 +1636,8 @@ write: CSR only (slow path, init time)
 → wr_tcam_hit_meta    per bank
 → rd_tcam_hit_bitmap  [N_RD_ENTRIES-1:0]
 → rd_tcam_hit_meta    per bank
-→ wr_status_valid     [N_WR_ENTRIES-1:0]
-→ rd_status_valid     [N_RD_ENTRIES-1:0]
+→ wr_occupied         [N_WR_ENTRIES-1:0]   [v1.9.9] head/tail range (no valid bit)
+→ (rd_status_valid retired [v1.9.9])
 
 ← s1_hit_bitmap    [N_BANKS-1:0]    gated by valid
 ← s1_hit_meta[]    per bank: {row, col, req_type, entry_idx, axi_id}
@@ -1858,7 +1858,7 @@ write: CSR only (slow path, init time)
 → rd_entry_idx     [$clog2(N_RD_ENTRIES)]   expected return tag
 
 ← rd_data_out      [511:0]
-← rd_data_valid    1b
+← rd_data_(no valid bit [v1.9.9] — occupancy = FIFO head/tail; status → queue entry)
 ← rd_axi_id        [AXI_ID_WIDTH]
 ← ecc_err_flag     1b   → error handler
 ← crc_err_flag     1b   → error handler
