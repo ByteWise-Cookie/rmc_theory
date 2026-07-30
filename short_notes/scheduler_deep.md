@@ -219,8 +219,9 @@ Rules the model enforces:
 
 **Where the §1 scoreboard state now lives:** timers (`next_*`) stay **per-bank** (a bank
 property — the head reads them); command-progress `state` (`NEED_PRE/ACT/CAS`) rides in
-the **queue entry**; `valid`/occupancy → **queue depth counters** (the relocated
-watermark). Nothing in §2/§4 changes — the gates read the same `next_*`.
+the **queue entry**; occupancy → **queue head/tail pointers + depth counter** (the
+relocated watermark) — **no per-entry `valid` bit** (mentor: FIFO pointers already define
+occupancy). Nothing in §2/§4 changes — the gates read the same `next_*`.
 
 **Result (measured):** 0 violations / 0 unscheduled both bins; DQ-busy within **±2pt** of
 the window model (per-bank head visibility is competitive); drains at `tcam=8,

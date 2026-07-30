@@ -30,8 +30,8 @@ Mentor review raised three points. Verdicts:
    is the core rework.* (§1, §2)
 3. **`status` field in reg_arr "useless".** Partly. The field did **two jobs**;
    the split gives each its own home — command-progress state moves into the queue entry,
-   occupancy/valid stays for the allocator but relocates to **queue occupancy**. Not
-   deleted, **relocated.** (§4)
+   occupancy relocates to **queue occupancy** (head/tail pointers + depth counter —
+   **no `valid` bit**, mentor). Not deleted, **relocated.** (§4)
 
 Design decisions taken: **per-bank queues** (not per-command), **thread-style
 self-contained entries**, RAW resolved **at admission**.
@@ -110,10 +110,16 @@ arbiter does not change** — it reads bank-queue heads where it used to read TC
 
 ### Queue entry (thread context)
 ```
-{ valid, R/W, seqnum, bg, bank, row, col, state, blocked }
+{ R/W, seqnum, bg, bank, row, col, state, blocked }
 state   : NEED_PRE | NEED_ACT | NEED_CAS | DONE
 blocked : RAW-held (read waiting on a write drain) — set at admission, §3
 ```
+**No `valid` bit (mentor).** A FIFO's occupancy is defined by its **head/tail pointers**
+(and the depth counter, §4) — a per-slot valid flag would be redundant. Slots between head
+and tail are live; everything else is empty by construction. Retire advances the head; evict
+advances the tail. This drops one bit per entry × 16 banks × depth and removes a
+keep-in-sync field.
+
 Timers (`next_pre/act/cas`, tRCD/tRTP/tWR…) are **NOT** per-entry — they are **per-bank
 scoreboard** properties. The head reads its bank scoreboard; deeper entries just wait.
 
@@ -144,10 +150,11 @@ The old reg_arr `status` conflated two roles. After the split:
 - **command-progress state** (NEED_PRE/ACT/CAS/DONE) → lives in the **queue entry**
   (`state`). Advances locally as commands issue — the "thread" self-advances (§5). Mentor
   right that this does not belong in the TCAM reg_arr.
-- **occupancy / valid** → still needed by the allocator/retire, but becomes **per-bank
-  queue occupancy** (depth counter + full flag), fed to admission backpressure. This is
-  where the **watermark logic relocates** — see [[watermark_mgr_scope]]: the inv-LSB
-  priority encoder + `wr_count` popcount now count **queue** slots, not TCAM slots.
+- **occupancy** → **no `valid` bit** (mentor). Occupancy is the FIFO's **head/tail
+  pointers** plus a per-bank **depth counter + full flag**, fed to admission backpressure —
+  not a per-entry valid flag. This is where the **watermark logic relocates** — see
+  [[watermark_mgr_scope]]: the inv-LSB priority encoder + `wr_count` popcount now count
+  **queue depth** (pointer delta), not TCAM valid bits.
 
 Answer to "status useless": it was doing two jobs in one register; the split gives each a
 home. Nothing lost.

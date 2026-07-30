@@ -16,7 +16,7 @@ flowchart TB
     subgraph SCH["Scheduler (read-only vs state, writes only at 15)"]
         direction TB
         ADM["9 · classify / admission<br/>short TCAM: {bg,bank} search,<br/>row vs open_row, RAW compare,<br/>evict to bank queue"]
-        Q["9b · per-bank queues ×16<br/>FIFO, head-only active"]
+        Q["9b · per-bank queues ×16<br/>FIFO (head/tail ptr, no valid bit)<br/>head-only active"]
         GATE["10 · gate_gen<br/>can_cas / can_act / can_pre"]
         CAND["11 · cand_gen<br/>one candidate per bank"]
         ARB["12 · weight arbiter<br/>K·control + age + servo<br/>guardrail: never idle DQ"]
@@ -69,7 +69,9 @@ flowchart LR
 ```
 
 Timers (`next_cas/pre/act`) are **per-bank scoreboard** properties the head reads — not
-per-entry. Occupancy = per-bank depth counter = the relocated watermark.
+per-entry. Occupancy = per-bank **head/tail pointers + depth counter** = the relocated
+watermark. **No per-entry `valid` bit** (mentor) — the pointers already say which slots are
+live (head..tail occupied, rest empty by construction).
 
 ---
 

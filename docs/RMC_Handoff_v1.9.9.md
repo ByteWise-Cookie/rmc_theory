@@ -262,11 +262,12 @@ wdb_entry_idx  $clog2(WR_BUF_DEPTH)   valid when merge_pending=1
 
 **[v1.9.9] Relocation.** The `status` field is split by role. **Command-progress**
 (`NEED_PRE/ACT/CAS/DONE`, the old `PENDING/ISSUED/DONE`) moves into the **per-bank queue
-entry** (§9E), where it self-advances as commands issue. **Occupancy/valid** stays with the
-allocator but is now counted as **per-bank queue depth** — this is where the watermark
-logic (inv-LSB priority encoder + `wr_count` popcount) relocates, counting queue slots
-instead of TCAM rows and feeding admission backpressure. `merge_pending`/`wdb_entry_idx`
-are retired with the RAW bypass (§11): the pause model has no partial-merge state.
+entry** (§9E), where it self-advances as commands issue. **Occupancy** is now the per-bank
+queue **head/tail pointers + depth counter** — **no per-entry `valid` bit** (mentor: FIFO
+pointers define which slots are live). This is where the watermark logic (inv-LSB priority
+encoder + `wr_count` popcount) relocates, counting queue depth instead of TCAM rows and
+feeding admission backpressure. `merge_pending`/`wdb_entry_idx` are retired with the RAW
+bypass (§11): the pause model has no partial-merge state.
 
 ---
 
@@ -519,7 +520,6 @@ order preserved (natural row-locality). Only the **head** is active in the comma
 
 | Field | Width | Description |
 |---|---|---|
-| valid | 1b | slot occupied |
 | rw | 1b | R / W (unified queue + tag; split-queue variant is a sweep option) |
 | seqnum | [SEQ_BITS] | ROB program order (RAW / retirement) |
 | bg, bank | [BG_BITS],[BANK_BITS] | target bank (redundant with FIFO index, carried for emit) |
@@ -534,7 +534,9 @@ head-only      : head asserts one ready-bit per class → can_pre/act/cas[16] to
                  the head reads them; deeper entries just wait
 advance        : head self-advances state locally as ACT/PRE/CAS issue (thread model);
                  on CAS done → retire, pop, next entry becomes head next cycle
-occupancy      : depth counter + full flag = relocated watermark → admission backpressure
+occupancy      : head/tail pointers + depth counter + full flag = relocated watermark →
+                 admission backpressure. NO per-entry valid bit (mentor: pointers define
+                 which slots are live) — head..tail = occupied, rest empty by construction.
 owner          : allocator/watermark manager (R/W). Scheduler + arbiter: READ head only.
 ```
 

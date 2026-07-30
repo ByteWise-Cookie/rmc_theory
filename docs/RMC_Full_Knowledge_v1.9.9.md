@@ -40,8 +40,9 @@ this document carries the consolidated narrative.
    losing per-bank row-locality. (§3.3)
 4. **`status` relocated, not deleted.** The old `status` field did two jobs: the split
    gives each a home — command-progress (`NEED_PRE/ACT/CAS/DONE`) rides in the queue
-   entry; occupancy/valid becomes **per-bank queue depth counters**, which is where the
-   watermark logic relocates. (§3.2)
+   entry; occupancy becomes **per-bank queue head/tail pointers + depth counters** —
+   **no per-entry `valid` bit** (mentor: FIFO pointers already define which slots are
+   live) — which is where the watermark logic relocates. (§3.2)
 5. **Weight arbiter replaces pure SJF Stage-3.** Winner selection is now
    `weight = K·control + age + servo_mod(ACT)` (control = CAS>ACT>PRE as the SJF
    baseline; an aging counter breaks real starvation; a DQ-occupancy servo balances
@@ -189,9 +190,11 @@ freeing the TCAM slot for the next arrival. This drops CAM depth/timing hard —
 searchable resource is held for cycles, not the ~118 tCK latency window. The TCAM is
 **not** removed; it stays the classify/RAW engine (one search does classify + RAW), only
 its residency shortens. Correspondingly, the `status` field is **relocated, not deleted**:
-command-progress (`NEED_PRE/ACT/CAS/DONE`) rides in the queue entry, while occupancy/valid
-becomes **per-bank queue depth counters** — and the watermark logic (the inv-LSB priority
-encoder + `wr_count` popcount) relocates to count queue slots instead of TCAM rows.
+command-progress (`NEED_PRE/ACT/CAS/DONE`) rides in the queue entry, while occupancy becomes
+**per-bank queue head/tail pointers + depth counters** — **no per-entry `valid` bit**
+(mentor: FIFO pointers already define which slots are live, so the flag is redundant) — and
+the watermark logic (the inv-LSB priority encoder + `wr_count` popcount) relocates to count
+queue depth instead of TCAM rows.
 Full spec: `scheduler_queue_arch.md`.
 
 Sitting between the write and read sides is the RAW hazard check. **v1.9.9 — RAW is now a

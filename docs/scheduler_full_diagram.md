@@ -35,7 +35,7 @@ flowchart TB
     subgraph QUE["Per-bank in-flight queues"]
         direction TB
         BQ["16 FIFOs · row-clustered<br/>(not strict FIFO) · head-only active"] --> HEADS["queue heads<br/>(1 candidate per bank)"]
-        BQ --> DEPTH["depth counters<br/>= relocated watermark"]
+        BQ --> DEPTH["head/tail pointers + depth counter<br/>= relocated watermark (no valid bit)"]
     end
     DEPTH -. queue full .-> TCAM
 
