@@ -29,12 +29,12 @@ flowchart TB
         HOLD -. write drains .-> RAW
     end
 
-    EV --> BQ
+    EV -->|"row-hit promotion:<br/>insert after last same-row entry"| BQ
 
     %% ---------------- per-bank queues ----------------
     subgraph QUE["Per-bank in-flight queues"]
         direction TB
-        BQ["16 FIFOs · arrival order<br/>head-only active"] --> HEADS["queue heads<br/>(1 candidate per bank)"]
+        BQ["16 FIFOs · row-clustered<br/>(not strict FIFO) · head-only active"] --> HEADS["queue heads<br/>(1 candidate per bank)"]
         BQ --> DEPTH["depth counters<br/>= relocated watermark"]
     end
     DEPTH -. queue full .-> TCAM
@@ -90,5 +90,7 @@ flowchart TB
 **The loop:** `writeback` is the single state writer — it advances the scoreboard, which the
 next clock edge feeds back into `gate_gen`; the arbiter picks; `writeback` commits. The
 maintenance engine reaches the DFI bus only through `s4_mux` (`s0_override`), never a second
-command path. TCAM classifies then evicts (short residency); only bank heads compete; RAW is
+command path. TCAM classifies then evicts (short residency); on eviction a row-hit is
+**promoted** next to its same-row siblings (insert after the last same-row entry) so it
+isn't stranded behind a same-bank miss; only bank heads compete; RAW is
 resolved once at admission.

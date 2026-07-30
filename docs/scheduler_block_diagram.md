@@ -42,7 +42,10 @@ command path.
 ## 2. Residency split — admission → per-bank queues → heads
 
 The post-mentor rework: TCAM is a **short classify station**, not a lifetime home. Classified
-requests **evict** into per-bank FIFOs; only the **head** of each bank competes.
+requests **evict** into per-bank FIFOs; only the **head** of each bank competes. On
+eviction a row-hit is **promoted** next to its same-row siblings (insert after the last
+same-row entry, not the tail) so it isn't stranded behind a same-bank miss — reorders only
+across *different* rows (no hazard); same-row order preserved.
 
 ```mermaid
 flowchart LR
@@ -53,9 +56,9 @@ flowchart LR
     end
     T -- "RAW: older write<br/>same addr → hold" --> T
 
-    T -->|evict when room| B0["bank 0 FIFO"]
-    T -->|evict when room| B1["bank 1 FIFO"]
-    T -->|evict when room| BN["bank … 15 FIFO"]
+    T -->|"evict + row-hit promote"| B0["bank 0 FIFO"]
+    T -->|"evict + row-hit promote"| B1["bank 1 FIFO"]
+    T -->|"evict + row-hit promote"| BN["bank … 15 FIFO"]
 
     B0 --> H{{"heads only<br/>→ weight arbiter"}}
     B1 --> H
