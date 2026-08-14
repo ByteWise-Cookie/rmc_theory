@@ -14,3 +14,12 @@ __pycache__/
 venv/
 # obsidian local cache
 notes/obsidian/.obsidian/workspace.json
+
+# root-vault local config (local viewing only)
+/.obsidian/
+
+# local scheduler HW/Visio build guide — do NOT push (tex + pdf + aux)
+/sched_hw_build/
+
+# local DDR5 / JESD79-5 study doc — do NOT push (tex + pdf, verified against the spec)
+/ddr5_spec_study/
