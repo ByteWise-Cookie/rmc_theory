@@ -202,6 +202,23 @@ Three transfer buffers + their CDC crossings. All parameterized on G (gear ratio
 
 ---
 
+### 3D. DFI output mux — init vs scheduler (I14)
+
+Two producers can drive the CA/write path onto DFI: the **Init FSM** (during boot —
+reset, MRW, ZQcal, training) and the **scheduler emit stage** (normal operation). A mux
+inside the fabric selects, gated by a one-way latch:
+
+```
+init_done = 0  →  Init FSM (in the Maintenance Engine) drives all DFI CA/wrdata outputs
+init_done = 1  →  scheduler Stage-4 emit drives DFI
+init_done      :  one-way latch — set once at boot DONE, never de-asserted
+MRR path       :  MR_Poll / MR_Write route via Stage-0 bypass → emit → DFI (no 3rd mux input)
+```
+
+The scheduler **inherits** the DFI port after boot; before that it is held off. The latch
+guarantees no glitch back to Init once normal traffic starts. Owner of `init_done` = the
+Maintenance Engine (block 06); the fabric only consumes it to steer the mux.
+
 ## 4. CDC crossing structures (summary)
 
 | Crossing | Direction | Structure | Flags |

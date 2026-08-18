@@ -224,6 +224,20 @@ Three transfer buffers + their CDC crossings. All parameterized on $G$.
   \item \textbf{Timeout guard} --- \reg{err\_rddata\_timeout} if valid never arrives.
 \end{itemize}
 
+\subsection{3D --- DFI output mux: init vs scheduler}
+Two producers can drive the CA/write path onto DFI: the \textbf{Init FSM} (boot: reset,
+MRW, ZQcal, training) and the \textbf{scheduler emit stage} (normal). A mux inside the
+fabric selects, gated by a one-way latch:
+\begin{center}\begin{tabular}{@{}lL{8.6cm}@{}}\toprule
+\sig{init\_done} & Drives DFI \\ \midrule
+0 & Init FSM (in the Maintenance Engine) drives all DFI CA/wrdata \\
+1 & scheduler Stage-4 emit drives DFI \\
+latch & one-way: set once at boot DONE, never de-asserted \\
+MRR & MR\_Poll / MR\_Write via Stage-0 bypass $\to$ emit $\to$ DFI (no 3rd mux input) \\ \bottomrule
+\end{tabular}\end{center}
+The scheduler \emph{inherits} the DFI port after boot; before that it is held off. Owner of
+\sig{init\_done} $=$ the Maintenance Engine; the fabric only consumes it to steer the mux.
+
 %======================================================================
 \section{CDC crossing structures}
 \begin{center}\begin{tabular}{@{}lL{2.4cm}L{5.4cm}L{3.2cm}@{}}\toprule

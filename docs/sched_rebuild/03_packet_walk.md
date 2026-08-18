@@ -142,6 +142,24 @@ Core blocks to detail (front-to-back), beyond 01/02:
 Detail order: **IAF → ADEC → HZU → BQ → ARB**, then RSP (thin), with EMIT (02) and FAB
 (01) already done.
 
+### 3b. Naming + protocol (A5, per block-00 ledger)
+
+Rebuild tags map onto the authoritative KB names (use KB names in RTL):
+
+| Tag | KB name | Key signals |
+|-----|---------|-------------|
+| IAF | Async REQ FIFO | credit-based push, `credit_return`, `FIFO_DEPTH` |
+| ADEC | **AMU** (Address Map Unit) | per-field XOR hash, `split_en`, `xor_shift` |
+| HZU | RAW pause + WR_TCAM/BCAM | `wr_occupied`, `blocked`, `raw_block_en` |
+| BQ | Per-Bank In-Flight Queue | `queue_head[16]`, `queue_depth[16]`, entry `state` |
+| ARB | Weight Arbiter (Stage 3) | `K·control+age+servo`, `last_act_bg` |
+| RSP | Async RESP FIFO | `gate_resp_fifo_avail`, `resp_type` |
+
+**Protocol:** every inter-block port inside the core is **valid-credit** (I15) — no
+combinational ready, better timing closure. Only the two boundaries differ: the CIF-facing
+IAF uses **credit-based push** (I16), and the DRAM-facing FAB speaks DFI. `gate_resp_fifo_avail`
+(I17) gates every RD issue so a read never launches without a reserved response slot.
+
 ---
 
 ## Open items (walk)
