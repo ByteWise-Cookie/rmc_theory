@@ -89,6 +89,70 @@ DRAM; ack via RSP. \textbf{Read path:} same to DRAM; data returns FAB.rd $\to$ R
 CIF (CIF reorders per \sig{id}, not the core).
 
 %======================================================================
+\chapter{MC-Core Architecture (top-level)}
+
+How every block wires together. Two planes: the \textbf{data plane} (solid --- requests to
+DRAM, data back) and the \textbf{control/timing plane} (dashed --- scoreboard, maintenance,
+gating that decides \emph{when} a command is legal).
+
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,>={Stealth[length=1.8mm]},node distance=6mm,
+  d/.style={draw,rounded corners,minimum height=6mm,minimum width=13mm,align=center,inner sep=1.5pt},
+  c/.style={draw,dashed,rounded corners,minimum height=6mm,align=center,inner sep=1.5pt}]
+  % data plane row
+  \node[d](iaf){IAF};
+  \node[d,right=of iaf](adec){ADEC};
+  \node[d,right=of adec](hzu){HZU};
+  \node[d,right=of hzu](bq){BQ};
+  \node[d,right=of bq](arb){ARB};
+  \node[d,right=of arb](emit){EMIT};
+  \node[d,right=of emit](fab){FAB};
+  \node[d,right=of fab](phy){PHY/DRAM};
+  \draw[->](iaf)--(adec);\draw[->](adec)--(hzu);\draw[->](hzu)--(bq);\draw[->](bq)--(arb);
+  \draw[->](arb)--(emit);\draw[->](emit)--(fab);\draw[->](fab)--(phy);
+  % control plane row
+  \node[c,below=9mm of arb,minimum width=34mm](scb){Timing Scoreboard\\per-bank / per-rank / global / \sig{timing_reg_file}};
+  \node[c,below=7mm of scb,minimum width=34mm](me){Maintenance Engine (peer, 7 sub-FSMs)};
+  \node[c,below=9mm of fab](rsp){RSP};
+  \draw[<->,dashed](arb)--(scb);\draw[->,dashed](emit)|-(scb.east);
+  \draw[->,dashed](me)--(scb);\draw[->,dashed](me.east)-|(emit.south);
+  \draw[->,dashed](me.east)-|(fab.south) node[pos=0.75,right]{\sig{init_done}};
+  \draw[->,dashed](hzu.south)|-(bq.south) node[pos=0.2,left]{\sig{wr_occupied}};
+  \draw[->,dashed](rsp)--(arb.south) node[pos=0.4,right]{\sig{gate_resp_fifo_avail}};
+  \draw[->](phy.south)|-(rsp.east);\draw[->](rsp.north)--(fab.south);
+\end{tikzpicture}
+\end{center}
+
+\section{Clock domains}
+\begin{center}\begin{tabular}{@{}llL{6.6cm}@{}}\toprule
+Domain & Clock & Contains \\ \midrule
+CIF & \sig{cif_clk} & AXI slave (not mine) \\
+core & \sig{mc_clk} & IAF$\to\ldots\to$EMIT, scoreboard, ME, RSP \\
+back-end & \sig{dfi_clk} & FAB, PHY (\sig{dfi_clk}==\sig{mc_clk} baseline $\to$ CDC degenerate) \\ \bottomrule
+\end{tabular}\end{center}
+Two async-FIFO seams, one real: IAF + RSP are the genuine CDC; the FAB egress CDC collapses
+to a register stage at baseline. DRAM \sig{tCK} is hidden PHY-side behind the gear ratio.
+
+\section{Shared-state ownership}
+\begin{center}\begin{tabular}{@{}L{5.0cm}L{4.4cm}L{3.4cm}@{}}\toprule
+State & Owner (writes) & Readers \\ \midrule
+per-bank / global timing tables & EMIT Stage-4 (+ME gates) & ARB, EMIT \\
+per-rank FSM table & ME & ARB, EMIT, ME \\
+\sig{timing_reg_file} & CSR init + ME MR\_Write & all \\
+WR\_TCAM / \sig{wr_occupied} & HZU / watermark mgr & HZU, BQ evict gate \\
+per-bank queues & watermark mgr & ARB (head only) \\
+bank activity counter & BQ alloc/retire & ME, power-mgmt \\
+\sig{gc} & free-running & all \\
+\sig{init_done} & ME (one-way latch) & FAB mux \\ \bottomrule
+\end{tabular}\end{center}
+
+\section{Config / sizing (validated)}
+\sig{N_RD_ENTRIES}=32, \sig{N_WR_ENTRIES}=96 (OW-7 sweep); \sig{bankDepth}=8, \sig{tcam}=32,
+in-flight $\le$128 (OQ-20); arbiter control 2/1/0, K=5000, guardrail ON, servo OFF,
+\sig{AGE_MAX}=256; \sig{N_RANKS} 1$\to$2 intent; gear 1:1$\ldots$1:4. All pkg values are
+\textbf{design intent} --- frozen until RTL-go.
+
+%======================================================================
 \chapter{IAF --- Ingress Async Request FIFO}
 
 Upstream boundary. Requests cross the CIF clock into \sig{mc_clk} \textbf{already formed}.
