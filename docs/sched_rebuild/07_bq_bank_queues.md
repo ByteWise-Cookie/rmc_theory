@@ -71,19 +71,22 @@ WR_TCAM `wr_occupied` gate (block 05) — pointers define liveness everywhere.
 
 ---
 
-## 4. Sizing (the live tension — OW-7)
+## 4. Sizing (OW-7 — RESOLVED by sweep)
 
-Two inputs disagree on depth:
-- **KB §25:** `N_WR = 2–3× N_RD` (larger write buffer drains in background, lower read
-  latency).
-- **Plan file:** read = write = 64 (row-hit batching headroom, symmetry).
-- **Datapath floor (I24):** to serve a **row-miss** read with zero DQ bubble, PRE must fire
-  ≈ `T_RCD + T_RP` ≈ 10 bursts ahead. So the per-bank depth × bank count must hold **≥ ~10
-  bursts of lookahead** across the active banks, or gap-0 is impossible on row-miss traffic.
+Sweep `tools/sched_model/sweep_ow7.js` (`OW7_RESULTS.md`) on the RTL-reference arbiter:
 
-**Verdict deferred to a sizing sweep** (`tools/sched_model`), not a guess. The sweep design
-point so far: `bankDepth=8`, `tcam=32`, in-flight ≤ 128 (OQ-20 DONE). The read-vs-write
-split (64/64 vs 2–3×) is the open half.
+- **N_RD = 32, N_WR = 96 (3×)** — the sweep optimum (busy 41%, readMean 1026).
+- **Plan's 64/64 is the *worst* tested point** (busy 39%, readMean 1933 — ~2× read
+  latency). Symmetric over-buffers reads and under-buffers writes.
+- **Reads want shallow:** busy saturates at rdCap≈32; rd64 *regresses* (piled-up reads →
+  more ACTs/contention). Floor ≥24.
+- **Writes want deep:** busy climbs with wrCap, saturates ~96 (accumulate + background
+  drain via adaptive batching — the throughput lever).
+- **Datapath floor (I24):** row-miss lookahead ≈ `T_RCD+T_RP` ≈ 10 bursts is served by
+  `tcam`(32) + `bankDepth`(8×16=128); rdCap only needs ≥24 to feed it — 32 clears it.
+
+Confirms **KB §25** exactly. Sweep design point (OQ-20): `bankDepth=8`, `tcam=32`,
+in-flight ≤128. pkg intent `N_RD_ENTRIES=32`, `N_WR_ENTRIES=96`; edit at RTL-go.
 
 ---
 

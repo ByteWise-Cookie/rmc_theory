@@ -422,7 +422,7 @@ RD pre-filter TCAM & DROP & $\to$ queue heads (v1.9.9) \\
 Sweep design point & KEEP & OQ-20 (control 2/1/0,K5000,guardrail,AGE\_MAX256,depth8) \\
 AXI narrow/excl/QoS & DROP-scope & CIF's job, not the core \\
 \sig{N_RANKS} 1$\to$2 & INTENT & cross-rank W$\to$R skips tWTR \\
-Read/write depth 64/64 vs 2--3x & OPEN & sizing sweep, floor $\ge$10 bursts \\ \bottomrule
+Read/write depth (OW-7) & \sig{N_RD}=32 \sig{N_WR}=96 & sweep: 3x wins; plan 64/64 worst (busy \& read latency) \\ \bottomrule
 \end{tabular}\end{center}
 
 \section{Key harvested ideas}

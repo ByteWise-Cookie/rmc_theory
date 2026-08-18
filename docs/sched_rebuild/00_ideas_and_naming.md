@@ -116,8 +116,8 @@ authority.
 | Staggered starvation `THR+entry_idx` | **ADAPT** | Weight `age` term is primary now; THR = hard backstop only |
 | Timing wheel | **DROP (rejected)** | Model: loses 4–6 pt DQ-busy multi-bank (OQ-22 CLOSED). Re-confirmed 33/33 |
 | Sweep design point (control 2/1/0, K=5000, guardrail ON, servo default-OFF, AGE_MAX=256, bankDepth=8, tcam=32, in-flight≤128) | **KEEP** | OQ-20 DONE (`sweep.js`) — weights 2nd-order, guardrail+sizing dominate |
-| Read buffer depth 32 vs 64 | **OPEN → 64 intent** | Plan file: read=write=64 for row-hit batching; pkg bump deferred to RTL. Not yet in a sweep — flag |
-| N_WR = 2–3× N_RD | **TENSION** | KB says WR≫RD; plan file says read=write=64. **Reconcile in sizing pass** (OW-7) |
+| Read/write buffer depth | **RESOLVED → N_RD=32 / N_WR=96** | OW-7 sweep (`OW7_RESULTS.md`): 32/96 wins (busy 41%, readMean 1026); **plan's 64/64 is the worst point** (busy 39%, readMean 1933). Reads want shallow (floor ~24-32, rd64 regresses), writes want deep (drain in background). KB §25 confirmed |
+| N_WR = 2–3× N_RD | **KEEP (validated)** | OW-7 sweep: asymmetric wins; symmetric 64/64 worst on both throughput and read latency |
 
 ---
 
@@ -138,9 +138,9 @@ convention + ideas:
   **valid-credit** (I15) on every inter-block port.
 - **A6 (new block):** **Maintenance Engine** (I9) — peer to the scheduler, 6 sub-FSMs,
   writes FSM tables, never issues CAS. Its own block doc.
-- **A7 (sizing pass):** resolve **OW-7** — read vs write buffer depth (64/64 plan vs
-  2–3× KB). Needs a sweep — **now with a floor: I24 says lookahead depth ≥ tRCD+tRP ≈ 10
-  bursts**, so BQ/outstanding depth must clear that to hit gap-0 on row-miss.
+- **A7 (sizing pass): DONE.** OW-7 resolved by sweep (`OW7_RESULTS.md`): **N_RD=32,
+  N_WR=96 (3×)**. Plan's 64/64 was the worst point. Read floor ~24-32 (rd64 regresses);
+  write depth is the throughput lever (saturates ~96). pkg intent recorded, edit at RTL-go.
 - **A8 (block 02/03):** elevate **≥2-live-BG (I20)** from an ARB tie-break to a stated
   hard invariant; add the **3-free-CA-slots/burst (I23)** budget to EMIT's `caFree` model.
 - **A9 (block 02):** add the **slack vector `A` (I25)** — schedule prep commands as
@@ -189,7 +189,7 @@ cross-check.
 
 ## 5. Open items (this ledger)
 
-- **OW-7** read/write buffer depth reconcile (64/64 vs 2–3×) — sizing sweep.
+- ~~**OW-7** read/write buffer depth~~ — **RESOLVED**: N_RD=32, N_WR=96 (sweep, `OW7_RESULTS.md`).
 - **OL-1** does the rebuild keep the 5-stage internal pipeline naming, or present purely
   as blocks? (I keep both: blocks for narrative, S0–S4 for RTL module boundaries.)
 - **OL-2** speculative ACT + opportunity REFsb — in v1 RTL or deferred? (sweep-gate).
