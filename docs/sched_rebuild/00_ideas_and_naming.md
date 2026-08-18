@@ -82,6 +82,7 @@ Each: the idea, its source, how the rebuild uses it, verdict.
 | I16 | **Async FIFO credit-based push**, `FIFO_DEPTH`=init credits, `gate_resp_fifo_avail` | IO §2–3 | block 03 IAF + RSP protocol | **KEEP** |
 | I17 | **`gate_resp_fifo_avail`** — RD never issues without a reserved resp slot | KB inv 6 | ARB/EMIT gate on read issue | **KEEP** |
 | I18 | **Staggered starvation** `age ≥ THR + entry_idx` (≤1 starved fires/cycle) | KB §15 | subsumed by weight `age` term; THR = hard backstop | **ADAPT** |
+| I28 | **MR_Write sub-FSM + shared MR Read Arbiter** — runtime mode-register writes (timing changes) with shadow→apply into `timing_reg_file`, MRR verify read-back, `gate_mr[rank]`; shares the MRR sideband with MR_Poll via `mrr_requester` tag. **Hard invariant: `timing_reg_file` never out of sync with DRAM's programmed latency** | `RMC_MR_Programming_v1_9_10` | ME gains a 7th sub-FSM; the timing-sync invariant is first-class | **KEEP** (ME scope) |
 
 ---
 
@@ -138,9 +139,53 @@ convention + ideas:
 - **A6 (new block):** **Maintenance Engine** (I9) — peer to the scheduler, 6 sub-FSMs,
   writes FSM tables, never issues CAS. Its own block doc.
 - **A7 (sizing pass):** resolve **OW-7** — read vs write buffer depth (64/64 plan vs
-  2–3× KB). Needs a sweep, not a guess.
+  2–3× KB). Needs a sweep — **now with a floor: I24 says lookahead depth ≥ tRCD+tRP ≈ 10
+  bursts**, so BQ/outstanding depth must clear that to hit gap-0 on row-miss.
+- **A8 (block 02/03):** elevate **≥2-live-BG (I20)** from an ARB tie-break to a stated
+  hard invariant; add the **3-free-CA-slots/burst (I23)** budget to EMIT's `caFree` model.
+- **A9 (block 02):** add the **slack vector `A` (I25)** — schedule prep commands as
+  windows `[D−A, D]`, not points; CSR knobs `A_PRE/A_ACT/A_CAS/A_REF`. Fold the backward
+  deadline chain (I26) into the emit feasibility check.
+- **A10 (pkg intent):** record **N_RANKS 1→2 (C1)** as design intent — cross-rank W→R
+  dodges tWTR. pkg edit deferred to RTL-go.
 
 ---
+
+## 6. Datapath-busy timing — harvested ideas (from `datapath_busy_timing.md`)
+
+The single richest non-consolidated source. The scheduler's whole objective restated in
+DQ-bus terms. New ideas beyond the handoff:
+
+| # | Idea | Detail | Rebuild use | Verdict |
+|---|------|--------|-------------|---------|
+| I19 | **DQ heartbeat = BL/2 = 8 tCK** | one CAS = 16 beats = 8 tCK on DQ; gapless ⇔ CAS spaced ≥8 | the atomic unit of `dqFree` in block 02 | **ADOPT** (naming: heartbeat) |
+| I20 | **≥2 live bank-groups invariant** | same-BG CAS pays tCCD_L(12 rd)/tCCD_L_WR(32 wr) → bubble; BG-rotate drops to tCCD_S=8=gapless. **Scheduler's #1 datapath job** | ARB tie-break already prefers `bg≠last_act_bg`; **elevate to a hard invariant** | **ADOPT** |
+| I21 | **R→W cheap / W→R expensive asymmetry** | R→W ≈ tWPRE+1 (3 tCK); W→R = tWTR+RL (64 same-BG / 46 diff-BG @4800B) | *why* adaptive batching exists — batch to pay W→R once/window | **KEEP** (grounds I7) |
+| I22 | **Cross-rank W→R skips tWTR** | writes/reads hit different dies → ~42 tCK vs 64. Concrete payoff of 2-rank | ARB: prefer cross-rank for the unavoidable W→R flip | **ADOPT** (ties to conflict C1) |
+| I23 | **CA lookahead budget: 3 free slots/burst** | 8-tCK burst = 4 CA slots (2-cyc cmds); 1 = next CAS, 3 free to prep future ACT/PRE | EMIT: the `caFree` budget = 3 prep-cmd/burst | **ADOPT** |
+| I24 | **Required lookahead depth = tRCD+tRP ≈ 78 tCK ≈ 10 bursts** | row-miss PRE must fire ~10 bursts before its CAS to hit gap-0 | **sizing floor** for BQ / outstanding queue depth (OW-7 input!) | **ADOPT** |
+| I25 | **Slack vector `A`** (windows not points) | each prep cmd gets `A_i`; legal window `[D_i−A_i, D_i]` floored by resource-ready. Smallest A_i keeping CA feasible | EMIT/ARB: schedule commands as windows → bin-pack into free CA slots | **ADOPT** (CSR-tunable `A_PRE/A_ACT/A_CAS/A_REF`) |
+| I26 | **Backward scheduling from DQ slot** | plan the DQ burst at N, back-solve PRE@N−tRCD−tRP, ACT@N−tRCD | the mental model for EMIT's feasibility check | **ADOPT** |
+| I27 | **Interactive scheduler GUI** | draggable DQ bursts, window bars, slack sliders, free-slot CSP fill | FUTURE tool, build on "go" only | **DEFER** |
+
+## 7. Conflicts to resolve (from datapath §6 + tensions found)
+
+These are settled-artifact conflicts the datapath analysis logged. Verdicts here; the pkg
+edits wait for RTL-go.
+
+| # | Settled | Conflict | Verdict / basis |
+|---|---------|----------|-----------------|
+| C1 | `rmc_pkg`: N_RANKS=1, RANK_BITS=0 | diff-rank W→R is ~22 tCK cheaper (I22); needs N_RANKS≥2 | **BUMP to 2 (intent)** — real turnaround win; pkg edit deferred |
+| C2 | KB §18: tWTR_L=4 | JEDEC = max(16nCK,10ns) = 16/24; **4 is illegal** | **FIX to 24@4800B** — spec-locked. My block 02 already uses tWTR_L=24 ✓ |
+| C3 | KB §18: tRTP=4 | JEDEC = max(12nCK,7.5ns) = 12/18 | **FIX to 18@4800B** — block 02 uses 18 ✓ |
+| C4 | KB §18: tRCD=tRP=4, tRAS=7 | DDR4-scaled "toy", not DDR5 (39/39/77 → verified 40/40/77) | **toy = label-only; 4800B authoritative** — block 02 uses 40/40/77 ✓ |
+| C5 | single toy timing set | need dual (toy + 4800B) CSR-loadable | **dual CSR profiles** — `timing_reg_file` already CSR-loaded (I10) |
+| C6 | datapath doc: "CA = 7 bits/subchannel" | study doc verified CA[13:0] = 14 lanes | **reconcile** — 14 total; per-subchannel nuance to confirm. Budget (3 free/burst) holds either way |
+| — | `architecture_reference.md` | corrupt: IO-map duplicated + leaked heredoc (line 959) | **repo hygiene** — delete/regenerate; not a design source |
+
+**Note:** my block-02 timings already match the *corrected* (C2/C3/C4) values — the
+datapath analysis and my rebuild independently landed on the JEDEC-verified numbers. Good
+cross-check.
 
 ## 5. Open items (this ledger)
 
