@@ -8,7 +8,7 @@ the 5-stage command pipe from the MCC handoff to DFI command emission.
 All internal nets are `[v1.9.9]` (residency split, per-bank queues, weight arbiter, row-hit
 promotion, never-idle-DQ guardrail, **no valid bit** — occupancy = FIFO head/tail, RAW gate =
 `wr_occupied`). External port names/widths are the frozen `RMC_IO_Map.md §19` ports. Renders
-inline on GitHub. Golden reference: [`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js).
+inline on GitHub. Golden reference: [`../tools/sched_model/sched_test.js`](../../tools/sched_model/sched_test.js).
 
 Legend: `*logic` = combinational block · `*reg` = register file · `*sram` = SRAM ·
 `*fifo` = FIFO · **▷ pin** = external port · ◆ = decision. Solid = forward command/data,

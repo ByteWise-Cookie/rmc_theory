@@ -3,7 +3,7 @@
 Zoom views for [`scheduler_cmd_pipeline_diagram.md`](scheduler_cmd_pipeline_diagram.md).
 One Mermaid block per stage (S0–S4), each expanded to net / gate level. Ports = frozen
 `RMC_IO_Map.md §19`; `[v1.9.9]` = per-bank-queue / weight-arbiter rework nets. Golden
-reference: [`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js).
+reference: [`../tools/sched_model/sched_test.js`](../../tools/sched_model/sched_test.js).
 
 Signal direction convention (matches the IO map): `→` an input the stage consumes,
 `←` an output the stage drives.
