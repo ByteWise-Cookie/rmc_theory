@@ -1,9 +1,9 @@
 # RMC Scheduler — Block Diagrams
 
 GitHub-native (Mermaid) block diagrams of the scheduler the golden model
-[`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js) implements.
-Authoritative wiring: [`../short_notes/scheduler_deep.md`](../short_notes/scheduler_deep.md) §7;
-residency split: [`scheduler_queue_arch.md`](scheduler_queue_arch.md).
+[`../tools/sched_model/sched_test.js`](../../tools/sched_model/sched_test.js) implements.
+Authoritative wiring: [`../short_notes/scheduler_deep.md`](../../short_notes/scheduler_deep.md) §7;
+residency split: [`scheduler_queue_arch.md`](../scheduler_queue_arch.md).
 
 ---
 

@@ -119,6 +119,8 @@ function runScheduler(queue, bin, opts = {}) {
   const queueArch = !!opts.queueArch;                  // admission (short TCAM) + per-bank queues
   const TCAM_SIZE = opts.tcam      || 32;              // searchable admission slots
   const bankDepth = opts.bankDepth || 8;               // per-bank in-flight FIFO depth
+  const rdCap     = opts.rdCap     || Infinity;        // max in-flight reads  (read buffer  N_RD_ENTRIES)
+  const wrCap     = opts.wrCap     || Infinity;        // max in-flight writes (write buffer N_WR_ENTRIES)
   const rawPause  = opts.rawPause !== false;           // block RAW reads at admission (queueArch)
   const wheel     = !!opts.wheel;                       // timing-wheel candidate advance (queueArch): instead of
                                                         // scanning every tCK, jump gc to the soonest ready-time
@@ -155,6 +157,8 @@ function runScheduler(queue, bin, opts = {}) {
 
   let toks = queue.map((q, i) => ({...q, id: i, done: false, gid: null, wstate: null, firstSeen: null}));
   let maxWait = 0, sumWait = 0, doneCount = 0;         // fairness metric (waiting tCK to service)
+  let maxWaitR = 0, sumWaitR = 0, doneR = 0, maxWaitW = 0, sumWaitW = 0, doneW = 0;  // per-type latency
+  let rInflight = 0, wInflight = 0;                    // in-flight per type (admit..retire) — rdCap/wrCap
   let activeCount = toks.length;
   let pendR = toks.reduce((a, t) => a + (t.dir === "R" ? 1 : 0), 0), pendW = activeCount - pendR;
   const demand = Array.from({length: NR}, () => Array.from({length: NB}, () => ({})));
@@ -214,9 +218,10 @@ function runScheduler(queue, bin, opts = {}) {
       G.dqFree = gc + l + BL2; G.lastCasBg = t.bg;
       if (t.dir === "R") { b.nPre = Math.max(b.nPre, gc + p.tRTP); rk.nRdWr = gc + tRTW(p); }
       else { b.nPre = Math.max(b.nPre, gc + p.WL + BL2 + p.tWR); rk.nWrRd = gc + p.WL + BL2 + p.tWTR_L; }
-      t.done = true; activeCount--; if (t.dir === "R") pendR--; else pendW--;
+      t.done = true; activeCount--; if (t.dir === "R") { pendR--; rInflight--; } else { pendW--; wInflight--; }
       demand[r][bidx(t)][t.row]--;
       const w = gc - (t.firstSeen ?? gc); if (w > maxWait) maxWait = w; sumWait += w; doneCount++;
+      if (t.dir === "R") { if (w > maxWaitR) maxWaitR = w; sumWaitR += w; doneR++; } else { if (w > maxWaitW) maxWaitW = w; sumWaitW += w; doneW++; }
     }
   }
 
@@ -246,7 +251,22 @@ function runScheduler(queue, bin, opts = {}) {
   const admitAndEvict = () => {
     // retire heads whose CAS has emitted, then top up TCAM in arrival order
     for (let r = 0; r < NR; r++) for (let bi = 0; bi < NB; bi++) { const q = bq[r][bi]; while (q.length && q[0].done) q.shift(); }
-    while (tcam.length < TCAM_SIZE && adm < toks.length) { const t = toks[adm++]; if (t.firstSeen === null) t.firstSeen = gc; tcam.push(t); }  // aging clock starts at admission (total in-system wait)
+    // top up TCAM in arrival order. rdCap/wrCap = separate read/write buffers: a request
+    // of a type at its cap cannot be admitted (buffer full) — skip it, admit the next
+    // fitting one, preserving per-type FIFO order (a full type blocks all its members).
+    if (rdCap === Infinity && wrCap === Infinity) {
+      while (tcam.length < TCAM_SIZE && adm < toks.length) { const t = toks[adm++]; if (t.firstSeen === null) t.firstSeen = gc; t.admitted = true; if (t.dir === "R") rInflight++; else wInflight++; tcam.push(t); }  // aging clock starts at admission
+    } else {
+      let scan = adm;
+      while (tcam.length < TCAM_SIZE && scan < toks.length) {
+        const t = toks[scan];
+        if (t.admitted) { scan++; continue; }
+        if (t.dir === "R" ? rInflight >= rdCap : wInflight >= wrCap) { scan++; continue; }   // that type's buffer is full
+        if (t.firstSeen === null) t.firstSeen = gc; t.admitted = true; tcam.push(t);
+        if (t.dir === "R") rInflight++; else wInflight++; scan++;
+      }
+      while (adm < toks.length && toks[adm].admitted) adm++;
+    }
     // classify is done at admit; evict to the bank queue when it has room and RAW is clear
     for (let i = 0; i < tcam.length; ) {
       const t = tcam[i];
@@ -367,7 +387,8 @@ function runScheduler(queue, bin, opts = {}) {
   for (const c of out) if (isCAS(c.type)) { bu++; const ds = c.cycle + lat(c.type, p); if (ds < s0) s0 = ds; if (ds + BL2 > s1) s1 = ds + BL2; }
   const span = bu ? s1 - s0 : 0, busy = span ? Math.round(100 * bu * BL2 / span) : 0;
   const meanWait = doneCount ? Math.round(sumWait / doneCount) : 0;
-  return {cmds: out, busy, span, bursts: bu, flips, refs, unscheduled: activeCount, guardHit: guard >= 20000000, maxWait, meanWait, iters};
+  const meanWaitR = doneR ? Math.round(sumWaitR / doneR) : 0, meanWaitW = doneW ? Math.round(sumWaitW / doneW) : 0;
+  return {cmds: out, busy, span, bursts: bu, flips, refs, unscheduled: activeCount, guardHit: guard >= 20000000, maxWait, meanWait, maxWaitR, meanWaitR, doneR, maxWaitW, meanWaitW, doneW, iters};
 }
 
 // ------------------------------ trace generator ---------------------------

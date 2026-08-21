@@ -1,11 +1,11 @@
 # RMC Scheduler — Full Stitched Block Diagram
 
 One Mermaid diagram of the whole scheduler the golden model
-[`../tools/sched_model/sched_test.js`](../tools/sched_model/sched_test.js) implements:
+[`../tools/sched_model/sched_test.js`](../../tools/sched_model/sched_test.js) implements:
 front-end → admission → per-bank queues → gates → weight arbiter → emit → DFI, with the
 timing-scoreboard feedback loop and the maintenance-engine override. Renders inline on
 GitHub. Detail views: [`scheduler_block_diagram.md`](scheduler_block_diagram.md) (per-stage),
-[`../short_notes/scheduler_deep.md`](../short_notes/scheduler_deep.md) §7 (net list).
+[`../short_notes/scheduler_deep.md`](../../short_notes/scheduler_deep.md) §7 (net list).
 
 ```mermaid
 flowchart TB

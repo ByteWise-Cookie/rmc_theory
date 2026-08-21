@@ -1,0 +1,10 @@
+{
+  "name": "tdp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "TDP — DDR5 command timing diagram plotter (model + checker). Framework-free ESM, no runtime dependencies.",
+  "scripts": {
+    "test": "node test/run.js"
+  }
+}
