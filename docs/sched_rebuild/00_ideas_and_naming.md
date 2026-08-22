@@ -82,7 +82,7 @@ Each: the idea, its source, how the rebuild uses it, verdict.
 | I16 | **Async FIFO credit-based push**, `FIFO_DEPTH`=init credits, `gate_resp_fifo_avail` | IO §2–3 | block 03 IAF + RSP protocol | **KEEP** |
 | I17 | **`gate_resp_fifo_avail`** — RD never issues without a reserved resp slot | KB inv 6 | ARB/EMIT gate on read issue | **KEEP** |
 | I18 | **Staggered starvation** `age ≥ THR + entry_idx` (≤1 starved fires/cycle) | KB §15 | subsumed by weight `age` term; THR = hard backstop | **ADAPT** |
-| I28 | **MR_Write sub-FSM + shared MR Read Arbiter** — runtime mode-register writes (timing changes) with shadow→apply into `timing_reg_file`, MRR verify read-back, `gate_mr[rank]`; shares the MRR sideband with MR_Poll via `mrr_requester` tag. **Hard invariant: `timing_reg_file` never out of sync with DRAM's programmed latency** | `RMC_MR_Programming_v1_9_10` | ME gains a 7th sub-FSM; the timing-sync invariant is first-class | **KEEP** (ME scope) |
+| I28 | **MR_Write sub-FSM** — runtime mode-register writes, optional MRR verify read-back, `gate_mr[rank]`; shares the MRR sideband with MR_Poll via a minimal `mrr_busy` mutual-exclusion interlock (not an arbiter, no requester tag, no response routing). `timing_reg_file` synchronization after a successful write is a **software** responsibility — no hardware shadow/apply path exists | `RMC_MR_Programming_and_Power_Management_v1_9_11` | ME gains a 7th sub-FSM | **KEEP** (ME scope) |
 
 ---
 

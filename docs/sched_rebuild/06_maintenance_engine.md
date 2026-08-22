@@ -48,7 +48,7 @@ rfm_req > zq_due`).
 | 4 | **RFM** | Refresh Management, per-bank RAA | `raa[b]≤RAAIMT` | RFM |
 | 5 | **PwrMgmt** | power-down + self-refresh entry/exit | idle / system | PDE/PDX, SRE/SRX |
 | 6 | **MR_Poll** | MR4/TUF temperature polling | `gc≥next_poll_gc` | MRR to MR4 (sideband return) |
-| 7 | **MR_Write** *(I28)* | runtime mode-register writes (timing changes) | `mr_wr_req` | MRW + verify MRR |
+| 7 | **MR_Write** *(I28)* | runtime mode-register writes | `mr_wr_req` | MRW + verify MRR |
 
 > "one concern per sub-FSM" — they stay functionally distinct (periodic vs on-demand,
 > read vs write), never merged.
@@ -70,22 +70,21 @@ rfm_req > zq_due`).
 
 ---
 
-## 3. MR_Write + shared MR Read Arbiter (I28)
+## 3. MR_Write + shared `mrr_busy` interlock (I28, per v1.9.11)
 
-Runtime mode-register writes — the hardest correctness path, because a timing-affecting
-MRW must never leave `timing_reg_file` out of sync with the DRAM's actual latency.
+Runtime mode-register writes. Per the finalized v1.9.11 model: MR_Write FSM issues the MRW,
+optionally verifies it over the existing MRR sideband, and reports `MR_WR_DONE`/
+`MR_WR_ERROR` — it stops there. Keeping `timing_reg_file` consistent with a timing-affecting
+write afterward is entirely **software's** responsibility, performed as a separate CSR write
+once software observes success; no hardware path connects MR_Write to `timing_reg_file`.
 
-- **Flow:** `IDLE → REQUEST → WAIT_tMRD (gate_mr[rank]=1) → VERIFY_MRR → WAIT_RDDATA →
-  CHECK_MATCH → APPLY_TIMING → DONE`.
-- **Shadow → apply:** a timing-affecting MRW stages the new value; `APPLY_TIMING` pulses
-  `timing_apply_en` into `timing_reg_file` **only after** the verify read-back matches
-  (`CHECK_MATCH`). So the controller's expectation and the DRAM flip atomically.
-- **Shared MR Read Arbiter:** MR_Poll and MR_Write both issue MRRs and share the sideband
-  return path. A small arbiter grants one at a time; responses are disambiguated by a new
-  **`mrr_requester`** tag (rank alone is insufficient once two FSMs can read). No
-  preemption of an in-flight read; tie → MR_Write first (`mr_write_req > mrr_due`).
-- **Invariant (first-class):** `timing_reg_file` is never out of sync with the DRAM's
-  programmed latency. Every timing-affecting MRW goes verify-then-apply.
+- **Flow:** `IDLE → WAIT_REQ → GATE_CHECK → ISSUE_MRW → WAIT_tMRD →
+  [VERIFY_MRR → WAIT_RDDATA → CHECK_MATCH] (optional, MR_WR_VERIFY=1) → DONE → IDLE`.
+- **Shared `mrr_busy` interlock:** MR_Poll and MR_Write both issue MRRs and share the
+  sideband return path via a single mutual-exclusion bit — the issuing FSM asserts
+  `mrr_busy` and clears it once it consumes its own response. This is not an arbiter: no
+  requester tag, no grant/priority logic, no response routing (`mrr_rank` is not used to
+  route responses).
 
 ---
 
@@ -101,10 +100,11 @@ once, at Init DONE.
 
 **Writes (into scheduler tables):** `set_ref_pending`/`clr_ref_pending`,
 `set_gate_rfc`/`clr`, `set_gate_zq`/`clr`, `update_next_trefi/zqcs/xp/xs`,
-`raa_dec_en/val`, `timing_apply_en`.
+`raa_dec_en/val`.
 **Reads:** `bank_act_count`, `all_idle`, `raa_out`, `can_xp/can_xs`, `gc`, `sched_ack`.
 **Own commands:** `me_cmd_valid/type/rank/bg/bank` → Stage-0 override → emit → FAB.
-**MRR sideband in:** `mrr_data_valid/data/rank/requester`.
+**MRR sideband in:** `mrr_data_valid/mrr_data/mrr_rank` (existing, unmodified); shared via
+`mrr_busy`.
 **Boot:** `INIT_KICK`, `TRAIN_EN` (CSR) → `init_done`.
 
 ---

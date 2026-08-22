@@ -138,7 +138,7 @@ to a register stage at baseline. DRAM \sig{tCK} is hidden PHY-side behind the ge
 State & Owner (writes) & Readers \\ \midrule
 per-bank / global timing tables & EMIT Stage-4 (+ME gates) & ARB, EMIT \\
 per-rank FSM table & ME & ARB, EMIT, ME \\
-\sig{timing_reg_file} & CSR init + ME MR\_Write & all \\
+\sig{timing_reg_file} & CSR only (MR\_Write has no write path to it) & all \\
 WR\_TCAM / \sig{wr_occupied} & HZU / watermark mgr & HZU, BQ evict gate \\
 per-bank queues & watermark mgr & ARB (head only) \\
 bank activity counter & BQ alloc/retire & ME, power-mgmt \\
@@ -453,10 +453,11 @@ Refresh: leaky bucket (\sig{ref_credits}+=1/\sig{T_REFI}, $-$=1/REF); \sig{ref_u
 credits$\ge$8. REFab (\sig{gate_rfc}, all banks, \sig{T_RFC1}) / REFsb (one bank,
 \sig{T_RFCsb}); target \sig{argmin(bank_act_count)}; opportunity REFsb on NOP. FGR-2x/4x +
 MR4 TUF halve \sig{T_REFI}.
-MR\_Write (I28): runtime timing changes via shadow$\to$verify-MRR$\to$apply into
-\sig{timing_reg_file}; shared MR Read Arbiter (\sig{mrr_requester} tag) with MR\_Poll.
-\textbf{Invariant: \sig{timing_reg_file} never out of sync with the DRAM's programmed
-latency.}
+MR\_Write (I28): MRW $\to$ optional verify-MRR $\to$ \sig{MR_WR_DONE}/\sig{MR_WR_ERROR}.
+Shares the MRR sideband with MR\_Poll via a \sig{mrr\_busy} mutual-exclusion interlock
+(not an arbiter: no requester tag, no response routing).
+\textbf{\sig{timing_reg_file} sync after a successful write is a software
+responsibility; no hardware path exists from MR\_Write to \sig{timing_reg_file}.}
 
 %======================================================================
 \appendix
@@ -492,7 +493,7 @@ Read/write depth (OW-7) & \sig{N_RD}=32 \sig{N_WR}=96 & sweep: 3x wins; plan 64/
 \section{Key harvested ideas}
 DQ heartbeat (BL/2=8); $\ge$2-live-BG invariant; R$\to$W/W$\to$R asymmetry; cross-rank
 W$\to$R dodges tWTR; 3-free-CA-slots/burst; lookahead depth $\ge$tRCD+tRP ($\approx$10
-bursts); slack vector A; backward scheduling; MR\_Write + shared MR Read Arbiter;
+bursts); slack vector A; backward scheduling; MR\_Write + shared \sig{mrr\_busy} interlock;
 valid-credit intra-MC; \sig{gate_resp_fifo_avail} RD-issue gate.
 
 \end{document}
