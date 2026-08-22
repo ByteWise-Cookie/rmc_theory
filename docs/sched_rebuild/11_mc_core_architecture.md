@@ -108,7 +108,7 @@ The **timing scoreboard** is the shared brain:
 | per-bank FSM (`state, row_open, next_cas/pre/act/ref`) | EMIT (Stage-4) + ME | ARB, EMIT |
 | per-rank FSM (`next_*_any, faw_window, gate_rfc/zq, raa`) | ME | ARB, EMIT, ME |
 | global timing (`next_*_bg, last_act_bg, caFree, dqFree`) | EMIT (Stage-4) | ARB, EMIT |
-| `timing_reg_file` (`T_*`) | CSR (init) + ME MR_Write | all (combinational) |
+| `timing_reg_file` (`T_*`) | CSR only (MR_Write reports DONE/ERROR; sync write is software's job) | all (combinational) |
 
 - **Legality** is precomputed `can_*` flags (`(gc - next_x)[MSB]==0`) — ARB reads them +
   `readyAt`; **no subtractor in the pick path**.
@@ -129,7 +129,7 @@ FAB DFI mux (Init drives DFI at boot, scheduler after). Never issues a CAS.
 |-------|----------------|---------|
 | per-bank / global timing tables | EMIT Stage-4 (+ ME sets `ref_pending`/gates) | ARB, EMIT |
 | per-rank FSM table | ME | ARB, EMIT, ME |
-| `timing_reg_file` | CSR init + ME MR_Write (verify→apply) | all |
+| `timing_reg_file` | CSR only (MR_Write has no write path to it, direct or indirect) | all |
 | WR_TCAM / `wr_occupied` | HZU / watermark mgr | HZU (RAW), BQ evict gate |
 | per-bank queues | watermark mgr (alloc/evict/retire) | ARB (head only) |
 | bank activity counter | BQ alloc/retire | ME, power-mgmt |
