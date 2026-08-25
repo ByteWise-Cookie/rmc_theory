@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="760" viewBox="0 0 1060 760" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1060" height="760" fill="#ffffff"/>
+  <text x="1050" y="32" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">cell[{rank, bank}]   -   x32 / lane</text>
+  <text x="1050" y="48" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">N_RANKS = 2  -&gt;  64 cells (fig_00, fig_08)</text>
+  <text x="1050" y="64" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">lives in rank r's lane; rank fixed per lane</text>
+  <text x="270" y="66" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">from per_bank_decoder (stage 2)</text>
+  <line x1="270" y1="74" x2="270" y2="116" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="263" y1="103" x2="277" y2="89" stroke="#000000" stroke-width="1.0"/>
+  <text x="280" y="112" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REQ_W</text>
+  <text x="284" y="96" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">{rob_index, phy_adr{row,col}, op}</text>
+  <rect x="120" y="118" width="300" height="64" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="270.0" y="150.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">row_comparator[{r,b}]</text>
+  <text x="270.0" y="165.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">packet.row vs open_row  -&gt;  is_hit, need_pre/act/cas</text>
+  <rect x="470" y="126" width="160" height="48" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="550" y="148" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">open_row[{r,b}]</text>
+  <text x="550" y="165" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">active_row</text>
+  <line x1="470" y1="150" x2="422" y2="150" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="270" y1="182" x2="270" y2="217" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M270 217.0 L345.0 250 L270 283.0 L195.0 250 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="270" y="255" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">is_hit?</text>
+  <path d="M198 250 L120 250 L120 356" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="150" y="240" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">hit</text>
+  <rect x="70" y="356" width="200" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="170.0" y="386.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">cas_path</text>
+  <text x="170.0" y="401.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">need_cas</text>
+  <path d="M342 250 L470 250 L470 356" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="430" y="240" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">miss</text>
+  <rect x="350" y="356" width="240" height="72" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="470.0" y="392.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">act_path</text>
+  <text x="470.0" y="407.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">need_pre -&gt; need_act -&gt; need_cas</text>
+  <rect x="680" y="200" width="360" height="224" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="860.0" y="222" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">fsm_state[{r,b}]   (4-bit / 16)</text>
+  <text x="702" y="244" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">IDLE</text>
+  <text x="702" y="268" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ACT_pending  -&gt;  ACTING (tRCD)</text>
+  <text x="702" y="292" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">OPEN</text>
+  <text x="702" y="316" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">PRE_pending  -&gt;  PREING (tRP)</text>
+  <text x="702" y="340" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REF_pending  -&gt;  REFING (tRFC)</text>
+  <text x="702" y="364" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">+ MRW / ZQ   (headroom)</text>
+  <text x="702" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">-ing states hold until timer expires</text>
+  <path d="M760 200 L760 150 L630 150" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="690" y="140" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">open_row &lt;- row @ ACT</text>
+  <rect x="300" y="470" width="320" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="460.0" y="505.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">row_valid</text>
+  <rect x="300" y="470" width="320" height="60" fill="#e3f2f1" stroke="#000000" stroke-width="1.6"/>
+  <text x="460" y="496" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">row_valid</text>
+  <text x="460" y="514" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">= (state == OPEN) &amp; !pre_pending</text>
+  <path d="M720 424 L720 500 L622 500" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="735" y="452" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">state==OPEN</text>
+  <rect x="700" y="476" width="150" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="775" y="499" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">pre_pending</text>
+  <text x="775" y="514" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">1-bit intent</text>
+  <line x1="700" y1="500" x2="622" y2="500" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="775" y1="570" x2="775" y2="524" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="775" y="588" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">set @ tier-1 PRE propose</text>
+  <line x1="120" y1="416" x2="120" y2="610" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="470" y1="428" x2="470" y2="610" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="460" y1="530" x2="460" y2="610" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="300" y="610" width="360" height="58" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="480.0" y="639.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">elig_gen[{r,b}]</text>
+  <text x="480.0" y="654.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">need_* &amp; can_*  -&gt;  bank_go, bank_cmd, is_hit</text>
+  <line x1="1040" y1="638" x2="662" y2="638" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="833" y1="645" x2="847" y2="631" stroke="#000000" stroke-width="1.0"/>
+  <text x="850" y="654" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">can_pre/act/cas</text>
+  <text x="840" y="616" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">from scoreboard (fig_04)  -  ALL legality folded in</text>
+  <text x="890" y="686" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">global last_cas_rank + per-rank faw feed can_*</text>
+  <line x1="480" y1="668" x2="480" y2="712" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="494" y="692" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">{bank_go, bank_cmd, is_hit}</text>
+  <text x="480" y="734" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-&gt;  L1 bg_arb[r]   (this rank's lane -&gt; L2 -&gt; L3)</text>
+  <text x="40" y="752" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">One cell of 64 (cell[{r,b}], N_RANKS=2). row_valid gates admission: high only while the row is OPEN and no PRE is in flight. Intent drops it early; FSM commits at out_cmd_fifo.</text>
+</svg>

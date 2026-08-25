@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="800" viewBox="0 0 1340 800" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1340" height="800" fill="#ffffff"/>
+  <text x="1330" y="34" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">Maintenance Engine  -  one shared block</text>
+  <text x="1330" y="50" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">per-rank refresh timers  (x N_RANKS = 2)</text>
+  <rect x="70" y="96" width="320" height="74" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="230.0" y="118" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">INIT engine  (boot FSM)</text>
+  <text x="88" y="138" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RESET -&gt; CK -&gt; MRW train -&gt; ZQCL</text>
+  <text x="88" y="156" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; PHY handoff -&gt; latch init_done</text>
+  <rect x="70" y="196" width="320" height="156" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="230.0" y="218" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFRESH engine  (per rank)</text>
+  <text x="88" y="240" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tREFI down-ctr -&gt; refresh debt (max 8)</text>
+  <text x="88" y="261" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REFsb  BA round-robin 0..3</text>
+  <text x="88" y="282" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">   (ba=k refreshes bank k in all 8 BG)</text>
+  <text x="88" y="303" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">opportunistic pull-in / debt-forced</text>
+  <text x="88" y="324" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REFab fallback when whole rank idle</text>
+  <rect x="70" y="378" width="320" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="230.0" y="398.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFM   (stub)</text>
+  <text x="230.0" y="413.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">RAA &gt; RAAMMT -&gt; rfm_req</text>
+  <rect x="70" y="430" width="320" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="230.0" y="450.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ZQ    (stub)</text>
+  <text x="230.0" y="465.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">long-interval ZQCS / ZQCL</text>
+  <rect x="70" y="482" width="320" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="230.0" y="502.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRW   (stub)</text>
+  <text x="230.0" y="517.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">runtime MR writes</text>
+  <path d="M500 250 L750 250 L720.3 316 L529.7 316 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="625.0" y="287.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">inject_prio</text>
+  <text x="625" y="300" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">init &gt; ref_urgent &gt; rfm &gt;</text>
+  <text x="625" y="314" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">ref_due &gt; zq &gt; mrw</text>
+  <line x1="392" y1="133" x2="498" y2="252" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="392" y1="250" x2="500" y2="252" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="392" y1="398" x2="500" y2="314" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="392" y1="450" x2="500" y2="314" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="392" y1="502" x2="500" y2="314" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="625" y1="316" x2="625" y2="372" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="640" y="350" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">maint_cmd {type, rank, ba}</text>
+  <rect x="505" y="372" width="240" height="50" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="625.0" y="397.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">packer override slot</text>
+  <text x="625.0" y="412.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">fig_05  -  never CAS</text>
+  <line x1="625" y1="422" x2="625" y2="470" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="625" y="492" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-&gt;  packer  -&gt;  DFI</text>
+  <line x1="750" y1="130" x2="1000" y2="130" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1010" y="126" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">init_done -&gt; DFI mux (fig_01)</text>
+  <line x1="392" y1="250" x2="1000" y2="250" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1010" y="246" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">REF_pending -&gt; bank FSMs (fig_03)</text>
+  <line x1="392" y1="286" x2="1000" y2="286" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1010" y="282" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">gate_rfc[rank] -&gt; scoreboard (fig_04)</text>
+  <line x1="1000" y1="398" x2="392" y2="398" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1010" y="394" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">raa_count &lt;- scoreboard</text>
+  <rect x="70" y="590" width="900" height="120" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="520" y="614" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">refresh handshake</text>
+  <text x="94" y="644" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ref due -&gt; set REF_pending on the 8 target banks</text>
+  <text x="94" y="664" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; scheduler stops new CAS, drains + precharges them</text>
+  <text x="94" y="684" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; ME injects PRE(sb) then REFsb   -&gt;  banks go REFING(tRFCsb)</text>
+  <text x="94" y="704" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; gate_rfc blocks issue until timer clears; other 24 banks keep feeding DQ</text>
+  <text x="40" y="780" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ME is a peer command source: it never issues CAS, injects into the packer with override priority, and drives refresh REFsb-first (opportunistic, debt-forced) so the rank keeps feeding DQ. INIT owns init_done.</text>
+</svg>
