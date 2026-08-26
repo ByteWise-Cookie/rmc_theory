@@ -1,0 +1,98 @@
+\documentclass[9pt]{extarticle}
+\usepackage[margin=0.55in]{geometry}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[T1]{fontenc}
+
+\setlength{\columnsep}{16pt}
+\pagestyle{empty}
+\definecolor{hdr}{RGB}{30,80,140}
+\definecolor{ff}{RGB}{120,120,120}
+
+\titleformat{\section}{\normalfont\bfseries\color{hdr}\small}{}{0pt}{}
+\titlespacing*{\section}{0pt}{6pt}{2pt}
+
+% \blk{name}{full form}{purpose}
+\newcommand{\blk}[3]{\noindent\textbf{\texttt{#1}}\; {\footnotesize\color{ff}#2}\; --- #3\par\vspace{1.5pt}}
+
+\begin{document}
+\footnotesize
+
+\begin{center}\normalsize\textbf{CIF — Channel Interface: block quick-reference}\\
+{\footnotesize\color{ff}AXI4 front end $\rightarrow$ segment/hash $\rightarrow$ ROB $\rightarrow$ CDC $\rightarrow$ MCC. Left = host/AXI, right = memory-controller core.}\end{center}
+\vspace{2pt}
+
+\begin{multicols}{2}
+
+\section{Host \& AXI ports}
+\blk{AXI\_INTERCONNECT}{AXI crossbar}{Routes the SoC masters onto the four CIF slave ports.}
+\blk{AX4IP0..3}{AXI4 IP port (slave)}{One AXI4 slave per port; terminates the five AXI channels for that port.}
+
+\section{Per-port AXI channels}
+\blk{AR\_CH}{Read Address channel}{Accepts read address/len/id (AR*), hands the request downstream.}
+\blk{AW\_CH}{Write Address channel}{Accepts write address/len/id (AW*).}
+\blk{W\_CH}{Write Data channel}{Accepts write beats + strobes (W*).}
+\blk{R\_CH}{Read Data channel}{Returns read beats + RRESP/RLAST to the master.}
+\blk{BRESP\_CH}{Write Response (B) channel}{Returns the write completion BRESP/BID.}
+
+\section{Per-port request FIFOs}
+\blk{AR\_REQ\_FIFO}{read-address request FIFO}{Buffers accepted AR requests so ARREADY can decouple from admission.}
+\blk{AW\_REQ\_FIFO}{write-address request FIFO}{Same for AW; holds until paired with data.}
+\blk{W\_BURST\_FIFO}{write-data burst descriptor FIFO}{Holds the descriptor (\texttt{start\_ptr} + beat \texttt{count}) into WD\_SRAM --- not the W beats themselves.}
+
+\section{Arbitration \& validation}
+\blk{PORT\_ARB\_R}{read port arbiter}{Picks one of four ports' read streams (independent from writes).}
+\blk{PORT\_ARB\_W}{write port arbiter}{Picks one of four ports' write streams.}
+\blk{WR\_PAIR}{write pair gate}{Pairs an AW address with its W-data descriptor (\texttt{start\_ptr}+\texttt{count}) before write admission.}
+\blk{REQ\_VAL\_R}{read request validator}{Checks alignment/len/legality; computes segment count \texttt{n\_segs}.}
+\blk{REQ\_VAL\_W}{write request validator}{Same legality/segmentation check for writes.}
+\blk{ERR\_HDLR\_R}{read error handler}{Flags DECERR/SLVERR; allocates + marks the ROB entry retire-eligible.}
+\blk{ERR\_HDLR\_W}{write error handler}{Same error path for writes.}
+
+\section{Segmentation \& packet form}
+\blk{BURST\_SPLIT\_R}{read burst splitter}{Cuts an AXI burst into \texttt{row\_size} segments (one packet each).}
+\blk{BURST\_SPLIT\_W}{write burst splitter}{Splits the write burst; maps each segment to a WD\_SRAM slot.}
+\blk{PKT\_FORM\_R}{read packet former}{Builds the per-segment request packet sent to MCC (\{rob\_index, dbuf\_addr, daddr, beats\}).}
+\blk{PKT\_FORM\_W}{write packet former}{Builds the write packet (\{rob\_index, wd\_slot, daddr, beats\}).}
+\blk{R\_ADR\_HASH}{read address hash}{XOR-hashes the \textbf{row + BG + bank} bits into DRAM coords; \textbf{column left un-hashed}.}
+\blk{W\_ADR\_HASH}{write address hash}{Same --- hashes row/BG/bank only, not column.}
+
+\section{Reorder buffers}
+\blk{ROB\_RD}{read reorder buffer}{Tracks each in-flight read: \texttt{start\_ptr, exp\_pkts, bitmap, status}; retires when the bitmap is full.}
+\blk{ROB\_WR}{write reorder buffer}{Tracks in-flight writes; \texttt{SLOT\_FIFO}+\texttt{RETIRE\_LOGIC} restore AXID order.}
+
+\section{Data SRAM \& managers}
+\blk{RD\_SRAM}{read data buffer}{512b/line store; MCC writes returned read data here at \texttt{dbuf\_addr}. Dual-domain (MC + CIF ports).}
+\blk{WD\_SRAM}{write data buffer}{Holds write beats; MCC reads them at \texttt{wd\_slot} to drive DFI.}
+\blk{RD\_SRAM\_MGR}{read buffer manager}{Allocates a contiguous \texttt{dbuf} range at ROB alloc; frees it on merge/drain.}
+\blk{WR\_SRAM\_MGR}{write buffer manager}{Allocates a per-burst slot-vector on arrival; frees per packet on completion.}
+
+\section{Response path}
+\blk{MERGE\_LOGIC}{read merge/serialize}{Waits for all packets (bitmap full), drains RD\_SRAM in segment order to R\_CH, frees the range.}
+\blk{BRESP\_GEN}{B-response generator}{Forms the AXI write response from the ROB\_WR completion.}
+\blk{RESP\_DISP}{response dispatcher}{1-of-4 port demux routing B responses back to the right \texttt{BRESP\_CH}.}
+
+\section{Config (APB / CSR)}
+\blk{APB\_SLAVE}{APB config slave}{Host register access into the CSR block.}
+\blk{CSR}{control/status registers}{Configuration + status word file.}
+\blk{CFG\_REG}{general config}{Top-level enable/mode bits.}
+\blk{ADR\_CFG}{address-map config}{Field widths/positions for the address decode.}
+\blk{GEOM\_CFG}{DRAM geometry config}{Ranks/BG/banks/rows/cols and \texttt{row\_size}.}
+\blk{HASH\_CFG}{hash config}{XOR-tap selection for the address hash.}
+
+\section{CDC — CIF $\gg$ MCC}
+\blk{CH\_R\_PKT\_FIFO}{read packet FIFO}{Per-channel staging of formed read packets before the async crossing.}
+\blk{CH\_W\_PKT\_FIFO}{write packet FIFO}{Same staging for write packets.}
+\blk{CH\_R\_REQ\_AFIFO}{read request async FIFO}{CIF$\rightarrow$MCC read-request clock-domain crossing.}
+\blk{CH\_W\_REQ\_AFIFO}{write request async FIFO}{CIF$\rightarrow$MCC write-request crossing.}
+\blk{CH\_R\_RESP\_AFIFO}{read response async FIFO}{MCC$\rightarrow$CIF read completion \{rob\_index,pkt\_num,status\} crossing.}
+\blk{CH\_W\_RESP\_AFIFO}{write response async FIFO}{MCC$\rightarrow$CIF write completion crossing.}
+
+\section{Downstream}
+\blk{MCC}{Memory Controller Core}{The scheduler + DFI side: consumes packets, drives DRAM, returns data to RD\_SRAM and tagged completions. (Separate design.)}
+
+\end{multicols}
+\end{document}
