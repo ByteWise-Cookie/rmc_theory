@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="780" viewBox="0 0 1340 780" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1340" height="780" fill="#ffffff"/>
+  <text x="430" y="56" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">from head_mux (lookahead)</text>
+  <line x1="430" y1="64" x2="430" y2="92" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="300" y="92" width="520" height="58" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="560.0" y="121.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">per_bank_decoder</text>
+  <text x="560.0" y="136.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">1 request -&gt; cell[{rank,bank}]   (64/128-way one-hot)</text>
+  <rect x="170" y="196" width="380" height="60" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="360" y="220" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">cell[{0, 0..31}]   -   32 cells</text>
+  <text x="360" y="240" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">L0: CAM + FSM + elig</text>
+  <path d="M180 322 L272 322 L253.1 364 L198.9 364 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="226.0" y="347.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">bg</text>
+  <path d="M288 322 L380 322 L361.1 364 L306.9 364 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="334.0" y="347.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">bg</text>
+  <path d="M396 322 L488 322 L469.1 364 L414.9 364 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="442.0" y="347.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">bg</text>
+  <text x="510" y="346" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">... x8</text>
+  <text x="360" y="300" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">8x  bg_arb[r0]   (L1)   4 banks -&gt; 1</text>
+  <line x1="226" y1="256" x2="226" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="334" y1="256" x2="334" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="442" y1="256" x2="442" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M250 442 L470 442 L448.4 490 L271.6 490 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="360.0" y="470.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">rank_arb[r0]</text>
+  <text x="244" y="470.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">L2</text>
+  <line x1="360" y1="364" x2="360" y2="442" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="690" y="196" width="380" height="60" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="880" y="220" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">cell[{1, 0..31}]   -   32 cells</text>
+  <text x="880" y="240" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">L0: CAM + FSM + elig</text>
+  <path d="M700 322 L792 322 L773.1 364 L718.9 364 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="746.0" y="347.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">bg</text>
+  <path d="M808 322 L900 322 L881.1 364 L826.9 364 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="854.0" y="347.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">bg</text>
+  <path d="M916 322 L1008 322 L989.1 364 L934.9 364 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="962.0" y="347.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">bg</text>
+  <text x="1030" y="346" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">... x8</text>
+  <text x="880" y="300" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">8x  bg_arb[r1]   (L1)   4 banks -&gt; 1</text>
+  <line x1="746" y1="256" x2="746" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="854" y1="256" x2="854" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="962" y1="256" x2="962" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M770 442 L990 442 L968.4 490 L791.6 490 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="880.0" y="470.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">rank_arb[r1]</text>
+  <text x="764" y="470.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">L2</text>
+  <line x1="880" y1="364" x2="880" y2="442" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="620" y="226" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">...  x N_RANKS</text>
+  <path d="M470 150 L360 150 L360 194" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M650 150 L880 150 L880 194" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M360 490 L500 490 L500 560" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M880 490 L740 490 L740 560" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M500 560 L740 560 L717.5 610 L522.5 610 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="620.0" y="589.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">inter_rank_arb</text>
+  <text x="494" y="589.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">L3</text>
+  <text x="360" y="516" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">rank0 winner</text>
+  <text x="880" y="516" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">rank1 winner</text>
+  <line x1="620" y1="610" x2="620" y2="664" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="620" y="686" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-&gt;  packer  -&gt;  one shared issue path</text>
+  <rect x="1120" y="92" width="200" height="420" fill="none" stroke="#777777" stroke-width="1.0"/>
+  <text x="1220" y="116" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">instance count</text>
+  <text x="1132" y="160" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">per_bank_decoder</text>
+  <text x="1132" y="176" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">x1  (shared)</text>
+  <text x="1132" y="240" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">cell[{rank,bank}]</text>
+  <text x="1132" y="256" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">N_RANKS x 32 = 64/128</text>
+  <text x="1132" y="320" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bg_arb  (L1)</text>
+  <text x="1132" y="336" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">N_RANKS x 8 = 16/32</text>
+  <text x="1132" y="400" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">rank_arb  (L2)</text>
+  <text x="1132" y="416" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">N_RANKS = 2/4</text>
+  <text x="1132" y="480" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">inter_rank_arb (L3)</text>
+  <text x="1132" y="496" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">x1</text>
+  <text x="40" y="748" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">The decoder-&gt;L2 path is ONE rank subtree {32 cells -&gt; 8 bg_arb -&gt; 1 rank_arb}, instanced x N_RANKS. One shared decoder feeds them; L3 collects the N_RANKS winners into one issue path.</text>
+</svg>
