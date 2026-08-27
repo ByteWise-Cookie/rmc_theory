@@ -67,21 +67,21 @@ f.slash(360, 370, "REQ_W")
 f.logic(210, 474, 300, 48, "BANK_DEC", "1-of-32  (8 BG x 4 banks)")
 f.line(360, 444, 360, 474, arrow=True)
 
-# -- per-bank cell array --
-f.logic(175, 544, 370, 82, "BANK_CELL[{r,b}]   x32", top=True)
-f.text(360, 590, "open_row CAM . 16-state FSM . elig_gen (L0)", size=11,
+# -- per-bank L0 elig (NO stored FSM here - reads FSM_TABLE) --
+f.logic(175, 544, 370, 82, "BANK_ELIG[{r,b}]   x32", top=True)
+f.text(360, 590, "row_comparator + elig_gen  (L0)  -  NO FSM here", size=10,
        mono=False, anchor="middle", fill=MUTED)
-f.text(360, 608, "row_valid = OPEN & !pre_pending", size=10, mono=False,
-       anchor="middle", fill=MUTED)
+f.text(360, 608, "reads FSM_TABLE + can_*  ->  need_*, is_hit, bank_go", size=10,
+       mono=False, anchor="middle", fill=MUTED)
 f.line(360, 522, 360, 544, arrow=True)
 
 # -- L1 bg_arb --
-f.logic(210, 650, 300, 42, "BG_ARB  x8    (L1)")
-f.line(360, 626, 360, 650, arrow=True)
+f.logic(210, 648, 300, 46, "BG_ARB  x8   (L1)", "per bank-group  (4 banks -> 1)")
+f.line(360, 626, 360, 648, arrow=True)
 
 # -- L2 rank_arb --
-f.mux(260, 708, 200, 44, "RANK_ARB (L2)")
-f.line(360, 692, 360, 708, arrow=True)
+f.mux(260, 710, 200, 44, "RANK_ARB (L2)", sel="per-rank")
+f.line(360, 694, 360, 710, arrow=True)
 
 # ================= ghost 2nd lane =================
 f.rect(690, 300, 150, 452, fill="none", stroke=FAINT, width=1.4, dashed=True)
@@ -95,8 +95,8 @@ f.path("M360 752 L360 812 L540 812 L540 838", arrow=True)
 f.text(360, 800, "rank0 winner", size=10, mono=False, anchor="middle", fill=MUTED)
 f.path("M765 752 L765 812 L700 812 L700 838", arrow=True)
 f.text(770, 800, "rank1 winner", size=10, mono=False, fill=MUTED)
-f.text(620, 912, "the ONLY rank arb", size=10, mono=False, anchor="middle",
-       fill=MUTED)
+f.text(620, 912, "per-channel cap  -  across ranks (the ONLY rank arb)", size=10,
+       mono=False, anchor="middle", fill=MUTED)
 
 # ================= shared back-end =================
 f.logic(490, 924, 260, 64, "PHASE_PACKER", top=True)
@@ -166,14 +166,42 @@ f.text(660, 202, "REF_pending", size=9, mono=False, fill=SB)
 # its UPDATE block (next_* = GC + timing @ cmd_issued). GLOBAL_REG = shared bus.
 f.text(1405, 168, "SCOREBOARD  -  split by arb level", size=13, anchor="middle",
        bold=True, fill=SB)
-f.counter(1645, 214, 30, "GC", "CK cnt")
+f.counter(1652, 212, 26, "GC", "CK cnt")
+
+# ---- TIMING_CONST : shared JEDEC addends (the constants added to GC) ----
+f.logic(1180, 296, 448, 50, "TIMING_CONST   (JEDEC addends - ONE shared copy)",
+        top=True)
+f.text(1404, 336, "~20 x ~10 b:  tRC tRP tRAS tRTP tWR tCCD_S/L tRRD_S/L tFAW "
+       "tWTR tRTW tRFCsb tCL tCWL tRTRS", size=9, mono=False, anchor="middle",
+       fill=MUTED)
+# feeds every *_UPD adder (next_* = GC + t)
+f.path("M1628 322 L1640 322 L1640 582 L1632 582", arrow=True, dashed=True)
+f.text(1636, 468, "t -> every *_UPD", size=9, mono=False, anchor="end",
+       fill=MUTED)
+
+# ---- FSM_TABLE : the SUPER FSM (cells own no FSM; state lives here) ----
+f.logic(1180, 360, 450, 96, "FSM_TABLE  [{rank,bank}] x64   -   super FSM",
+        top=True)
+f.text(1405, 404, "state[4] . open_row . pre_pending . valid . ref_pending",
+       size=10, mono=False, anchor="middle", fill=MUTED)
+f.text(1405, 422, "ONE indexed table  -  written @ FSM-commit, read by L0/L1/L2",
+       size=9, mono=False, anchor="middle", fill=MUTED)
+# FSM_TABLE state read out to EVERY arb level (L0, L1, L2)
+f.path("M1180 440 L655 440 L655 730", arrow=False)      # read spine
+f.line(655, 605, 545, 605, arrow=True)                  # -> L0 (BANK_ELIG)
+f.line(655, 660, 512, 660, arrow=True)                  # -> L1 (BG_ARB)
+f.line(655, 730, 462, 730, arrow=True)                  # -> L2 (RANK_ARB)
+f.text(870, 432, "state / open_row / pre_pending  ->  read by L0 / L1 / L2",
+       size=10, mono=False, anchor="middle")
 
 # GC broadcast bus down the far right (feeds every UPDATE)
-f.line(1645, 244, 1645, 916)
-f.text(1660, 560, "GC", size=9, mono=False, fill=MUTED)
-# cmd_issued bus from packer (triggers every UPDATE, carries issued cmd)
-f.path("M740 924 L740 586 L1150 586 L1150 916", dashed=True, stroke=SB)
-f.text(905, 578, "cmd_issued", size=10, mono=False, anchor="middle", fill=SB)
+f.line(1652, 240, 1652, 916)
+f.text(1666, 560, "GC", size=9, mono=False, fill=MUTED)
+# commit bus from packer: one edge updates FSM_TABLE + every timing UPDATE
+f.path("M740 924 L740 470 L1150 470 L1150 916", dashed=True, stroke=SB)
+f.line(1150, 470, 1180, 440, arrow=True, dashed=True, stroke=SB)  # -> FSM_TABLE
+f.text(905, 462, "cmd_issued / FSM-commit", size=10, mono=False, anchor="middle",
+       fill=SB)
 
 
 def level(y, treg, params, cmpn, upd, tier_path, lbl_xy, th=60):
@@ -184,24 +212,29 @@ def level(y, treg, params, cmpn, upd, tier_path, lbl_xy, th=60):
     f.logic(1360, uy, 270, 40, upd, "next_* = GC + t")
     f.line(1360, y + 30, 1330, y + 30, arrow=True)              # next_* -> CMP
     f.line(1495, uy, 1495, uy - 12, arrow=True)                 # UPD writes TREG
-    f.line(1645, uy + 20, 1632, uy + 20, arrow=True)            # GC -> UPD
+    f.line(1652, uy + 20, 1632, uy + 20, arrow=True)            # GC -> UPD
     f.line(1150, uy + 20, 1360, uy + 20, arrow=True, stroke=SB)  # cmd_issued -> UPD
     f.path(tier_path, arrow=True, stroke=SB)                    # can_* -> tier
     f.text(lbl_xy[0], lbl_xy[1], cmpn, size=9, mono=False, anchor="middle",
            fill=SB)
 
 
-level(500, "BANK_TREG", "tRC . tRTP . tWR . tRAS . tCCD_Lsb", "can_bank",
-      "BANK_UPD", "M1180 530 L620 530 L620 590 L545 590", (1055, 522))
-level(668, "BG_TREG", "tCCD_L . tRRD_L . tRFCsb (REFsb)", "can_bg",
+level(500, "BANK_TREG   x64", "next_act/cas/pre  (3 x 13b = 39b deadlines)",
+      "can_bank", "BANK_UPD", "M1180 530 L620 530 L620 590 L545 590", (1055, 522))
+level(668, "BG_TREG   x16", "next_cas/act/ref  (3 x 13b = 39b)", "can_bg",
       "BG_UPD", "M1180 698 L560 698 L560 671 L513 671", (1055, 690), th=52)
-level(820, "RANK_TREG", "tWTR/tRTW . tFAW[4] . tRTRS . RAA . REFab", "can_rank",
-      "RANK_UPD", "M1180 850 L800 850 L800 866 L772 866", (975, 843))
+level(820, "RANK_TREG   x2", "faw_ts[4]=52 + last_cas_ts + refab  (~85b)",
+      "can_rank", "RANK_UPD", "M1180 850 L800 850 L800 866 L772 866", (975, 843))
+
+# comparator fan-out per level (tracks depth x fields) - above each CMP
+f.text(1255, 496, "192 cmp", size=8, mono=False, anchor="middle", fill=MUTED)
+f.text(1255, 662, "48 cmp", size=8, mono=False, anchor="middle", fill=MUTED)
+f.text(1255, 814, "few cmp", size=8, mono=False, anchor="middle", fill=MUTED)
 f.text(975, 828, "-> L3  (+L2 rank_arb)", size=9, mono=False, anchor="middle",
        fill=SB)
 
 # global reg under the rank level (shared bus state)
-f.logic(1360, 936, 270, 40, "GLOBAL_REG", "CAFREE . DQFREE . LAST_CAS")
+f.logic(1360, 936, 270, 40, "GLOBAL_REG   x1", "54 b:  CAFREE DQFREE LAST_CAS gc")
 
 # REF / gate_rfc fan from maintenance -> every ref-scoped level.
 # bank = solo REF_pending (arrow above); BG = REFsb; rank = REFab; global = gate_rfc.
@@ -213,10 +246,11 @@ f.text(1352, 700, "REFsb", size=8, mono=False, fill=SB)
 f.text(1352, 852, "REFab", size=8, mono=False, fill=SB)
 f.text(1352, 950, "gate_rfc", size=8, mono=False, fill=SB)
 
-f.caption(40, 1190, "N_RANKS full lanes (ingress -> L2) fan into ONE L3 cap; the "
-                    "scoreboard is SPLIT by arb level - bank / BG / rank+global "
-                    "timing regs, each with its own UPDATE - feeding can_* to its "
-                    "tier; one shared back-end drives DFI and returns data to CIF.")
+f.caption(40, 1190, "N_RANKS full lanes (ingress -> L2) fan into ONE L3 cap. Cells "
+                    "own NO FSM - state lives in one FSM_TABLE[{rank,bank}] "
+                    "(written @ FSM-commit, read by L0/L1/L2); the scoreboard is "
+                    "SPLIT by arb level (bank / BG / rank+global timing regs, each "
+                    "with its own UPDATE). One shared back-end drives DFI.")
 
 f.save("fig_mcc_block.svg")
 print("wrote fig_mcc_block.svg")

@@ -50,16 +50,18 @@
   <text x="360.0" y="513.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">1-of-32  (8 BG x 4 banks)</text>
   <line x1="360" y1="444" x2="360" y2="474" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <rect x="175" y="544" width="370" height="82" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="360.0" y="566" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BANK_CELL[{r,b}]   x32</text>
-  <text x="360" y="590" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">open_row CAM . 16-state FSM . elig_gen (L0)</text>
-  <text x="360" y="608" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">row_valid = OPEN &amp; !pre_pending</text>
+  <text x="360.0" y="566" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BANK_ELIG[{r,b}]   x32</text>
+  <text x="360" y="590" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">row_comparator + elig_gen  (L0)  -  NO FSM here</text>
+  <text x="360" y="608" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">reads FSM_TABLE + can_*  -&gt;  need_*, is_hit, bank_go</text>
   <line x1="360" y1="522" x2="360" y2="544" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <rect x="210" y="650" width="300" height="42" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="360.0" y="676.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG_ARB  x8    (L1)</text>
-  <line x1="360" y1="626" x2="360" y2="650" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <path d="M260 708 L460 708 L440.2 752 L279.8 752 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="360.0" y="734.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">RANK_ARB (L2)</text>
-  <line x1="360" y1="692" x2="360" y2="708" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="210" y="648" width="300" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="360.0" y="671.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG_ARB  x8   (L1)</text>
+  <text x="360.0" y="686.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">per bank-group  (4 banks -&gt; 1)</text>
+  <line x1="360" y1="626" x2="360" y2="648" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M260 710 L460 710 L440.2 754 L279.8 754 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="360.0" y="736.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">RANK_ARB (L2)</text>
+  <text x="254" y="736.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">per-rank</text>
+  <line x1="360" y1="694" x2="360" y2="710" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <rect x="690" y="300" width="150" height="452" fill="none" stroke="#aaaaaa" stroke-width="1.4" stroke-dasharray="4 3"/>
   <text x="765" y="500" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">rank 1 lane</text>
   <text x="765" y="518" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">(identical)</text>
@@ -71,7 +73,7 @@
   <text x="360" y="800" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">rank0 winner</text>
   <path d="M765 752 L765 812 L700 812 L700 838" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="770" y="800" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">rank1 winner</text>
-  <text x="620" y="912" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">the ONLY rank arb</text>
+  <text x="620" y="912" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">per-channel cap  -  across ranks (the ONLY rank arb)</text>
   <rect x="490" y="924" width="260" height="64" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="620.0" y="946" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHASE_PACKER</text>
   <text x="620" y="968" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">gear 1:N . bundle . FSM-commit</text>
@@ -135,25 +137,40 @@
   <path d="M880 210 L640 210 L640 566 L543 566" fill="none" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="660" y="202" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">REF_pending</text>
   <text x="1405" y="168" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a5cb8" font-weight="bold">SCOREBOARD  -  split by arb level</text>
-  <circle cx="1645" cy="214" r="30" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1645" y="214" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GC</text>
-  <text x="1645" y="228" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">CK cnt</text>
-  <line x1="1645" y1="244" x2="1645" y2="916" stroke="#000000" stroke-width="1.0"/>
-  <text x="1660" y="560" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC</text>
-  <path d="M740 924 L740 586 L1150 586 L1150 916" fill="none" stroke="#7a5cb8" stroke-width="1.0" stroke-dasharray="5 4"/>
-  <text x="905" y="578" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">cmd_issued</text>
+  <circle cx="1652" cy="212" r="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1652" y="212" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GC</text>
+  <text x="1652" y="226" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">CK cnt</text>
+  <rect x="1180" y="296" width="448" height="50" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1404.0" y="318" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">TIMING_CONST   (JEDEC addends - ONE shared copy)</text>
+  <text x="1404" y="336" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">~20 x ~10 b:  tRC tRP tRAS tRTP tWR tCCD_S/L tRRD_S/L tFAW tWTR tRTW tRFCsb tCL tCWL tRTRS</text>
+  <path d="M1628 322 L1640 322 L1640 582 L1632 582" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="1636" y="468" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">t -&gt; every *_UPD</text>
+  <rect x="1180" y="360" width="450" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1405.0" y="382" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">FSM_TABLE  [{rank,bank}] x64   -   super FSM</text>
+  <text x="1405" y="404" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">state[4] . open_row . pre_pending . valid . ref_pending</text>
+  <text x="1405" y="422" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">ONE indexed table  -  written @ FSM-commit, read by L0/L1/L2</text>
+  <path d="M1180 440 L655 440 L655 730" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <line x1="655" y1="605" x2="545" y2="605" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="655" y1="660" x2="512" y2="660" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="655" y1="730" x2="462" y2="730" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="870" y="432" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">state / open_row / pre_pending  -&gt;  read by L0 / L1 / L2</text>
+  <line x1="1652" y1="240" x2="1652" y2="916" stroke="#000000" stroke-width="1.0"/>
+  <text x="1666" y="560" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC</text>
+  <path d="M740 924 L740 470 L1150 470 L1150 916" fill="none" stroke="#7a5cb8" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="1150" y1="470" x2="1180" y2="440" stroke="#7a5cb8" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="905" y="462" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">cmd_issued / FSM-commit</text>
   <rect x="1180" y="502" width="150" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="1255.0" y="529.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CMP</text>
   <text x="1255.0" y="544.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">can_bank</text>
   <rect x="1360" y="500" width="270" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1495.0" y="522" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BANK_TREG</text>
-  <text x="1495.0" y="537" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tRC . tRTP . tWR . tRAS . tCCD_Lsb</text>
+  <text x="1495.0" y="522" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BANK_TREG   x64</text>
+  <text x="1495.0" y="537" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">next_act/cas/pre  (3 x 13b = 39b deadlines)</text>
   <rect x="1360" y="572" width="270" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="1495.0" y="592.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BANK_UPD</text>
   <text x="1495.0" y="607.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">next_* = GC + t</text>
   <line x1="1360" y1="530" x2="1330" y2="530" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1495" y1="572" x2="1495" y2="560" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="1645" y1="592" x2="1632" y2="592" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1652" y1="592" x2="1632" y2="592" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1150" y1="592" x2="1360" y2="592" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <path d="M1180 530 L620 530 L620 590 L545 590" fill="none" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="1055" y="522" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">can_bank</text>
@@ -161,14 +178,14 @@
   <text x="1255.0" y="697.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CMP</text>
   <text x="1255.0" y="712.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">can_bg</text>
   <rect x="1360" y="668" width="270" height="52" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1495.0" y="690" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG_TREG</text>
-  <text x="1495.0" y="705" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tCCD_L . tRRD_L . tRFCsb (REFsb)</text>
+  <text x="1495.0" y="690" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG_TREG   x16</text>
+  <text x="1495.0" y="705" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">next_cas/act/ref  (3 x 13b = 39b)</text>
   <rect x="1360" y="732" width="270" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="1495.0" y="752.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG_UPD</text>
   <text x="1495.0" y="767.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">next_* = GC + t</text>
   <line x1="1360" y1="698" x2="1330" y2="698" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1495" y1="732" x2="1495" y2="720" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="1645" y1="752" x2="1632" y2="752" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1652" y1="752" x2="1632" y2="752" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1150" y1="752" x2="1360" y2="752" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <path d="M1180 698 L560 698 L560 671 L513 671" fill="none" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="1055" y="690" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">can_bg</text>
@@ -176,21 +193,24 @@
   <text x="1255.0" y="849.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CMP</text>
   <text x="1255.0" y="864.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">can_rank</text>
   <rect x="1360" y="820" width="270" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1495.0" y="842" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RANK_TREG</text>
-  <text x="1495.0" y="857" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tWTR/tRTW . tFAW[4] . tRTRS . RAA . REFab</text>
+  <text x="1495.0" y="842" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RANK_TREG   x2</text>
+  <text x="1495.0" y="857" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">faw_ts[4]=52 + last_cas_ts + refab  (~85b)</text>
   <rect x="1360" y="892" width="270" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="1495.0" y="912.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RANK_UPD</text>
   <text x="1495.0" y="927.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">next_* = GC + t</text>
   <line x1="1360" y1="850" x2="1330" y2="850" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1495" y1="892" x2="1495" y2="880" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="1645" y1="912" x2="1632" y2="912" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1652" y1="912" x2="1632" y2="912" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1150" y1="912" x2="1360" y2="912" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <path d="M1180 850 L800 850 L800 866 L772 866" fill="none" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="975" y="843" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">can_rank</text>
+  <text x="1255" y="496" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">192 cmp</text>
+  <text x="1255" y="662" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">48 cmp</text>
+  <text x="1255" y="814" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">few cmp</text>
   <text x="975" y="828" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#7a5cb8">-&gt; L3  (+L2 rank_arb)</text>
   <rect x="1360" y="936" width="270" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1495.0" y="956.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GLOBAL_REG</text>
-  <text x="1495.0" y="971.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">CAFREE . DQFREE . LAST_CAS</text>
+  <text x="1495.0" y="956.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GLOBAL_REG   x1</text>
+  <text x="1495.0" y="971.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">54 b:  CAFREE DQFREE LAST_CAS gc</text>
   <path d="M1140 270 L1345 270 L1345 956 L1360 956" fill="none" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1345" y1="706" x2="1360" y2="706" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
   <line x1="1345" y1="858" x2="1360" y2="858" stroke="#7a5cb8" stroke-width="1.0" marker-end="url(#arw)"/>
@@ -198,5 +218,5 @@
   <text x="1352" y="700" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">REFsb</text>
   <text x="1352" y="852" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">REFab</text>
   <text x="1352" y="950" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a5cb8">gate_rfc</text>
-  <text x="40" y="1190" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">N_RANKS full lanes (ingress -&gt; L2) fan into ONE L3 cap; the scoreboard is SPLIT by arb level - bank / BG / rank+global timing regs, each with its own UPDATE - feeding can_* to its tier; one shared back-end drives DFI and returns data to CIF.</text>
+  <text x="40" y="1190" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">N_RANKS full lanes (ingress -&gt; L2) fan into ONE L3 cap. Cells own NO FSM - state lives in one FSM_TABLE[{rank,bank}] (written @ FSM-commit, read by L0/L1/L2); the scoreboard is SPLIT by arb level (bank / BG / rank+global timing regs, each with its own UPDATE). One shared back-end drives DFI.</text>
 </svg>
