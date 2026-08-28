@@ -1,0 +1,33 @@
+\section{Read Completion Tracking and Serialization}
+\label{sec:read-completion}
+
+Read completion tracking, final-beat indication, and release are implemented
+by the read ROB instance and its Retiring Register (\S\ref{sec:rob}).
+
+\subsection{Read ROB metadata and completion}
+
+The read Metadata RAM is directly indexed by \texttt{ROB\_INDEX}.  Each entry
+contains \texttt{exp\_pkts[2:0]}, a four-bit completion bitmap, and one
+opaque Read Data Buffer allocation handle per \texttt{dbuf\_ptr[0..3]}.  The expected count is initialized from the
+Burst Splitter's \texttt{splitter\_pkt\_count}, which is the number of packet
+segments for this transaction.
+
+On a read completion, \texttt{GLOBAL\_TAG[9:0]} directly selects the entry
+and its packet-number bit.  The completion data is written into the pooled
+Read Data Buffer allocation identified by the handle recorded for that packet
+number.  Exact allocation representation, MC response-unit semantics,
+allocation/read/free handshakes, and latency remain \textbf{TBD}; the ROB
+assumes only that the handle is valid from packet issue until the
+contract-defined release point.
+
+\subsection{Read retirement}
+
+An AXID Slot FIFO head can retire only after all expected completion bits are
+set.  The Retiring Register then holds that index while the Read Serializer
+serializes the completed Data Buffer allocations in packet-number order.
+Within-segment progress and allocation release are defined by the MC/Data-Buffer
+interface contract.  \texttt{rob\_last} is generated with the final AXI beat
+of the final segment.  Final AXI R acceptance, after all contract-defined
+allocation releases, permits retirement to pop the Slot FIFO and return
+\texttt{ROB\_INDEX} to the read Free List.  Completion alone never frees the
+index.
