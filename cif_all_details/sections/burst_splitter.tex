@@ -1,0 +1,122 @@
+\section{Burst Splitter}
+\label{sec:splitter}
+\subsection{Purpose and bounds}
+
+The Burst Splitter converts one accepted AXI transaction into one to four MC
+packet segments.  It is shared by the read and write request paths.  A row
+boundary is the only splitting boundary: AXI beats are carried by a segment's
+\texttt{beat\_cnt}; they are not independently converted into MC packets.
+
+The configured \texttt{row\_size} is a run-time parameter and is at least
+1~KB.  AXI4 prohibits a burst from crossing a 4~KB boundary, so a transaction
+spans at most 4~KB.  It can therefore cross at most three 1~KB rows and has
+at most four segments:
+\[
+ \texttt{MAX\_SEGMENTS}=1+3=4.
+\]
+
+\subsection{Interfaces and state}
+
+At transaction acceptance, the selected read or write ROB allocates
+\texttt{ROB\_INDEX[7:0]}.  The splitter accepts that index with the AXI
+metadata and retains it for the whole transaction.  Stage~1 determines
+\texttt{num\_segments} and writes the Segment Table.  It presents
+\texttt{splitter\_pkt\_count[2:0]=num\_segments} to the corresponding ROB;
+this is the sole source of \texttt{exp\_pkts}.  It is not derived from
+\texttt{AWLEN+1} or \texttt{ARLEN+1}.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{State} & \textbf{Width/depth} & \textbf{Meaning}\\
+\midrule
+Segment Table & 4 entries & \texttt{\{addr[31:0], beat\_cnt[7:0]\}} per segment\\
+\texttt{ROB\_INDEX} & 8 bits & Transaction index retained while segments issue\\
+\texttt{num\_segments} & 3 bits & Number of valid Segment Table entries, 1--4\\
+\texttt{seg\_idx} & 2 bits & Segment currently being emitted\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Stage 1 --- segment construction}
+
+Stage~1 receives address, burst length, size, burst type, AXID, packet type,
+and \texttt{ROB\_INDEX}.  Using the run-time \texttt{row\_size}, it walks
+the addressed burst span and partitions it only at row boundaries.  It writes
+one Segment Table entry for each contiguous portion of the transaction.  The
+resulting count is in the inclusive range 1--4.  The AXI 4~KB constraint and
+minimum row size make a fifth entry unreachable.
+
+For a read allocation, Stage~1 also provides the initialized count to the
+read ROB before its \texttt{ROB\_INDEX} becomes visible at the relevant
+per-AXID Slot FIFO.  The write path follows the identical ordering.
+
+\subsection{Stage 2 --- sequential emission}
+
+Stage~2 emits Segment Table entries in increasing \texttt{seg\_idx} order.
+For each accepted packet it forms
+\[
+ \texttt{GLOBAL\_TAG[9:0]=\{ROB\_INDEX[7:0],PACKET\_NUMBER[1:0]\}},
+ \qquad \texttt{PACKET\_NUMBER=seg\_idx}.
+\]
+Packet Formation receives \texttt{addr}, \texttt{beat\_cnt}, packet type,
+and \texttt{GLOBAL\_TAG}; it serializes one MC request packet per Segment
+Table entry.  For reads, the packet-issue path also obtains a pooled Read Data
+Buffer pointer and records it in \texttt{dbuf\_ptr[seg\_idx]} before that
+packet can complete.
+
+Stage~2 advances \texttt{seg\_idx} only on downstream packet acceptance.  It
+stalls Stage~1 whenever it is emitting a multi-segment transaction, thereby
+preserving the Segment Table and its associated \texttt{ROB\_INDEX}.  After
+the final accepted segment it returns to idle and permits the next Stage~1
+transaction.
+
+\subsection{WRAP addressing within the Segment Table model}
+
+The Segment Table and WRAP address generation solve different problems and
+operate together for a WRAP burst that crosses a row boundary:
+
+\begin{itemize}[noitemsep]
+  \item Stage~1's row-boundary partitioning applies identically to INCR and
+        WRAP bursts: it determines \emph{how many} row-bounded segments the
+        transaction requires and each segment's \texttt{addr}/\texttt{beat\_cnt}
+        starting point, independent of burst type.
+  \item WRAP address generation determines the \emph{per-beat} address
+        sequence \emph{within} a segment.  Because a WRAP burst's beat
+        addresses are not simply contiguous beyond its wrap boundary, the
+        beat-by-beat address a WRAP segment presents to MC Core is produced
+        by WRAP address generation, not by incrementing \texttt{addr} by the
+        transfer size each beat.
+  \item Both mechanisms are required together for a WRAP burst that crosses
+        one or more row boundaries: the Segment Table determines segment
+        count and each segment's starting point, while WRAP address
+        generation determines the beat addresses used within each segment.
+        Neither mechanism substitutes for the other.
+\end{itemize}
+
+This preserves the existing WRAP Beat Address Table semantics --- a
+sequential, per-beat address sequence consumed in beat order --- scoped now
+to one Segment Table entry at a time rather than to the whole burst.
+
+\subsection{Backpressure and error packets}
+
+\begin{itemize}[noitemsep]
+  \item A full selected ROB Slot FIFO, an empty selected ROB Free List, or
+        unavailable read Data Buffer capacity prevents acceptance upstream as
+        appropriate to that path.
+  \item Packet-FIFO backpressure holds the current Segment Table entry and
+        its \texttt{seg\_idx}; it does not alter \texttt{num\_segments}.
+  \item Error read and error write transactions use the same segmentation and
+        \texttt{GLOBAL\_TAG} mechanism.  Their packet type is carried in
+        every generated segment.
+\end{itemize}
+
+\subsection{Timing notes}
+
+\begin{itemize}[noitemsep]
+  \item \texttt{splitter\_pkt\_count} is the number of packets generated by
+        this one transaction, not a sum across a burst.
+  \item \texttt{seg\_idx} is assigned at packet emission, not allocation.
+  \item Segment Table state is indexed only by \texttt{seg\_idx}; packet
+        counting is independent of AXI beat count.
+\end{itemize}

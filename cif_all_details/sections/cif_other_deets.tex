@@ -1,0 +1,150 @@
+\section{Top-level AXI4 interface}
+\label{sec:axi4top}
+
+CIF presents a standard AXI4 slave interface to its client(s).  The table
+below cross-references the channel signals against the widths the current
+architecture documents establish (\texttt{ADDR\_W=32}, \texttt{AXID\_W=6},
+\texttt{LEN\_W=8}, from the Request Validator's Design Parameters).  Widths
+marked AXI4-fixed follow the AXI4 protocol specification itself and are not
+CIF-specific parameters.  Write/read data-path widths are not established by
+any current CIF document and remain \textbf{TBD}; see \S\ref{sec:respformat}
+for the corresponding response-side discussion.
+
+\begin{longtable}{p{1.3cm}p{3.2cm}p{1.6cm}p{9.5cm}}
+\toprule
+\textbf{Channel} & \textbf{Signal} & \textbf{Width} & \textbf{Notes}\\
+\midrule
+AW & \texttt{AWVALID/AWREADY} & 1/1 & Write address handshake\\
+   & \texttt{AWADDR}          & 32  & \texttt{ADDR\_W}\\
+   & \texttt{AWID}            & 6   & \texttt{AXID\_W}\\
+   & \texttt{AWLEN}           & 8   & \texttt{LEN\_W}; \emph{not} the MC packet/segment count (\S\ref{sec:identity})\\
+   & \texttt{AWSIZE/AWBURST}  & 3/2 & AXI4-fixed\\
+\midrule
+W  & \texttt{WVALID/WREADY}   & 1/1 & Write data handshake\\
+   & \texttt{WDATA/WSTRB}     & TBD & Data-path width not established by current CIF documents (\S\ref{sec:pktformat})\\
+   & \texttt{WLAST}           & 1   & AXI4-fixed\\
+\midrule
+B  & \texttt{BVALID/BREADY}   & 1/1 & Write response handshake\\
+   & \texttt{BID}             & 6   & \texttt{AXID\_W}; from the retiring transaction's Slot FIFO context, not stored in the Metadata RAM entry\\
+   & \texttt{BRESP}           & 2   & AXI4-fixed; driven from the write ROB's aggregate \texttt{resp\_status}\\
+\midrule
+AR & \texttt{ARVALID/ARREADY} & 1/1 & Read address handshake\\
+   & \texttt{ARADDR}          & 32  & \texttt{ADDR\_W}\\
+   & \texttt{ARID}            & 6   & \texttt{AXID\_W}\\
+   & \texttt{ARLEN}           & 8   & \texttt{LEN\_W}; \emph{not} the MC packet/segment count (\S\ref{sec:identity})\\
+   & \texttt{ARSIZE/ARBURST}  & 3/2 & AXI4-fixed\\
+\midrule
+R  & \texttt{RVALID/RREADY}   & 1/1 & Read data handshake\\
+   & \texttt{RDATA}           & TBD & Data-path width not established by current CIF documents (\S\ref{sec:pktformat})\\
+   & \texttt{RID}             & 6   & \texttt{AXID\_W}; from the retiring transaction's Slot FIFO context\\
+   & \texttt{RRESP}           & 2   & AXI4-fixed; per-beat value from the read ROB's serialized status\\
+   & \texttt{RLAST}           & 1   & Asserted only on the final AXI beat of the final segment, not on every segment boundary\\
+\bottomrule
+\caption{Top-level AXI4 slave interface, cross-referenced to CIF-internal handling}
+\end{longtable}
+
+\section{Interface Signal Table}
+\label{sec:interfaces}
+
+This table records the consolidated interfaces after the read/write ROB
+refactor.  Names describe the frozen connectivity where prior documents did
+not fix a signal name.
+
+\subsection{AXI request acceptance to the selected ROB}
+\begin{longtable}{p{3.3cm}p{1cm}p{3.4cm}p{7cm}}
+\toprule
+\textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
+\midrule
+\texttt{alloc\_req} & 1 & Accept logic $\rightarrow$ RD/WR ROB & Allocate one transaction slot on accepted AR/AW request.\\
+\texttt{AXID} & 6 & Accept logic $\rightarrow$ RD/WR ROB & Selects the per-AXID Slot FIFO.\\
+\texttt{ROB\_INDEX} & 8 & RD/WR ROB $\rightarrow$ Splitter & Free-List result retained for the transaction.\\
+\texttt{splitter\_pkt\_count} & 3 & Splitter $\rightarrow$ RD/WR ROB & Number of segments for this transaction, 1--4; initializes \texttt{exp\_pkts}.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Burst Splitter to Packet Formation}
+\begin{longtable}{p{3.3cm}p{1cm}p{3.4cm}p{7cm}}
+\toprule
+\textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
+\midrule
+\texttt{seg\_valid/seg\_ready} & 1/1 & Splitter $\leftrightarrow$ Packet Formation & Handshake for the current Segment Table entry.\\
+\texttt{seg\_addr} & 32 & Splitter $\rightarrow$ Packet Formation & Segment start address.\\
+\texttt{seg\_beat\_cnt} & 8 & Splitter $\rightarrow$ Packet Formation & Number of AXI beats represented by the segment.\\
+\texttt{PACKET\_NUMBER} & 2 & Splitter $\rightarrow$ Packet Formation & Current \texttt{seg\_idx}, assigned at packet emission.\\
+\texttt{GLOBAL\_TAG} & 10 & Packet Formation $\rightarrow$ Packet FIFO & \texttt{\{ROB\_INDEX,PACKET\_NUMBER\}}.\\
+\bottomrule
+\end{longtable}
+
+\subsection{MC Core completion interface}
+
+Response transport and handshake naming are MC/Data-Buffer
+interface-contract dependent (\S\ref{sec:respformat}); no
+\texttt{RESP\_VALID}/\texttt{RESP\_READY} signal pair is assumed.  The fields
+below are the only ones the current architecture requires MC Core to supply.
+
+\begin{longtable}{p{3.3cm}p{1cm}p{3.4cm}p{7cm}}
+\toprule
+\textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
+\midrule
+\texttt{GLOBAL\_TAG} & 10 & MC Core $\rightarrow$ RD/WR ROB & Echoed request tag; directly decodes index and packet number.\\
+\texttt{data} & TBD & MC Core $\rightarrow$ Read ROB & Read data payload; width and response-unit granularity are contract-dependent (\S\ref{sec:respformat}).\\
+\texttt{status} & 4 & MC Core $\rightarrow$ RD/WR ROB & Raw completion status; encoding is \textbf{TBD with MC Core}.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Retirement interfaces}
+\begin{longtable}{p{3.3cm}p{1cm}p{3.4cm}p{7cm}}
+\toprule
+\textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
+\midrule
+\texttt{merge\_ready} & 1 & Merge Logic $\rightarrow$ Read ROB & Accepts an emitted AXI read beat; serializer progress and Data Buffer release follow the MC/Data-Buffer contract.\\
+\texttt{rob\_last} & 1 & Read ROB $\rightarrow$ Merge Logic & Asserted with the final serialized read beat.\\
+\texttt{bresp\_ready} & 1 & B response path $\rightarrow$ Write ROB & Accepts the ordered BRESP and permits write-slot release.\\
+\texttt{dbuf\_alloc/read/free} & TBD & Read ROB $\leftrightarrow$ Read Data Buffer & Allocation representation, handshake, response-unit semantics, and release timing are \textbf{TBD}; one handle is recorded per packet number.\\
+\bottomrule
+\end{longtable}
+
+\section{Arbitration and backpressure}
+
+The request validators and Burst Splitter retain the existing request
+arbitration policy.  The selected ROB Free List and selected AXID Slot FIFO
+provide transaction-allocation backpressure.  A full Slot FIFO affects only
+its AXID; it does not imply global Free List exhaustion.  Conversely, an empty
+Free List means all 256 transaction entries are allocated.
+
+Read packet issuance is additionally controlled by pooled Read Data Buffer
+availability and its independent 128-entry watermark.  Metadata RAM capacity
+does not control packet issue.
+
+\section{Reset and initialization sequence}
+\label{sec:resetseq}
+
+Reset is active-low, asserted asynchronously, and deasserted synchronously to
+the CIF clock domain.  While asserted, it forces every structure below to its
+initialized state; normal operation begins only after synchronous
+deassertion.
+
+On reset, each ROB instance independently initializes its 256-bit Free List
+to free, clears Metadata RAM state, resets all 64 Slot FIFOs, and clears its
+Retiring Register.  The Burst Splitter clears its Segment Table validity,
+\texttt{num\_segments}, \texttt{seg\_idx}, and retained \texttt{ROB\_INDEX}.
+Packet FIFOs and AXI request FIFOs retain their established reset behavior.
+The MC completion/response handshake is not assigned a fixed reset value by
+this specification; its behavior across reset is governed by the MC--CIF
+interface contract (\S\ref{sec:respformat}).
+
+A soft reset first quiesces request acceptance and waits for packet FIFOs,
+Segment Table activity, both ROB Slot-FIFO sets, both Retiring Registers, and
+all externally visible AXI responses to drain.  The Read Data Buffer has a
+separate drain/initialization contract; its exact interface and timing are
+\textbf{TBD}.  Reset must not release a read \texttt{ROB\_INDEX} until the
+final AXI read response and its Data Buffer release have completed.
+
+\section{Error propagation}
+
+Error packets are segmented and tagged in the same manner as ordinary
+requests.  Every completion sets its packet-number bit in the selected ROB.
+The write ROB aggregates packet status before its one BRESP; the read ROB
+serializes status with its data.  Raw MC status encoding and write
+worst-status precedence are \textbf{TBD}; this specification intentionally
+does not assign an AXI response value without that contract.

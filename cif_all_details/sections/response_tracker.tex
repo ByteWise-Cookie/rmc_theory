@@ -1,0 +1,35 @@
+\section{Write Completion Tracking and BRESP Retirement}
+\label{sec:write-completion}
+
+Write completion tracking is implemented inside the write ROB instance
+described in \S\ref{sec:rob}.
+
+\subsection{Write ROB metadata}
+
+Each write Metadata RAM entry is directly addressed by \texttt{ROB\_INDEX}
+and contains:
+\begin{itemize}[noitemsep]
+  \item \texttt{exp\_pkts[2:0]}, initialized from
+        \texttt{splitter\_pkt\_count};
+  \item \texttt{completion\_bitmap[3:0]}, initially zero; and
+  \item \texttt{resp\_status[1:0]}, initially benign pending the defined
+        MC-to-AXI status mapping.
+\end{itemize}
+
+For each MC completion, the write ROB decodes \texttt{GLOBAL\_TAG} directly,
+sets the bit selected by \texttt{PACKET\_NUMBER}, and folds raw status into
+\texttt{resp\_status}.  The raw MC status encoding and the precedence rule
+when segment statuses differ are \textbf{TBD}.  No counter derived from AXI
+burst length is used.
+
+\subsection{Ordered response and release}
+
+The head index of each per-AXID Slot FIFO is eligible when its completion
+bitmap equals the mask implied by \texttt{exp\_pkts}.  A priority selection
+loads an eligible index into the write Retiring Register.  The write response
+logic presents one BRESP for that transaction and holds it until
+\texttt{bresp\_ready}.  Only on that acceptance does retirement pop the
+selected Slot FIFO and return \texttt{ROB\_INDEX} to the write Free List.
+
+This provides per-AXID AXI B ordering without coupling write release to read
+traffic.

@@ -1,0 +1,163 @@
+\section{Request Validator}
+\subsection{Overview}
+
+The Request Validator is a purely combinational block instantiated once
+each on the read and write paths. It pops entries from the AR or AW
+Metadata FIFO, performs a single runtime check (address range
+validation), and steers the transaction to one of two downstream paths:
+
+\begin{itemize}
+  \item \textbf{Valid path:} Transaction forwarded to ROB allocation
+        with \texttt{REQ\_VALID} asserted.
+  \item \textbf{Error path:} Transaction forwarded to the Error Handler
+        with \texttt{ERR\_VALID} asserted and \texttt{AXID} preserved.
+\end{itemize}
+
+The Request Validator contains a Configuration Register that stores the valid physical address range used for runtime address validation. 
+Apart from this internal configuration state, the Request Validator contains no per-transaction storage or counters.
+All protocol-level checks (burst type, WRAP legality, alignment, burst
+length) are enforced as design-time assertions in the verification
+environment only. Compliant AXI4 masters are assumed at runtime.
+
+% -----------------------------------------------------------------------
+\subsection{Design Parameters}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+\midrule
+\texttt{ADDR\_W}  & 32 & Address width in bits \\
+\texttt{AXID\_W}  & 6  & AXI ID width \\
+\texttt{LEN\_W}   & 8  & Burst length field width (ARLEN/AWLEN) \\
+\bottomrule
+\end{tabular}
+\caption{Request Validator parameters}
+\end{table}
+
+% -----------------------------------------------------------------------
+\subsection{Internal Blocks}
+
+Configuration Register
+Stores the valid physical address range used during request validation.
+Provides the configured address range to the Address Range Check block.
+Represents the only persistent state within the Request Validator.
+
+\subsection{Address Range Check}
+
+\begin{itemize}
+  \item \textbf{Type:} Purely combinational.
+  \item \textbf{Input:} \texttt{ADDR[31:0]} from the AR/AW Metadata
+        FIFO.
+  \item \textbf{Function:} Checks whether \texttt{ADDR} falls within
+        the valid physical address range stored in the Configuration Register.
+  \item \textbf{Output:} \texttt{addr\_ok} (1-bit) — asserted when the
+        address is valid, deasserted on an address error.
+  \item \textbf{Scope:} Address range check only. No burst type, no
+        alignment, no length checks at runtime.
+\end{itemize}
+
+\subsection{Output Mux}
+
+\begin{itemize}
+  \item \textbf{Type:} Purely combinational.
+  \item \textbf{Function:} Routes the transaction to the correct
+        downstream block based on \texttt{addr\_ok}.
+  \item \textbf{Valid path} (\texttt{addr\_ok == 1}): asserts
+        \texttt{REQ\_VALID} to ROB allocation; forwards
+        \texttt{AXID[5:0]}.
+  \item \textbf{Error path} (\texttt{addr\_ok == 0}): asserts
+        \texttt{ERR\_VALID} to the Error Handler; forwards
+        \texttt{AXID[5:0]}.
+  \item Only one output path is active per transaction. Both paths are
+        never asserted simultaneously.
+\end{itemize}
+
+% -----------------------------------------------------------------------
+\subsection{Interface Signals}
+
+\subsection{Inputs}
+
+\begin{longtable}{llll}
+\toprule
+\textbf{Signal} & \textbf{Width} & \textbf{Source} & \textbf{Description} \\
+\midrule
+\texttt{ADDR[31:0]}        & 32 & AR/AW Metadata FIFO & Transaction address \\
+\texttt{AXID[5:0]}         & 6  & AR/AW Metadata FIFO & AXI ID \\
+\texttt{ARLEN/AWLEN[7:0]}  & 8  & AR/AW Metadata FIFO & Burst length \\
+\texttt{STALL}             & 1  & ROB Allocation      & Per-AXID stall; holds output until deasserted \\
+\bottomrule
+\caption{Request Validator input signals}
+\end{longtable}
+
+\subsection{Outputs}
+
+\begin{longtable}{llll}
+\toprule
+\textbf{Signal} & \textbf{Width} & \textbf{Destination} & \textbf{Description} \\
+\midrule
+\texttt{REQ\_VALID}       & 1 & ROB allocation & Valid transaction request \\
+\texttt{AXID[5:0]}        & 6 & ROB allocation & Forwarded AXI ID \\
+\texttt{ERR\_VALID}       & 1 & Error Handler & Address error notification \\
+\texttt{AXID[5:0]}        & 6 & Error Handler & AXI ID preserved for error-response handling \\
+\bottomrule
+\caption{Request Validator output signals}
+\end{longtable}
+
+% -----------------------------------------------------------------------
+\subsection{Functional Behaviour}
+
+\begin{enumerate}
+  \item Request Validator pops the head entry from the AR/AW Metadata
+        FIFO: \texttt{ADDR[31:0]}, \texttt{AXID[5:0]},
+        \texttt{ARLEN/AWLEN[7:0]}.
+  \item Address Range Check compares the incoming address against the physical address range stored in the Configuration Register and evaluates \texttt{addr\_ok} combinationally.
+  \item If \texttt{addr\_ok == 1} and \texttt{STALL} is deasserted:
+        Output Mux asserts \texttt{REQ\_VALID} to ROB allocation
+        with \texttt{AXID}.
+  \item If \texttt{addr\_ok == 0}: Output Mux asserts \texttt{ERR\_VALID}
+        to the Error Handler with \texttt{AXID}. The Error Handler sets
+        \texttt{pkt\_type = Err\_write / Err\_read} and injects the
+        transaction into the normal pipeline via ROB allocation.
+  \item If \texttt{STALL} is asserted (ROB Allocation unavailable for this
+        AXID): the Request Validator holds its outputs stable and does
+        not pop the next FIFO entry until \texttt{STALL} deasserts.
+\end{enumerate}
+
+% -----------------------------------------------------------------------
+\subsection{Timing Notes}
+
+\begin{itemize}
+  \item Fully combinational. Output (\texttt{REQ\_VALID} or
+        \texttt{ERR\_VALID}) is valid in the same cycle as the FIFO
+        head entry is presented.
+  \item \texttt{STALL} from ROB allocation is also combinational —
+        the combined path (FIFO output → Address Range Check → Output
+        Mux → ROB Allocation Stall Logic → STALL back) is a
+        combinational loop that must be timed carefully. A register
+        stage may be inserted between the Request Validator output and
+        the ROB Allocation if timing closure requires it, at the
+        cost of one cycle of allocation latency.
+  \item The Address Range Check remains purely combinational. 
+        The Configuration Register provides the address range used during validation and is treated as stable during normal request processing.
+\end{itemize}
+
+% -----------------------------------------------------------------------
+\subsection{Edge Cases}
+
+\begin{itemize}
+  \item \textbf{Error path stall:} An address error transaction still
+        consumes a ROB allocation. If the AXID is at maximum
+        outstanding (\texttt{STALL} asserted), the error path is also
+        held. \texttt{ERR\_VALID} is not asserted until \texttt{STALL}
+        deasserts.
+  \item \textbf{Protocol violations:} Illegal burst type, unaligned
+        WRAP, and maximum burst length violations are not checked at
+        runtime. They are enforced as design-time assertions in the
+        verification environment. A non-compliant master will cause
+        undefined behaviour.
+  \item \textbf{Simultaneous valid and error:} Not possible —
+        \texttt{addr\_ok} is a single-bit result; exactly one output
+        path is active per transaction.
+\end{itemize}

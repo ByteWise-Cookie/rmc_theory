@@ -1,0 +1,50 @@
+\section{Transaction Allocation and ROB-Index Assignment}
+\label{sec:allocator}
+
+Transaction allocation is performed independently by the read and write ROB
+instances.  The allocator's result is an eight-bit \texttt{ROB\_INDEX}.
+
+\subsection{Structures and parameters}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Structure} & \textbf{Definition}\\
+\midrule
+Free List & 256-bit free/occupied bitmap per ROB instance\\
+Allocation result & \texttt{ROB\_INDEX[7:0]} selected from a free bit\\
+Ordering storage & 64 per-AXID Slot FIFOs $\times$ depth 4 per instance\\
+Completion identity & \texttt{GLOBAL\_TAG=\{ROB\_INDEX,PACKET\_NUMBER\}}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Allocation flow}
+\begin{enumerate}[noitemsep]
+  \item Request acceptance selects either the read or write ROB and presents
+        \texttt{alloc\_req} and \texttt{AXID}.
+  \item If that AXID's Slot FIFO is full, allocation for that AXID stalls.
+        If its Free List is empty, allocation stalls globally for that ROB
+        instance.
+  \item The Free List selects a free \texttt{ROB\_INDEX} and reserves it.
+  \item Burst Splitter Stage~1 produces \texttt{splitter\_pkt\_count}; the
+        Metadata RAM entry is initialized with that count and a zero
+        completion bitmap.
+  \item Only after initialization is the index pushed to the AXID Slot FIFO
+        and made visible to retirement.  The index then accompanies the
+        transaction to the Burst Splitter.
+\end{enumerate}
+
+\subsection{Release flow}
+
+Completion is not release.  The write ROB returns an index only after the
+ordered BRESP is accepted.  The read ROB returns an index only after its final
+AXI R response is fully accepted and the corresponding Read Data Buffer allocations
+have been released.  Retirement performs the Slot FIFO pop and Free List
+update; no external free-by-tag interface exists.
+
+\subsection{Removed legacy behavior}
+
+The Slot FIFOs enforce the depth-four per-AXID outstanding limit and preserve
+AXI response order.  A full Slot FIFO does not imply that the 256 entry Free
+List is empty; global exhaustion occurs only when all transaction capacity is
+allocated.
