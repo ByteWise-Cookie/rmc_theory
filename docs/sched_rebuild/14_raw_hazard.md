@@ -58,16 +58,17 @@ not been updated. Program order `W < R` was inverted by the batch.
 
 ## 3. Why it is expensive to catch inside the MC core
 
-By the time a request reaches the MC core it is **pre-hashed and pre-segmented**: one 64 B line's
-packets are scattered across banks/bank-groups by the interleave map. The MC has **no line-level
-view** — it sees `{rank,bg,bank,row,col}` fields, not "these two packets are the same line."
+The **hash lives in the CIF**, so by the time a request reaches the MC core it is already
+`daddr = {rank,bg,bank,row,col}`. The hash is deterministic and 1:1, so **same 64 B line ⟺ same
+`daddr`** — line identity *is* `daddr` equality, no aliasing. Detection is not impossible MC-side;
+it is just **redundant and badly placed**. To do it in the MC you would have to add, mid-pipe:
 
-To detect the hazard MC-side you would have to add, mid-pipe:
-
-- a **line-granular CAM** of every in-flight write address `{rank,bg,bank,row,col}` (a whole new
-  structure — the scoreboard is timing deadlines, not addresses), and
+- a **dedicated in-flight-write `daddr` CAM** — a whole new structure holding every admitted,
+  not-yet-retired write address (the scoreboard stores timing deadlines, not addresses), which
+  **duplicates state the CIF ROB already keeps**, and
 - **per-packet stall** logic that holds an individual read packet in the lane until the matching
-  write retires.
+  write retires — and a big request is segmented into many packets, so this fires deep in the pipe,
+  one packet at a time.
 
 And a tempting shortcut does **not** work: timestamping the last read / last write in the WLR
 arbiter. Without an address match a timestamp is **global**, which forces one of two bad outcomes —
@@ -80,13 +81,13 @@ requester's arrival order already tells you which op is older — no extra times
 
 ## 4. Why CIF wins — the argument
 
-**CIF is where the split happens.** It sees the request stream in **program order, before** the
-address is hashed and segmented into per-bank packets. "Same line" is trivially visible there; it
-is destroyed by the time MC sees the traffic.
+**CIF computes `daddr` and already holds the state.** The hash runs in the CIF, so it has `daddr`
+at split time, plus the ROB (per-request order/timestamps) and the AXI handshake. The overlap test
+is therefore plain `daddr`-equality against the ROB's set of in-flight writes — **reusing state the
+CIF already keeps**, no new structure. The MC would have to rebuild that set in a dedicated CAM.
 
-**CIF already holds the state.** It has the ROB (with per-request order/timestamps) and the AXI
-handshake. The only added logic is: compare a new read's address against the set of in-flight write
-addresses, and hold the read if they overlap. No new datapath, no mid-pipe CAM in the scheduler.
+**Order is free.** Older/younger comes straight from ROB / AXI-request arrival order — no separate
+timestamp store, and (per §3) a timestamp without an address match is useless anyway.
 
 **Request-wise stall ≫ packet-wise stall.** This is the decisive point:
 
