@@ -22,7 +22,8 @@ def fld(b0, nb, y, h, label, sub=None, fill=FILL_CELL, stroke=None):
     return x, w
 
 # ---------- row A: the format ----------
-f.text(X0, 66, "format", size=12, mono=False, anchor="end", fill=MUTED)
+f.text(X0, 60, "assembled", size=12, mono=False, anchor="end", fill=MUTED)
+f.text(X0, 74, "(at packer)", size=10, mono=False, anchor="end", fill=MUTED)
 fld(0, 2,  74, 52, "enc",     "2", fill=FILL_NEW)
 fld(2, 1,  74, 52, "dir",     "1", fill=FILL_LOGIC)
 fld(3, 6,  74, 52, "idx",     "rank1·bg3·bank2", fill=FILL_ACTIVE)
@@ -77,8 +78,8 @@ for i, (nm, sc, tm) in enumerate(lv):
 # enc bus under the level row
 f.line(bx, by + bh + 26, bx + 5 * (bw + 8) - 8, by + bh + 26, stroke=FILL_NEW,
        width=3)
-f.text(bx, by + bh + 44, "enc (+dir) broadcast to every level - one tag, reused",
-       size=10, mono=False, fill=MUTED)
+f.text(bx, by + bh + 44, "only {enc, dir} + grant ride the tree (3 b) - operand "
+       "fetched once at the packer by idx", size=10, mono=False, fill=MUTED)
 
 f.caption(40, 640, "One enc-tagged micro-op rides the arb tree: enc reinterprets "
                    "a 27-b union operand (ACT row and CAS {col,sram,rob} share "

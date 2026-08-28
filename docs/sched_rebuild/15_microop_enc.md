@@ -1,41 +1,47 @@
 # Micro-op encoding — the tagged command that rides the arb tree
 
-**Phase-2 rebuild.** One fixed-width, `enc`-tagged **micro-op** is the single object that travels the
-whole forward path. `enc` (the command type) rides **every arb level** — each level applies the
-timing check for *its* scope keyed by `enc` (and direction) — and reaches the packer, where `enc`
-decodes the CA fields and decides whether the data engine arms. The operand is a **tagged union**:
-ACT's `row` and CAS's `{col, sram, rob}` never coexist in one micro-op, so they share the same bit
-slots. Companion to STAGE 12 (arb tree) and STAGE 13 (back-end). Figure: `fig/fig_15_microop`.
+**Phase-2 rebuild.** The command that travels the arb tree is **not** the full payload — that would
+push ~36 b through every level for nothing. Only the tiny tag `{enc(2), dir(1)}` rides the levels
+(it is all a level needs to pick which timing constraint applies), alongside the grant. The
+**operand stays parked in the winning cell** and is pulled **once, at the packer**, by the grant
+`idx`. The full micro-op is therefore *assembled at the packer*: `enc/dir` from the tree + operand
+from the cell. Companion to STAGE 12 (arb tree) and STAGE 13 (back-end). Figure: `fig/fig_15_microop`.
 
 ---
 
-## 1. Why one tagged micro-op
+## 1. What rides the tree vs what stays put
 
-The arb tree already narrows a winner hierarchically (`CMD_ARB → BGB_ARB → BG_ARB → RANK_ARB`). Rather
-than carry per-command payloads on separate buses, **one fixed-width micro-op** rides the same selects.
-Two facts make it cheap:
+The arb tree narrows a winner hierarchically (`CMD_ARB → BGB_ARB → BG_ARB → RANK_ARB`). Carrying the
+27-b operand up all four levels is wasted width — a level never reads the operand, only the tag.
 
-- **Only one command per bank per pass**, and for a given bank ACT and CAS are *different* passes
-  (miss climbs as PRE, then ACT, then — as a hit — CAS). So a single micro-op never needs both `row`
-  and `{col,sram}` at once → **overlap them in a union**.
-- **`enc` is the discriminant everywhere.** Every level reads `enc` to pick the timing constraint for
-  its scope; the packer reads `enc` to lay the CA fields and to gate the data-engine arm. One tag,
-  reused at every stage.
+- **Rides the tree (3 b):** `{enc, dir}`. Each level reads `enc` (and `dir`) to select which
+  scope-timing/`can_*` applies — nothing more. The grant one-hot narrows `idx` as it climbs.
+- **Stays in the cell:** the operand. Parked in `BANK_REQ_REG` (and `row` in `open_row`, per the
+  STAGE 12 `open_row`-at-admit refinement — not stored per-packet at all).
+- **Assembled at the packer:** `idx` (the resolved winner) selects the operand out of the winning
+  cell via the staged mux; `enc` decodes the CA fields and gates the data-engine arm.
+
+The operand is still a **tagged union** when read — ACT's `row` and CAS's `{col, sram, rob}` never
+coexist for one command (miss climbs as PRE, then ACT, then — as a hit — CAS), so they share slots.
+But that union lives in the cell / at the packer read, **not on a bus climbing the tree.**
 
 ---
 
-## 2. Micro-op format (fixed width)
+## 2. Assembled micro-op (at the packer — NOT a bus up the tree)
 
-| field | bits | meaning |
-|---|---|---|
-| `enc` | 2 | command type — the union discriminant (§3) |
-| `dir` | 1 | R/W, meaningful for `enc==CAS` (selects tWTR/tRTW/tCCD_L_WR vs read deltas) |
-| `idx` | 6 | grant identity `{rank(1), bg(3), bank(2)}` (N_RANKS=2) — who won |
-| `operand` | 27 | **tagged union**, interpreted by `enc` (§4) |
-| | **≈36 b** | total per micro-op lane |
+This is the object the packer builds and hands to the DFI CA/data stage. It exists only here; the
+tree never carries the wide form.
 
-`idx` is the resolved winner assembled from the level selects (bank from L1, bg from L2, rank from L3),
-so the packer needs no separate address lookup.
+| field | bits | rides the tree? | source |
+|---|---|---|---|
+| `enc` | 2 | **yes** | FSM state (need_pre/act/cas) — the union discriminant (§3) |
+| `dir` | 1 | **yes** | R/W; selects tWTR/tRTW/tCCD_L_WR vs read deltas (only `enc==CAS`) |
+| `idx` | 6 | **as the grant** | resolved winner `{rank(1), bg(3), bank(2)}` — narrowed by the level selects |
+| `operand` | 27 | **no** | pulled from the winning cell by `idx` at the packer — **tagged union** (§4) |
+| | **≈36 b** | | assembled only at the packer output |
+
+Up the tree the payload is just **`{enc, dir}` (3 b) + the grant one-hot**. `idx` (from the grant)
+then selects the operand out of the cell — no separate address lookup, no wide bus climbing four levels.
 
 ---
 
@@ -86,16 +92,18 @@ The diff-BG (`tCCD_S`) preference lives only at L2 and only for `CAS` — the DQ
 
 ---
 
-## 6. Lanes — one micro-op is not enough for a bundle
+## 6. Bundle slots — only at the packer output
 
-At gear 1:4 the packer fills a bundle that can hold **1 CAS + 1 ACT + fill PRE** to *different* banks
-in one mc_clk (STAGE 5). A single micro-op lane carries one command per cycle, so it would serialize
-the bundle and kill phase-fill. Two options:
+At gear 1:4 the packer fills a bundle of **1 CAS + 1 ACT + fill PRE** to *different* banks in one
+mc_clk (STAGE 5). This is a concern **only at the assembled-micro-op stage** (packer → DFI), not up
+the tree — the tree just narrows grants. Two options for the packer:
 
-- **N parallel lanes**, `N = max commands per bundle ≈ 3` (CAS, ACT, PRE) — each lane the identical
-  micro-op format, produced by the tree's top winners.
-- **One lane + packer gather** — emit one micro-op per sub-cycle and let the packer assemble the bundle
-  across the 4 CK of the mc_clk.
+- **N assembled slots**, `N = max commands per bundle ≈ 3` (CAS, ACT, PRE) — each a full ~36-b
+  micro-op read out from its winning cell.
+- **One slot + gather** — assemble one micro-op per sub-cycle and pack the bundle across the 4 CK.
+
+Either way the wide form exists only here; the four arb levels never carry more than `{enc, dir}` +
+the grant.
 
 Either way the **format** is shared; only the number of concurrent slots changes.
 
@@ -104,12 +112,13 @@ Either way the **format** is shared; only the number of concurrent slots changes
 ## 7. Width summary
 
 ```
-micro-op = enc(2) + dir(1) + idx(6) + operand-union(27)  ≈ 36 b / lane
-operand-union width  = max( ACT row 18 , CAS {col10+sram9+rob8}=27 , PRE 0 ) = 27
-bundle bus           = N_lanes × 36 b   (N ≈ 3)
+UP THE TREE (×4 levels):  {enc(2), dir(1)} + grant one-hot        = 3 b + grant
+AT THE PACKER (assembled): enc(2)+dir(1)+idx(6)+operand-union(27) ≈ 36 b / slot
+operand-union width      = max( ACT row 18 , CAS {col10+sram9+rob8}=27 , PRE 0 ) = 27
+bundle (packer output)   = N_slots × 36 b   (N ≈ 3)      ← wide form lives ONLY here
 ```
 
-The union saves the `row` bits from ever being a separate field — they live in the CAS slot's low
-bits and are only read when `enc==ACT`. Combined with `open_row`-at-admit (STAGE 12 refinement, `row`
-is not stored per-packet at all — it is read from `open_row` when an ACT wins), the forward path
-carries **one tagged 36-bit micro-op per lane**, `enc`-decoded identically at every stage.
+The waste avoided: the 27-b operand is **not** dragged through four arb levels — only the 3-b tag is,
+and the operand is fetched once by the grant at the packer. The union then keeps `row` from being a
+separate stored field (it shares the CAS slot, and per `open_row`-at-admit is read from `open_row`,
+not stored per-packet). Net: **3 b on the tree, one ~36-b micro-op assembled at the packer.**
