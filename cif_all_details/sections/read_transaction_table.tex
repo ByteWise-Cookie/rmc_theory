@@ -7,27 +7,31 @@ by the read ROB instance and its Retiring Register (\S\ref{sec:rob}).
 \subsection{Read ROB metadata and completion}
 
 The read Metadata RAM is directly indexed by \texttt{ROB\_INDEX}.  Each entry
-contains \texttt{exp\_pkts[2:0]}, a four-bit completion bitmap, and one
-opaque Read Data Buffer allocation handle per \texttt{dbuf\_ptr[0..3]}.  The expected count is initialized from the
-Burst Splitter's \texttt{splitter\_pkt\_count}, which is the number of packet
-segments for this transaction.
+contains \texttt{exp\_pkts[6:0]} (the number of 64-B MC packets for this
+transaction, \texttt{1..64}), a 64-bit completion bitmap, and
+\texttt{rd\_dbuf\_base}, the base of a contiguously-allocated RD\_SRAM range
+of \texttt{exp\_pkts} 64-B lines.  The count is initialized from the Burst
+Splitter --- one MC packet per 64-B AXI data beat.  The read entry stores no
+AXI address or 64\,B line footprint: same-line read/write ordering is
+enforced entirely at read admission, before allocation
+(\S\ref{sec:samelinehaz}), and a completed read is never re-checked.
 
-On a read completion, \texttt{GLOBAL\_TAG[9:0]} directly selects the entry
-and its packet-number bit.  The completion data is written into the pooled
-Read Data Buffer allocation identified by the handle recorded for that packet
-number.  Exact allocation representation, MC response-unit semantics,
+On a read completion, \texttt{GLOBAL\_TAG[13:0]} directly selects the entry
+(\texttt{[13:6]}) and its packet-number bit (\texttt{[5:0]}).  The returned
+64-B data unit is written to \texttt{rd\_dbuf\_base + PACKET\_NUMBER} in
+RD\_SRAM.  RD\_SRAM depth (hence \texttt{RD\_SRAM\_ADDR\_W}), its
 allocation/read/free handshakes, and latency remain \textbf{TBD}; the ROB
-assumes only that the handle is valid from packet issue until the
-contract-defined release point.
+assumes only that the contiguous \texttt{rd\_dbuf\_base} range is valid from
+allocation until the contract-defined release point.
 
 \subsection{Read retirement}
 
-An AXID Slot FIFO head can retire only after all expected completion bits are
-set.  The Retiring Register then holds that index while the Read Serializer
-serializes the completed Data Buffer allocations in packet-number order.
-Within-segment progress and allocation release are defined by the MC/Data-Buffer
-interface contract.  \texttt{rob\_last} is generated with the final AXI beat
-of the final segment.  Final AXI R acceptance, after all contract-defined
-allocation releases, permits retirement to pop the Slot FIFO and return
-\texttt{ROB\_INDEX} to the read Free List.  Completion alone never frees the
-index.
+An AXID Slot FIFO head can retire only after \texttt{completion\_bitmap}
+bits \texttt{[exp\_pkts-1:0]} are all set.  The Retiring Register then
+holds that index while the Read Serializer emits
+\texttt{rd\_dbuf\_base + 0 .. rd\_dbuf\_base + exp\_pkts-1} in packet order,
+one AXI beat per 64-B MC packet.  \texttt{rob\_last} is generated with the
+final beat (\texttt{PACKET\_NUMBER == exp\_pkts - 1}).  Final AXI R
+acceptance, after the \texttt{rd\_dbuf\_base} range is released, permits
+retirement to pop the Slot FIFO and return \texttt{ROB\_INDEX} to the read
+Free List.  Completion alone never frees the index.

@@ -6,9 +6,9 @@ below cross-references the channel signals against the widths the current
 architecture documents establish (\texttt{ADDR\_W=32}, \texttt{AXID\_W=6},
 \texttt{LEN\_W=8}, from the Request Validator's Design Parameters).  Widths
 marked AXI4-fixed follow the AXI4 protocol specification itself and are not
-CIF-specific parameters.  Write/read data-path widths are not established by
-any current CIF document and remain \textbf{TBD}; see \S\ref{sec:respformat}
-for the corresponding response-side discussion.
+CIF-specific parameters.  The write and read data paths are \texttt{512}
+bits: one 64-B AXI data beat per MC request packet (\S\ref{sec:identity},
+\S\ref{sec:respformat}).
 
 \begin{longtable}{p{1.3cm}p{3.2cm}p{1.6cm}p{9.5cm}}
 \toprule
@@ -17,11 +17,12 @@ for the corresponding response-side discussion.
 AW & \texttt{AWVALID/AWREADY} & 1/1 & Write address handshake\\
    & \texttt{AWADDR}          & 32  & \texttt{ADDR\_W}\\
    & \texttt{AWID}            & 6   & \texttt{AXID\_W}\\
-   & \texttt{AWLEN}           & 8   & \texttt{LEN\_W}; \emph{not} the MC packet/segment count (\S\ref{sec:identity})\\
-   & \texttt{AWSIZE/AWBURST}  & 3/2 & AXI4-fixed\\
+   & \texttt{AWLEN}           & 8   & \texttt{LEN\_W}; raw AXI burst length. Given the 64-B-beat contract, \texttt{exp\_pkts = AWLEN + 1} (\S\ref{sec:identity})\\
+   & \texttt{AWSIZE/AWBURST}  & 3/2 & AXI4-fixed; also feed the write 64\,B line footprint calc (\S\ref{sec:samelinehaz})\\
 \midrule
 W  & \texttt{WVALID/WREADY}   & 1/1 & Write data handshake\\
-   & \texttt{WDATA/WSTRB}     & TBD & Data-path width not established by current CIF documents (\S\ref{sec:pktformat})\\
+   & \texttt{WDATA}           & 512 & One 64-B AXI data beat per MC request packet (\S\ref{sec:identity})\\
+   & \texttt{WSTRB}           & 64  & AXI4-fixed (one bit per \texttt{WDATA} byte); carried verbatim as the \texttt{wmask} field on \texttt{wdata\_afifo} (\S\ref{sec:cifmc})\\
    & \texttt{WLAST}           & 1   & AXI4-fixed\\
 \midrule
 B  & \texttt{BVALID/BREADY}   & 1/1 & Write response handshake\\
@@ -31,14 +32,14 @@ B  & \texttt{BVALID/BREADY}   & 1/1 & Write response handshake\\
 AR & \texttt{ARVALID/ARREADY} & 1/1 & Read address handshake\\
    & \texttt{ARADDR}          & 32  & \texttt{ADDR\_W}\\
    & \texttt{ARID}            & 6   & \texttt{AXID\_W}\\
-   & \texttt{ARLEN}           & 8   & \texttt{LEN\_W}; \emph{not} the MC packet/segment count (\S\ref{sec:identity})\\
-   & \texttt{ARSIZE/ARBURST}  & 3/2 & AXI4-fixed\\
+   & \texttt{ARLEN}           & 8   & \texttt{LEN\_W}; raw AXI burst length. Given the 64-B-beat contract, \texttt{exp\_pkts = ARLEN + 1} (\S\ref{sec:identity})\\
+   & \texttt{ARSIZE/ARBURST}  & 3/2 & AXI4-fixed; also feed the read footprint used by the same-line hazard check (\S\ref{sec:samelinehaz})\\
 \midrule
 R  & \texttt{RVALID/RREADY}   & 1/1 & Read data handshake\\
-   & \texttt{RDATA}           & TBD & Data-path width not established by current CIF documents (\S\ref{sec:pktformat})\\
+   & \texttt{RDATA}           & 512 & One 64-B AXI data beat per MC request packet (\S\ref{sec:identity})\\
    & \texttt{RID}             & 6   & \texttt{AXID\_W}; from the retiring transaction's Slot FIFO context\\
    & \texttt{RRESP}           & 2   & AXI4-fixed; per-beat value from the read ROB's serialized status\\
-   & \texttt{RLAST}           & 1   & Asserted only on the final AXI beat of the final segment, not on every segment boundary\\
+   & \texttt{RLAST}           & 1   & Asserted only on the final AXI beat of the transaction (\texttt{PACKET\_NUMBER == exp\_pkts - 1}), not on every packet\\
 \bottomrule
 \caption{Top-level AXI4 slave interface, cross-referenced to CIF-internal handling}
 \end{longtable}
@@ -58,7 +59,11 @@ not fix a signal name.
 \texttt{alloc\_req} & 1 & Accept logic $\rightarrow$ RD/WR ROB & Allocate one transaction slot on accepted AR/AW request.\\
 \texttt{AXID} & 6 & Accept logic $\rightarrow$ RD/WR ROB & Selects the per-AXID Slot FIFO.\\
 \texttt{ROB\_INDEX} & 8 & RD/WR ROB $\rightarrow$ Splitter & Free-List result retained for the transaction.\\
-\texttt{splitter\_pkt\_count} & 3 & Splitter $\rightarrow$ RD/WR ROB & Number of segments for this transaction, 1--4; initializes \texttt{exp\_pkts}.\\
+\texttt{exp\_pkts} & 7 & Splitter $\rightarrow$ RD/WR ROB & Number of 64-B MC packets for this transaction, 1--64; initializes the ROB's \texttt{exp\_pkts}.\\
+\texttt{wr\_line\_base} & 26 & Accept logic $\rightarrow$ WR ROB & Start 64\,B line of the write footprint; written at allocation (\S\ref{sec:samelinehaz}).\\
+\texttt{wr\_line\_count} & 7 & Accept logic $\rightarrow$ WR ROB & Contiguous 64\,B line span of the write, 1--64 (\S\ref{sec:samelinehaz}).\\
+\texttt{HAZ\_HOLD} & 1 & Same-line hazard gate $\rightarrow$ Request Validator & Read path: head read overlaps an occupied \texttt{ROB\_WR} footprint; withholds \texttt{alloc\_req} (\S\ref{sec:samelinehaz}).\\
+\texttt{free\_req} & --- & WR ROB $\rightarrow$ same-line hazard gate & Existing write-retirement pulse; also re-arms the held-read recheck (\S\ref{sec:samelinehaz}).\\
 \bottomrule
 \end{longtable}
 
@@ -67,28 +72,32 @@ not fix a signal name.
 \toprule
 \textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
 \midrule
-\texttt{seg\_valid/seg\_ready} & 1/1 & Splitter $\leftrightarrow$ Packet Formation & Handshake for the current Segment Table entry.\\
-\texttt{seg\_addr} & 32 & Splitter $\rightarrow$ Packet Formation & Segment start address.\\
-\texttt{seg\_beat\_cnt} & 8 & Splitter $\rightarrow$ Packet Formation & Number of AXI beats represented by the segment.\\
-\texttt{PACKET\_NUMBER} & 2 & Splitter $\rightarrow$ Packet Formation & Current \texttt{seg\_idx}, assigned at packet emission.\\
-\texttt{GLOBAL\_TAG} & 10 & Packet Formation $\rightarrow$ Packet FIFO & \texttt{\{ROB\_INDEX,PACKET\_NUMBER\}}.\\
+\texttt{emit\_valid/emit\_ready} & 1/1 & Splitter $\leftrightarrow$ Packet Formation & Handshake for the current 64-B MC packet.\\
+\texttt{emit\_addr} & 32 & Splitter $\rightarrow$ Packet Formation & 64-B-granular start address of this packet's data beat.\\
+\texttt{PACKET\_NUMBER} & 6 & Splitter $\rightarrow$ Packet Formation & Current \texttt{pkt\_idx} (\texttt{0..exp\_pkts-1}), assigned at packet emission.\\
+\texttt{GLOBAL\_TAG} & 14 & Packet Formation $\rightarrow$ \texttt{req\_afifo} & \texttt{\{ROB\_INDEX[7:0],PACKET\_NUMBER[5:0]\}}.\\
 \bottomrule
 \end{longtable}
 
+\noindent Packet Formation applies the CIF-side address map/hash to
+\texttt{emit\_addr}, producing the packet's \texttt{daddr} field
+(\S\ref{sec:cifmc}); the raw byte address is not carried to MC.
+
 \subsection{MC Core completion interface}
 
-Response transport and handshake naming are MC/Data-Buffer
-interface-contract dependent (\S\ref{sec:respformat}); no
-\texttt{RESP\_VALID}/\texttt{RESP\_READY} signal pair is assumed.  The fields
-below are the only ones the current architecture requires MC Core to supply.
+Response transport is the valid-only \texttt{resp\_afifo} (\S\ref{sec:cifmc});
+CIF always accepts, MC self-throttles via a per-read reserved slot.  MC Core
+supplies exactly one response per accepted 64-B request packet
+(\S\ref{sec:cifmc-req}).
 
 \begin{longtable}{p{3.3cm}p{1cm}p{3.4cm}p{7cm}}
 \toprule
 \textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
 \midrule
-\texttt{GLOBAL\_TAG} & 10 & MC Core $\rightarrow$ RD/WR ROB & Echoed request tag; directly decodes index and packet number.\\
-\texttt{data} & TBD & MC Core $\rightarrow$ Read ROB & Read data payload; width and response-unit granularity are contract-dependent (\S\ref{sec:respformat}).\\
-\texttt{status} & 4 & MC Core $\rightarrow$ RD/WR ROB & Raw completion status; encoding is \textbf{TBD with MC Core}.\\
+\texttt{resp\_type} & 1 & MC Core $\rightarrow$ RD/WR ROB & \texttt{0 = RD\_DATA} (route to read ROB), \texttt{1 = WR\_ACK} (route to write ROB).\\
+\texttt{GLOBAL\_TAG} & 14 & MC Core $\rightarrow$ RD/WR ROB & Echoed request tag; \texttt{[13:6]} = \texttt{ROB\_INDEX}, \texttt{[5:0]} = \texttt{PACKET\_NUMBER}.\\
+\texttt{status} & 4 & MC Core $\rightarrow$ RD/WR ROB & \texttt{0 = OK}, \texttt{1 = SLVERR}, \texttt{2 = DECERR}; codes \texttt{3..15} reserved $\to$ \texttt{DECERR} (\S\ref{sec:cifmc}).\\
+\texttt{rdata} & 512 & MC Core $\rightarrow$ Read ROB & Read data payload, one 64-B unit; valid only when \texttt{resp\_type = RD\_DATA} (\S\ref{sec:respformat}).\\
 \bottomrule
 \end{longtable}
 
@@ -97,10 +106,10 @@ below are the only ones the current architecture requires MC Core to supply.
 \toprule
 \textbf{Signal} & \textbf{Width} & \textbf{Path} & \textbf{Description}\\
 \midrule
-\texttt{merge\_ready} & 1 & Merge Logic $\rightarrow$ Read ROB & Accepts an emitted AXI read beat; serializer progress and Data Buffer release follow the MC/Data-Buffer contract.\\
-\texttt{rob\_last} & 1 & Read ROB $\rightarrow$ Merge Logic & Asserted with the final serialized read beat.\\
+\texttt{merge\_ready} & 1 & Merge Logic $\rightarrow$ Read ROB & Accepts an emitted AXI read beat (one per 64-B MC packet).\\
+\texttt{rob\_last} & 1 & Read ROB $\rightarrow$ Merge Logic & Asserted with the final serialized read beat (\texttt{PACKET\_NUMBER == exp\_pkts - 1}).\\
 \texttt{bresp\_ready} & 1 & B response path $\rightarrow$ Write ROB & Accepts the ordered BRESP and permits write-slot release.\\
-\texttt{dbuf\_alloc/read/free} & TBD & Read ROB $\leftrightarrow$ Read Data Buffer & Allocation representation, handshake, response-unit semantics, and release timing are \textbf{TBD}; one handle is recorded per packet number.\\
+\texttt{rd\_dbuf alloc/read/free} & TBD & Read ROB $\leftrightarrow$ Read Data Buffer & Handshake and release timing are \textbf{TBD}; a contiguous \texttt{exp\_pkts}-line range is allocated at ROB init and released as one unit.\\
 \bottomrule
 \end{longtable}
 
@@ -126,25 +135,35 @@ deassertion.
 
 On reset, each ROB instance independently initializes its 256-bit Free List
 to free, clears Metadata RAM state, resets all 64 Slot FIFOs, and clears its
-Retiring Register.  The Burst Splitter clears its Segment Table validity,
-\texttt{num\_segments}, \texttt{seg\_idx}, and retained \texttt{ROB\_INDEX}.
-Packet FIFOs and AXI request FIFOs retain their established reset behavior.
-The MC completion/response handshake is not assigned a fixed reset value by
-this specification; its behavior across reset is governed by the MC--CIF
-interface contract (\S\ref{sec:respformat}).
+Retiring Register.  The write \texttt{wr\_line\_base} and \texttt{wr\_line\_count}
+footprint fields are part of Metadata RAM state and are cleared with it; the
+read-admission same-line hazard gate is combinational and holds no reset
+state (\S\ref{sec:samelinehaz}).  The Burst Splitter clears its per-packet
+address-layout state, \texttt{exp\_pkts}, \texttt{pkt\_idx}, and retained
+\texttt{ROB\_INDEX}.
+The CIF--MC async FIFOs (\S\ref{sec:cifmc}) reset to empty; each credit
+counter resets to its FIFO depth.  No transaction crosses either seam until
+both clock domains are out of reset.  The address-map / hash CSRs are
+CIF-side and are loaded and locked before \texttt{init\_done}.
 
 A soft reset first quiesces request acceptance and waits for packet FIFOs,
-Segment Table activity, both ROB Slot-FIFO sets, both Retiring Registers, and
-all externally visible AXI responses to drain.  The Read Data Buffer has a
+Burst Splitter activity, both ROB Slot-FIFO sets, both Retiring Registers, and
+all externally visible AXI responses to drain.  A read held at the AR Metadata
+FIFO head by the same-line hazard check (\S\ref{sec:samelinehaz}) is upstream
+of ROB allocation; quiescing request acceptance stops feeding it and its
+blocking writes drain through normal retirement, so no additional quiescence
+condition is required.  The Read Data Buffer has a
 separate drain/initialization contract; its exact interface and timing are
 \textbf{TBD}.  Reset must not release a read \texttt{ROB\_INDEX} until the
 final AXI read response and its Data Buffer release have completed.
 
 \section{Error propagation}
 
-Error packets are segmented and tagged in the same manner as ordinary
+Error packets are split and tagged in the same manner as ordinary
 requests.  Every completion sets its packet-number bit in the selected ROB.
 The write ROB aggregates packet status before its one BRESP; the read ROB
-serializes status with its data.  Raw MC status encoding and write
-worst-status precedence are \textbf{TBD}; this specification intentionally
-does not assign an AXI response value without that contract.
+serializes status with its data.  The \texttt{status} encoding
+(\texttt{0}/\texttt{1}/\texttt{2} $=$ OK/SLVERR/DECERR, codes \texttt{3..15}
+reserved $\rightarrow$ DECERR) and the write worst-status precedence
+(\texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY}) are frozen in
+\S\ref{sec:cifmc}.

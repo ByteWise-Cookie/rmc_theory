@@ -2,22 +2,33 @@
 \label{sec:overview}
 
 The Client Interface (CIF) accepts AXI read and write transactions, validates
-them, divides each accepted transaction into row-bounded MC packet segments,
-and returns AXI responses in order for each AXID.  Read and write traffic use
-independent instances of the same transaction-tracking ROB architecture.
+them, divides each accepted transaction into up to 64 MC request packets (one
+per 64-B AXI data beat), and returns AXI responses in order for each AXID.
+Read and write traffic use independent instances of the same
+transaction-tracking ROB architecture.
 
 \subsection{Global assumptions}
 \begin{itemize}[noitemsep]
   \item AXID is 6 bits (64 AXI IDs); each ROB instance has 64 per-AXID Slot
         FIFOs, each of depth four.
-  \item One accepted AXI transaction produces 1--4 packet segments.  AXI
-        beats are represented by a segment's \texttt{beat\_cnt}; a beat is
-        not an MC packet.
-  \item An AXI transaction must not cross 4~KB.  With runtime-configured
-        \texttt{row\_size} of at least 1~KB, row crossings are at most three
-        and \texttt{MAX\_SEGMENTS=4}.
-  \item MC Core echoes the packet's \texttt{GLOBAL\_TAG} on completion.
-        Completion-status encoding is \textbf{TBD with MC Core}.
+  \item One MC request packet carries one 512-bit / 64-B AXI data beat.  One
+        accepted AXI transaction produces up to 64 MC packets --- a beat
+        \emph{is} an MC packet.
+  \item Every AXI data beat transfers a full 64-B unit (\texttt{AxSIZE = 6})
+        at a 64-B-aligned address.  Like the other AXI-protocol constraints,
+        this is a design-time assumption verified by assertion, not a
+        runtime check (see the Request Validator); it is what makes one AXI
+        beat correspond to exactly one 64-B MC packet and
+        \texttt{exp\_pkts = AxLEN + 1}.
+  \item An AXI transaction must not cross 4~KB, so it produces at most
+        \texttt{MAX\_PKTS = 4\,KB / 64\,B = 64} MC packets.  With
+        runtime-configured \texttt{row\_size} of at least 1~KB, row
+        crossings are at most three and affect each packet's address, not
+        the packet count.
+  \item MC Core echoes the packet's \texttt{GLOBAL\_TAG} on completion, one
+        response per accepted 64-B request packet (\S\ref{sec:cifmc-req}).
+        Completion \texttt{status} encoding is frozen: \texttt{0}/\texttt{1}/\texttt{2}
+        $=$ OK/SLVERR/DECERR (\S\ref{sec:cifmc}).
 \end{itemize}
 
 \section{Parameters}
@@ -29,9 +40,11 @@ independent instances of the same transaction-tracking ROB architecture.
 \texttt{AXID\_W} & 6\\
 \texttt{ROB\_DEPTH} & 256 transactions per ROB instance\\
 \texttt{ROB\_INDEX\_W} & 8\\
-\texttt{PACKET\_NUMBER\_W} & 2\\
-\texttt{GLOBAL\_TAG\_W} & 10: \texttt{\{ROB\_INDEX, PACKET\_NUMBER\}}\\
-\texttt{MAX\_SEGMENTS} & 4\\
+\texttt{DATA\_W} & 512: one 64-B AXI data beat per MC packet\\
+\texttt{PACKET\_NUMBER\_W} & 6\\
+\texttt{GLOBAL\_TAG\_W} & 14: \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}}\\
+\texttt{COMPLETION\_BITMAP\_W} & 64\\
+\texttt{MAX\_PKTS} & 64\\
 Per-AXID Slot FIFO & 64 FIFOs $\times$ depth 4, per ROB instance\\
 Read Data Buffer watermark & 128 entries, owned independently by that buffer\\
 \bottomrule
@@ -43,15 +56,15 @@ Read Data Buffer watermark & 128 entries, owned independently by that buffer\\
 
 At AXI transaction acceptance, the applicable ROB Free List allocates
 \texttt{ROB\_INDEX[7:0]}.  The index is pushed into the accepting AXID's Slot
-FIFO only after the Burst Splitter has supplied
-\texttt{splitter\_pkt\_count}.  The ROB initializes
-\texttt{exp\_pkts=splitter\_pkt\_count} and clears its four-bit completion
-bitmap before the entry becomes eligible for retirement.
+FIFO only after the Burst Splitter has supplied \texttt{exp\_pkts}, the
+number of 64-B MC packets for the transaction (\texttt{1..64}).  The ROB
+initializes \texttt{exp\_pkts} and clears its 64-bit completion bitmap
+before the entry becomes eligible for retirement.
 
-At packet emission, the Burst Splitter assigns \texttt{PACKET\_NUMBER} from
-its two-bit \texttt{seg\_idx} and Packet Formation attaches
-\texttt{GLOBAL\_TAG=\{ROB\_INDEX,PACKET\_NUMBER\}}.  This is the complete
-MC completion identity.
+At packet emission, the Burst Splitter assigns \texttt{PACKET\_NUMBER}
+(\texttt{0..exp\_pkts-1}) and Packet Formation attaches
+\texttt{GLOBAL\_TAG = \{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}} (14 bits).
+This is the complete MC completion identity.
 
 \section{Write path}
 \label{sec:writepath}
@@ -60,20 +73,26 @@ MC completion identity.
 The AW Metadata FIFO, W Data FIFO, Request Validator, Error Handler, Burst
 Splitter, Packet Formation Unit, and Write Packet FIFO retain their existing
 roles.  The accepting write ROB allocates the transaction index.  The splitter
-generates one to four row-bounded segments and the Write Packet FIFO forwards
-one packet per segment to MC Core.
+generates up to 64 MC packets, one per 64-B AXI data beat, and the Write
+Packet FIFO forwards them to MC Core.
 
 \subsection{Write ROB and response}
 
 The write ROB has its own 256-entry Free List, Metadata RAM, and 64 Slot
 FIFOs.  Its Metadata RAM is directly indexed by \texttt{ROB\_INDEX} and
-stores \texttt{exp\_pkts}, \texttt{completion\_bitmap[3:0]}, and aggregate
-\texttt{resp\_status}.  MC completions set the bit selected by
-\texttt{PACKET\_NUMBER} and update aggregate status.  The status mapping and
-the worst-status precedence are \textbf{TBD}; no value is assumed here.
+stores \texttt{exp\_pkts[6:0]}, \texttt{completion\_bitmap[63:0]}, aggregate
+\texttt{resp\_status[1:0]}, and the Issue-\#11 footprint
+\texttt{wr\_line\_base[25:0]}/\texttt{wr\_line\_count[6:0]}
+(\S\ref{sec:samelinehaz}).  MC completions set the bit selected by
+\texttt{PACKET\_NUMBER} and update aggregate status.  The \texttt{status}
+encoding (\texttt{0}/\texttt{1}/\texttt{2} $=$ OK/SLVERR/DECERR, codes
+\texttt{3..15} reserved $\rightarrow$ DECERR) and the worst-status precedence
+(\texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY}) are frozen in
+\S\ref{sec:cifmc}.
 
-When the head transaction of an AXID Slot FIFO has all expected completion
-bits set, retirement selects it in AXID order.  It holds BRESP valid until the
+When the head transaction of an AXID Slot FIFO has \texttt{completion\_bitmap}
+bits \texttt{[exp\_pkts-1:0]} all set, retirement selects it in AXID
+order.  It holds BRESP valid until the
 downstream AXI response path accepts it.  Only that acceptance pops the Slot
 FIFO and returns \texttt{ROB\_INDEX} to the write Free List.  Write traffic
 has no Read Data Buffer.
@@ -84,117 +103,281 @@ has no Read Data Buffer.
 
 The AR Metadata FIFO, Request Validator, Error Handler, Burst Splitter,
 Packet Formation Unit, and Read Packet FIFO retain their existing roles.  The
-read ROB allocates \texttt{ROB\_INDEX} at acceptance.  The splitter emits one
-to four segments, each carrying a distinct \texttt{PACKET\_NUMBER}.
+read ROB allocates \texttt{ROB\_INDEX} at acceptance, subject to the same-line
+read/write hazard check at the AR Metadata FIFO head
+(\S\ref{sec:samelinehaz}).  The splitter emits up to 64 MC packets, each
+carrying a distinct \texttt{PACKET\_NUMBER} (\texttt{0..exp\_pkts-1}).
 
 \subsection{Read ROB, Data Buffer, and serializer}
 
 The independent read ROB has the same generic structures as the write ROB.
-Its Metadata RAM additionally stores \texttt{dbuf\_ptr[0..3]}, one opaque
-Read Data Buffer allocation handle per packet number.  At read packet issue,
-the handle for that segment's allocation is recorded before the packet is
-issued.  Completion data is routed through that handle according to the
-MC/Data-Buffer interface contract, then
-\texttt{completion\_bitmap[PACKET\_NUMBER]} is set.
+Its Metadata RAM additionally stores \texttt{rd\_dbuf\_base}, the base of a
+single contiguously-allocated RD\_SRAM range of \texttt{exp\_pkts} 64-B
+lines, set at allocation.  On completion, packet \texttt{PACKET\_NUMBER}'s
+returned 64-B data unit is written to \texttt{rd\_dbuf\_base + PACKET\_NUMBER}
+and \texttt{completion\_bitmap[PACKET\_NUMBER]} is set.
 
 Once a Slot FIFO head is complete, a Retiring Register holds its
-\texttt{ROB\_INDEX} while the Read Serializer emits the associated buffer
-allocations in packet-number order.  The MC/Data-Buffer interface contract
-defines response-unit semantics, within-segment serialization, and allocation
-release.  \texttt{RLAST} is asserted on the final AXI beat of the final
-segment; only after that beat and every associated contract-defined release
-may the Slot FIFO be popped and \texttt{ROB\_INDEX} returned to the read Free
-List.  Read Data Buffer handshakes, latency, pointer representation, and MC
-response-unit semantics remain \textbf{TBD}; its 128-entry watermark is its
-own capacity control, not ROB occupancy control.
+\texttt{ROB\_INDEX} while the Read Serializer emits
+\texttt{rd\_dbuf\_base + 0 .. rd\_dbuf\_base + exp\_pkts-1} in packet order,
+one AXI beat per 64-B MC packet.  \texttt{RLAST} is asserted on the final
+beat (\texttt{PACKET\_NUMBER == exp\_pkts - 1}); only after that beat is
+accepted and the \texttt{rd\_dbuf\_base} range released may the Slot FIFO be
+popped and \texttt{ROB\_INDEX} returned to the read Free List.  RD\_SRAM
+depth (hence \texttt{RD\_SRAM\_ADDR\_W}), its handshakes and latency remain
+\textbf{TBD}; its 128-entry watermark is its own capacity control, not ROB
+occupancy control.
 
-\section{Request and response packet formats}
+\subsection{Same-line read/write ordering}
+\label{sec:samelinehaz}
+
+The MC core may reorder a read ahead of an older write to the same 64\,B
+line.  CIF prevents the resulting stale read by holding a conflicting read at
+admission until the overlapping write has retired.  The check is request-wise
+and uses only the raw 64\,B line address; no hashed \texttt{daddr} and no CAM
+are introduced.
+
+\textbf{Write footprint.} Each outstanding write is tracked in its
+\texttt{ROB\_WR} entry as one contiguous 64\,B line interval
+\texttt{\{wr\_line\_base[25:0], wr\_line\_count[6:0]\}}, derived from
+\texttt{\{AWADDR, AWLEN, AWSIZE, AWBURST\}}:
+\begin{itemize}[noitemsep]
+  \item \texttt{nbytes = (AWLEN + 1) << AWSIZE}
+  \item \texttt{INCR}:  \texttt{start = AWADDR};
+        \texttt{last = AWADDR + nbytes - 1}
+  \item \texttt{WRAP}:  \texttt{start = AWADDR \& \textasciitilde(nbytes - 1)};
+        \texttt{last = start + nbytes - 1}
+  \item \texttt{FIXED}: \texttt{start = AWADDR};
+        \texttt{last = AWADDR + (1 << AWSIZE) - 1}
+  \item \texttt{wr\_line\_base  = start[31:6]}
+  \item \texttt{wr\_line\_count = last[31:6] - start[31:6] + 1}, range
+        \texttt{[1,64]}
+\end{itemize}
+Rounding outward to line granularity is mandatory: burst alignment and
+\texttt{AWSIZE} are not checked at runtime.  \texttt{wr\_line\_count} $\le 64$
+follows from the 4\,KB transaction limit (\S\ref{sec:overview}).  The
+footprint is written at allocation (\S\ref{sec:alloc}), is never modified by
+completion, and is released when the entry is freed (\S\ref{sec:release}).
+
+\textbf{Read admission check.} At the head of the AR Metadata FIFO, on the
+Request Validator valid path and \emph{before} \texttt{alloc\_req}, the
+incoming read's footprint is computed from
+\texttt{\{ARADDR, ARLEN, ARSIZE, ARBURST\}} by the identical calculation and
+tested for interval overlap against every occupied \texttt{ROB\_WR} entry.
+Writing $R$ for the incoming read footprint and $W$ for an occupied write
+footprint, the read conflicts iff
+\[
+  (R_{\mathrm{base}} < W_{\mathrm{base}} + W_{\mathrm{count}})
+  \;\wedge\;
+  (W_{\mathrm{base}} < R_{\mathrm{base}} + R_{\mathrm{count}}).
+\]
+The read footprint is transient: used for the check only, stored nowhere.  No
+footprint or hazard state is added to \texttt{ROB\_RD}, and a completed read
+is never re-checked.
+
+\textbf{Hold and release.} On any overlap the AR Metadata FIFO head is not
+popped and no read \texttt{ROB\_INDEX} is allocated; the hold uses the same
+mechanism as the existing per-AXID \texttt{STALL} (outputs held stable, FIFO
+not advanced).  The check is re-evaluated whenever a write
+\texttt{ROB\_INDEX} is freed (\texttt{free\_req}, \S\ref{sec:release}); the
+freed entry's footprint stops being occupied in the same cycle its Free List
+bit is set.  The read admits as soon as it overlaps no occupied write
+footprint.  Liveness holds because writes drain independently of the held
+read.  Holding the FIFO head also stalls non-conflicting reads behind it on
+that port; this is accepted, as same-line overlap is rare.
+
+\textbf{MC contract dependency.} Release keys on the blocking write's
+\texttt{ROB\_WR} entry being freed, which occurs when its \texttt{BRESP} is
+accepted after every \texttt{WR\_ACK} for that write has been received.  This
+is correct only if a write reported complete is visible to a subsequent
+same-line read; that property is stated as an explicit interface requirement
+on MC Core (\S\ref{sec:cifmc-req}, item 2).
+
+\section{CIF--MC Interface Contract}
+\label{sec:cifmc}
 \label{sec:pktformat}
 
-This is the compact, standalone reference for the CIF-generated request
-packet and the MC completion response, gathering fields already established
-in \S\ref{sec:identity}, \S\ref{sec:splitter}, and \S\ref{sec:rob}.  The
-request format (CIF\texorpdfstring{$\to$}{->}MC) and the response format
-(MC\texorpdfstring{$\to$}{->}CIF) carry different degrees of freeze and must
-not be conflated.
+This section is the authoritative statement of the CIF\,$\to$\,MC and
+MC\,$\to$\,CIF interface.  Where an earlier section gives a placeholder
+signal name or leaves an interface detail open, this section governs.  It
+applies the frozen decisions of \S\ref{sec:identity}, \S\ref{sec:tag},
+\S\ref{sec:rob}, and \S\ref{sec:samelinehaz} without changing them.
 
-\subsection{CIF \texorpdfstring{$\rightarrow$}{->} MC Core request packet}
+\subsection{Channels}
 
-Packet Formation emits exactly one MC request packet per Segment Table entry
-(\S\ref{sec:splitter}).  The packet is transferred to MC Core using the
-\texttt{PKT\_VALID}/\texttt{PKT\_READY} handshake; that handshake is an
-interface signal pair, not a field carried inside the packet.  Every request
-packet, read or write, carries:
+Three clock-domain-crossing FIFOs cross the CIF--MC boundary:
 
 \begin{center}
 \begin{tabular}{lll}
 \toprule
-\textbf{Field} & \textbf{Width} & \textbf{Meaning}\\
+\textbf{FIFO} & \textbf{Direction} & \textbf{Payload}\\
 \midrule
-\texttt{GLOBAL\_TAG} & 10 & \texttt{\{ROB\_INDEX[7:0],PACKET\_NUMBER[1:0]\}}; this segment's completion identity\\
-\texttt{addr} & 32 & Segment start address\\
-\texttt{beat\_cnt} & 8 & AXI beats represented by \emph{this segment}, not the transaction's packet count\\
-packet type & inherited, unconfirmed width & Distinguishes Write/Read/Err\_write/Err\_read; set by the Request Validator/Error Handler and carried unchanged through the Burst Splitter to Packet Formation\\
+\texttt{req\_afifo}   & CIF $\to$ MC & \texttt{\{req\_type[0], GLOBAL\_TAG[13:0], daddr[DADDR\_W-1:0]\}}\\
+\texttt{wdata\_afifo} & CIF $\to$ MC & \texttt{\{wdata[511:0], wmask[63:0]\}} --- write packets only\\
+\texttt{resp\_afifo}  & MC $\to$ CIF & \texttt{\{resp\_type[0], GLOBAL\_TAG[13:0], status[3:0], rdata[511:0]\}}\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{Write request packets} additionally carry write data for the beats
-represented by \texttt{beat\_cnt}.  The current documents establish only that
-a W Data FIFO supplies this data on the write path (\S\ref{sec:writepath});
-the per-segment write-data field width, byte-enable representation, and its
-exact relationship to \texttt{beat\_cnt} are not fixed by any current CIF
-document and remain \textbf{TBD}.
+\noindent \texttt{req\_afifo} is one ordered stream carrying read and write
+descriptors interleaved in CIF packet-emission order; that order is program
+order.  \texttt{wdata\_afifo} carries one entry per write descriptor, in the
+same order the write descriptors enter \texttt{req\_afifo} (positional
+binding); a write packet is emitted only when both request- and write-data
+credit are available.  \texttt{resp\_afifo} is one merged stream;
+\texttt{rdata} is valid only when \texttt{resp\_type = RD\_DATA}.
 
-\textbf{Read request packets} carry no data field.  The interpretation of
-\texttt{addr} and \texttt{beat\_cnt} at the MC request interface is governed
-by the CIF--MC interface contract.
+\subsection{Request packet}
 
-For WRAP bursts, the CIF-side WRAP Beat Address Table remains responsible for
-generating the per-beat address sequence; the exact representation of that
-sequence at the MC request interface is part of the CIF--MC interface
-contract and is not fixed by this document.
+\begin{center}
+\begin{tabular}{lp{1.6cm}p{8.4cm}}
+\toprule
+\textbf{Field} & \textbf{Width} & \textbf{Meaning}\\
+\midrule
+\texttt{req\_type}   & 1 & \texttt{0 = READ}, \texttt{1 = WRITE}.  Invalid AXI requests never cross (see \S\ref{sec:cifmc} error transactions)\\
+\texttt{GLOBAL\_TAG} & 14 & \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}} (\S\ref{sec:tag}); opaque to MC, echoed verbatim on the response\\
+\texttt{daddr}       & \texttt{DADDR\_W} & DRAM coordinates \texttt{\{rank, ch, bg, bank, row, col\}}, MSB\,$\to$\,LSB, produced by the CIF-side address map/hash.  \emph{Not} a byte address; sub-block / offset bits excluded.  \texttt{DADDR\_W = RANK\_BITS + CH\_BITS + 3 + 2 + ROW\_BITS + COL\_BITS} (\texttt{BG\_BITS = 3}, \texttt{BANK\_BITS = 2} frozen); baseline 30\\
+\bottomrule
+\end{tabular}
+\end{center}
 
-Packet-type width/encoding is not restated by the post-refactor architecture
-documents; the field's existence and the values it must distinguish (Write,
-Read, Err\_write, Err\_read) are established, but its bit width should be
-treated as inherited-but-unconfirmed, in the same manner as \texttt{status}
-(see the Unresolved/TBD discussion referenced from \S\ref{sec:rob}).
+\noindent One request packet is one 64-B AXI data beat; up to
+\texttt{MAX\_PKTS = 64} per transaction.  \texttt{PACKET\_NUMBER} is the Burst
+Splitter \texttt{pkt\_idx}, \texttt{0..exp\_pkts-1}.  There is no
+\texttt{beat\_cnt}, \texttt{size}, or \texttt{len} field.  For WRAP bursts the
+CIF-side WRAP Beat Address Table produces the per-packet byte address that is
+then mapped to \texttt{daddr}.
 
-\subsection{MC Core \texorpdfstring{$\rightarrow$}{->} CIF response interface}
+\subsection{Write-data packet}
+
+\begin{center}
+\begin{tabular}{lp{1.6cm}p{8.4cm}}
+\toprule
+\textbf{Field} & \textbf{Width} & \textbf{Meaning}\\
+\midrule
+\texttt{wdata} & 512 & one 64-B write beat\\
+\texttt{wmask} & 64  & byte-enable, bit \texttt{i} $\leftrightarrow$ byte \texttt{i}, verbatim from AXI \texttt{WSTRB}.  \texttt{wmask} not all-ones $\Rightarrow$ MC read-modify-write\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Response packet}
 \label{sec:respformat}
 
-The current architecture requires only that a completion be attributable to
-one segment and carry a status:
-
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{lp{1.6cm}p{8.4cm}}
 \toprule
 \textbf{Field} & \textbf{Width} & \textbf{Meaning}\\
 \midrule
-\texttt{GLOBAL\_TAG} & 10 & Echoed back unmodified; decodes directly to \texttt{ROB\_INDEX} and \texttt{PACKET\_NUMBER}\\
-\texttt{status} & TBD & Raw MC completion status; encoding \textbf{TBD}\\
-\texttt{data} & TBD & Read response payload, read segments only\\
+\texttt{resp\_type}  & 1  & \texttt{0 = RD\_DATA} (route to read ROB), \texttt{1 = WR\_ACK} (route to write ROB)\\
+\texttt{GLOBAL\_TAG} & 14 & echoed verbatim; CIF decodes \texttt{ROB\_INDEX = [13:6]}, \texttt{PACKET\_NUMBER = [5:0]}\\
+\texttt{status}      & 4  & \texttt{0 = OK}, \texttt{1 = SLVERR}, \texttt{2 = DECERR}.  Codes \texttt{3..15} reserved; CIF treats a reserved value as \texttt{DECERR}\\
+\texttt{rdata}       & 512 & \texttt{RD\_DATA} only; undefined for \texttt{WR\_ACK}\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The following remain \textbf{MC/Data-Buffer interface-contract dependent} and
-are intentionally not fixed by this specification:
-\begin{itemize}[noitemsep]
-  \item response transport and handshake naming --- no \texttt{RESP\_VALID}/\texttt{RESP\_READY} signal pair is assumed;
-  \item response payload width;
-  \item response-unit granularity, i.e.\ whether one response unit corresponds to one AXI beat, one fixed-width data unit, or another unit;
-  \item within-segment serialization semantics.
-\end{itemize}
+\noindent One MC completion sets exactly one \texttt{completion\_bitmap} bit,
+one per 64-B packet.  A packet completing is not \texttt{RLAST}:
+\texttt{RLAST} additionally requires \texttt{PACKET\_NUMBER == exp\_pkts - 1}
+and that beat to have been serialized and accepted downstream.
 
-One segment's completion sets exactly one \texttt{completion\_bitmap} bit
-regardless of that segment's \texttt{beat\_cnt} --- it is not one bit per AXI
-beat.  A segment completing is therefore not the same event as \texttt{RLAST}
-on the AXI R channel, which additionally requires that segment's beats to
-have been serialized and accepted downstream.  See the read ROB's completion
-and read-instance handling (\S\ref{sec:rob}) for how this response is
-consumed once its transport is defined by that contract.
+\subsection{Flow control}
+
+\textbf{Request side (\texttt{req\_afifo}, \texttt{wdata\_afifo}).}
+Credit-based push, one independent credit pool per FIFO.  CIF holds
+\texttt{N\_REQ\_CREDITS} (equal to the FIFO depth), drives a push while
+credit $>$ 0, and decrements per push.  MC returns one \texttt{credit\_return}
+pulse per consumed entry (registered, 2-flop synchronized MC\,$\to$\,CIF).
+No combinational ready crosses the clock-domain boundary; there is no
+\texttt{PKT\_READY}.
+
+\textbf{Response side (\texttt{resp\_afifo}).}
+Valid-only push; no ready from CIF.  MC self-throttles: every read reserves a
+\texttt{resp\_afifo} slot at MC issue time and is not issued unless a slot is
+free.  CIF accepts every response the cycle it is presented (one per cycle,
+merged stream, dedicated Metadata-RAM completion port) and returns a response
+credit to MC only after the response is fully processed --- the
+\texttt{completion\_bitmap} bit set, and for \texttt{RD\_DATA} the
+\texttt{rdata} written to \texttt{rd\_dbuf\_base + PACKET\_NUMBER}.
+
+\subsection{Transaction identity}
+
+The 14-bit \texttt{GLOBAL\_TAG} is the sole end-to-end identifier.  MC stores
+it verbatim and never interprets any sub-field.  No AXI ID crosses the
+interface; CIF recovers the AXID from per-AXID Slot-FIFO context at
+retirement (\S\ref{sec:fifo}).
+
+\subsection{Status to AXI response}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\texttt{status} & AXI \texttt{RESP[1:0]}\\
+\midrule
+\texttt{0} & \texttt{OKAY} (\texttt{2'b00})\\
+\texttt{1} & \texttt{SLVERR} (\texttt{2'b10})\\
+\texttt{2} & \texttt{DECERR} (\texttt{2'b11})\\
+\texttt{3..15} & reserved $\to$ \texttt{DECERR}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \texttt{status} is per-packet.  \textbf{Read:} each packet's mapped
+\texttt{RESP} drives \texttt{RRESP} for the AXI R beat it serializes into ---
+no aggregation.  \textbf{Write:} \texttt{resp\_status} is the worst-of over
+the transaction's \texttt{exp\_pkts} \texttt{WR\_ACK}s, precedence
+\texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY} (numeric max of the
+\texttt{status} codes); the single AXI \texttt{BRESP} is
+\texttt{map(resp\_status)}.  \texttt{EXOKAY} is unused.
+
+\subsection{Error transactions}
+
+Invalid AXI requests (CIF address-range-check failures) are completed
+entirely inside CIF and \emph{do not cross the interface}.  The Error Handler
+drives \texttt{alloc\_req}; at Metadata-RAM initialization it force-fills
+\texttt{completion\_bitmap[exp\_pkts-1:0]} and sets
+\texttt{resp\_status = SLVERR}, so the entry is immediately
+retirement-eligible and retires in Slot-FIFO order.  A read error emits
+\texttt{exp\_pkts} R beats with \texttt{RRESP = SLVERR} and undefined data,
+\texttt{rob\_last} on the final beat.  MC-detected faults on \emph{valid}
+transactions are carried in the \texttt{status} field of the owning
+\texttt{RD\_DATA}/\texttt{WR\_ACK}, not as a distinct response type.
+
+\subsection{Requirements on MC Core}
+\label{sec:cifmc-req}
+
+The two items below are \textbf{requirements this interface places on MC
+Core}.  They are stated as interface dependencies; the current MC-core
+documentation is \emph{not} asserted to implement or to have verified them.
+
+\begin{enumerate}
+  \item \textbf{Response granularity.}  MC shall generate \emph{exactly one}
+        response packet for every accepted 64-B request packet, echoing that
+        packet's \texttt{GLOBAL\_TAG} unmodified.  No burst-level or
+        transaction-level response grouping.  There is no \texttt{last} field
+        on the interface --- CIF derives \texttt{RLAST} from
+        \texttt{PACKET\_NUMBER == exp\_pkts - 1}.  Response packets for one
+        transaction may arrive in any order; CIF's \texttt{completion\_bitmap}
+        and \texttt{rd\_dbuf\_base + PACKET\_NUMBER} placement tolerate that.
+  \item \textbf{Write-completion safety (Issue \#11 dependency).}  MC shall
+        issue \texttt{WR\_ACK} for a write packet only when that packet is
+        complete \emph{and} a subsequent read to the same 64-B address is
+        guaranteed to observe the write.  CIF releases a held same-line read
+        (\S\ref{sec:samelinehaz}) when the blocking write's
+        \texttt{ROB\_INDEX} is freed --- which occurs once every
+        \texttt{WR\_ACK} for that write has been accepted and its
+        \texttt{BRESP} emitted.  The correctness of Issue \#11 therefore
+        depends on this requirement; CIF adds no further MC-visibility
+        guarantee of its own.
+\end{enumerate}
+
+\subsection{Ordering}
+
+\texttt{req\_afifo} order is program order; MC derives its internal ordering
+token from ingress order.  MC may schedule DRAM commands and return responses
+out of order.  MC does not reorder the response stream for AXI purposes;
+CIF owns AXI R- and B-channel ordering per AXID (\S\ref{sec:fifo}).
 
 \section{Ordering, capacity, and reset}
 
@@ -214,8 +397,11 @@ both ROB instances have no allocated Slot FIFO entries.
 
 \section{Error handling}
 
-Invalid requests enter the normal packet path with the appropriate error
-packet type.  They receive ordinary \texttt{GLOBAL\_TAG}s and complete through
-the corresponding ROB.  Error status is preserved until ordered retirement;
-the external mapping of raw MC status to AXI \texttt{BRESP/RRESP} remains
-\textbf{TBD with MC Core}.
+Invalid requests (CIF address-range-check failures) are completed entirely
+inside CIF and never cross the CIF--MC interface (\S\ref{sec:cifmc}, error
+transactions).  The Error Handler allocates the ROB entry, force-fills
+\texttt{completion\_bitmap} and sets \texttt{resp\_status = SLVERR} at
+initialization, and the entry retires in Slot-FIFO order.  The
+\texttt{status} $\to$ AXI \texttt{RESP} mapping is frozen in \S\ref{sec:cifmc}
+(\texttt{0}/\texttt{1}/\texttt{2} $=$ OK/SLVERR/DECERR); only the meaning of
+MC error codes \texttt{3..15} remains an MC-owned detail.
