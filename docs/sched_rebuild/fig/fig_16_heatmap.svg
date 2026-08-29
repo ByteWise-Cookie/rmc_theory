@@ -1,0 +1,282 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="860" viewBox="0 0 1240 860" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="860" fill="#ffffff"/>
+  <text x="1230" y="30" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">address-map heat map  -  one 4KB read = 64 pkt</text>
+  <text x="1230" y="46" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">map: [ row | rank | col | bank2 | bg3 | byte6 ]</text>
+  <text x="40" y="42" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">TOP-DOWN PICK</text>
+  <rect x="40" y="58" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="100.0" y="73" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CH0</text>
+  <text x="100.0" y="86" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">which MC inst</text>
+  <line x1="160" y1="75" x2="178" y2="75" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="178" y="58" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="238.0" y="73" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RANK0</text>
+  <text x="238.0" y="86" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">rank bit</text>
+  <line x1="298" y1="75" x2="316" y2="75" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="316" y="58" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="376.0" y="73" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BANK 0..3</text>
+  <text x="376.0" y="86" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">addr[10:9]</text>
+  <line x1="436" y1="75" x2="454" y2="75" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="454" y="58" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="514.0" y="73" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG 0..7</text>
+  <text x="514.0" y="86" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">addr[8:6]</text>
+  <text x="40" y="118" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">byte[5:0]=0  (64B aligned, full burst)   pkt n = base + n*64B   n[2:0]=BG  n[4:3]=BANK  n[5]=col-step</text>
+  <text x="341.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG0</text>
+  <text x="423.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG1</text>
+  <text x="505.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG2</text>
+  <text x="587.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG3</text>
+  <text x="669.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG4</text>
+  <text x="751.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG5</text>
+  <text x="833.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG6</text>
+  <text x="915.0" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG7</text>
+  <line x1="280" y1="176" x2="280" y2="408" stroke="#000000" stroke-width="1.0"/>
+  <line x1="276" y1="176" x2="280" y2="176" stroke="#000000" stroke-width="1.0"/>
+  <line x1="276" y1="408" x2="280" y2="408" stroke="#000000" stroke-width="1.0"/>
+  <text x="272" y="288.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000" font-weight="bold">col C</text>
+  <text x="272" y="304.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">MISS -&gt; ACT</text>
+  <line x1="280" y1="408" x2="280" y2="640" stroke="#000000" stroke-width="1.0"/>
+  <line x1="276" y1="408" x2="280" y2="408" stroke="#000000" stroke-width="1.0"/>
+  <line x1="276" y1="640" x2="280" y2="640" stroke="#000000" stroke-width="1.0"/>
+  <text x="272" y="520.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000" font-weight="bold">col C+1</text>
+  <text x="272" y="536.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">HIT</text>
+  <text x="292" y="209.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk0</text>
+  <rect x="300" y="176" width="82" height="58" fill="#fff2ac" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">00</text>
+  <text x="341.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w0</text>
+  <rect x="382" y="176" width="82" height="58" fill="#fff2ac" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">01</text>
+  <text x="423.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w0</text>
+  <rect x="464" y="176" width="82" height="58" fill="#fff2ac" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">02</text>
+  <text x="505.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w0</text>
+  <rect x="546" y="176" width="82" height="58" fill="#fff2ac" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">03</text>
+  <text x="587.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w0</text>
+  <rect x="628" y="176" width="82" height="58" fill="#ffdc86" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">04</text>
+  <text x="669.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w1</text>
+  <rect x="710" y="176" width="82" height="58" fill="#ffdc86" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">05</text>
+  <text x="751.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w1</text>
+  <rect x="792" y="176" width="82" height="58" fill="#ffdc86" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">06</text>
+  <text x="833.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w1</text>
+  <rect x="874" y="176" width="82" height="58" fill="#ffdc86" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="198" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">07</text>
+  <text x="915.0" y="216" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w1</text>
+  <text x="292" y="267.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk1</text>
+  <rect x="300" y="234" width="82" height="58" fill="#ffc164" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">08</text>
+  <text x="341.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w2</text>
+  <rect x="382" y="234" width="82" height="58" fill="#ffc164" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">09</text>
+  <text x="423.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w2</text>
+  <rect x="464" y="234" width="82" height="58" fill="#ffc164" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">10</text>
+  <text x="505.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w2</text>
+  <rect x="546" y="234" width="82" height="58" fill="#ffc164" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">11</text>
+  <text x="587.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w2</text>
+  <rect x="628" y="234" width="82" height="58" fill="#ffa347" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">12</text>
+  <text x="669.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w3</text>
+  <rect x="710" y="234" width="82" height="58" fill="#ffa347" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">13</text>
+  <text x="751.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w3</text>
+  <rect x="792" y="234" width="82" height="58" fill="#ffa347" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">14</text>
+  <text x="833.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w3</text>
+  <rect x="874" y="234" width="82" height="58" fill="#ffa347" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="256" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">15</text>
+  <text x="915.0" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w3</text>
+  <text x="292" y="325.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk2</text>
+  <rect x="300" y="292" width="82" height="58" fill="#f9812f" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">16</text>
+  <text x="341.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w4</text>
+  <rect x="382" y="292" width="82" height="58" fill="#f9812f" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">17</text>
+  <text x="423.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w4</text>
+  <rect x="464" y="292" width="82" height="58" fill="#f9812f" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">18</text>
+  <text x="505.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w4</text>
+  <rect x="546" y="292" width="82" height="58" fill="#f9812f" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">19</text>
+  <text x="587.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT w4</text>
+  <rect x="628" y="292" width="82" height="58" fill="#e85f27" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">20</text>
+  <text x="669.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w5</text>
+  <rect x="710" y="292" width="82" height="58" fill="#e85f27" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">21</text>
+  <text x="751.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w5</text>
+  <rect x="792" y="292" width="82" height="58" fill="#e85f27" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">22</text>
+  <text x="833.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w5</text>
+  <rect x="874" y="292" width="82" height="58" fill="#e85f27" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="314" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">23</text>
+  <text x="915.0" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w5</text>
+  <text x="292" y="383.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk3</text>
+  <rect x="300" y="350" width="82" height="58" fill="#d33f1c" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">24</text>
+  <text x="341.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w6</text>
+  <rect x="382" y="350" width="82" height="58" fill="#d33f1c" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">25</text>
+  <text x="423.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w6</text>
+  <rect x="464" y="350" width="82" height="58" fill="#d33f1c" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">26</text>
+  <text x="505.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w6</text>
+  <rect x="546" y="350" width="82" height="58" fill="#d33f1c" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">27</text>
+  <text x="587.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w6</text>
+  <rect x="628" y="350" width="82" height="58" fill="#bd2414" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">28</text>
+  <text x="669.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w7</text>
+  <rect x="710" y="350" width="82" height="58" fill="#bd2414" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">29</text>
+  <text x="751.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w7</text>
+  <rect x="792" y="350" width="82" height="58" fill="#bd2414" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">30</text>
+  <text x="833.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w7</text>
+  <rect x="874" y="350" width="82" height="58" fill="#bd2414" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="372" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#ffffff" font-weight="bold">31</text>
+  <text x="915.0" y="390" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#ffffff">ACT w7</text>
+  <text x="292" y="441.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk0</text>
+  <rect x="300" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">32</text>
+  <text x="341.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="382" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">33</text>
+  <text x="423.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="464" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">34</text>
+  <text x="505.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="546" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">35</text>
+  <text x="587.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="628" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">36</text>
+  <text x="669.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="710" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">37</text>
+  <text x="751.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="792" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">38</text>
+  <text x="833.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="874" y="408" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="430" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">39</text>
+  <text x="915.0" y="448" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <text x="292" y="499.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk1</text>
+  <rect x="300" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">40</text>
+  <text x="341.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="382" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">41</text>
+  <text x="423.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="464" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">42</text>
+  <text x="505.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="546" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">43</text>
+  <text x="587.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="628" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">44</text>
+  <text x="669.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="710" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">45</text>
+  <text x="751.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="792" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">46</text>
+  <text x="833.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="874" y="466" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="488" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">47</text>
+  <text x="915.0" y="506" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <text x="292" y="557.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk2</text>
+  <rect x="300" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">48</text>
+  <text x="341.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="382" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">49</text>
+  <text x="423.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="464" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">50</text>
+  <text x="505.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="546" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">51</text>
+  <text x="587.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="628" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">52</text>
+  <text x="669.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="710" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">53</text>
+  <text x="751.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="792" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">54</text>
+  <text x="833.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="874" y="524" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="546" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">55</text>
+  <text x="915.0" y="564" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <text x="292" y="615.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bk3</text>
+  <rect x="300" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="341.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">56</text>
+  <text x="341.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="382" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="423.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">57</text>
+  <text x="423.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="464" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">58</text>
+  <text x="505.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="546" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="587.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">59</text>
+  <text x="587.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="628" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="669.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">60</text>
+  <text x="669.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="710" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="751.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">61</text>
+  <text x="751.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="792" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="833.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">62</text>
+  <text x="833.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <rect x="874" y="582" width="82" height="58" fill="#d7ecc4" stroke="#000000" stroke-width="1.4"/>
+  <text x="915.0" y="604" font-size="15" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">63</text>
+  <text x="915.0" y="622" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">HIT</text>
+  <text x="996" y="168" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">tFAW gate: 4 ACT / window</text>
+  <rect x="996" y="176" width="26" height="26" fill="#fff2ac" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="188" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave0: pkt 00-03</text>
+  <text x="1032" y="200" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="202" x2="1009" y2="220" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="220" width="26" height="26" fill="#ffdc86" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="232" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave1: pkt 04-07</text>
+  <text x="1032" y="244" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="246" x2="1009" y2="264" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="264" width="26" height="26" fill="#ffc164" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="276" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave2: pkt 08-11</text>
+  <text x="1032" y="288" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="290" x2="1009" y2="308" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="308" width="26" height="26" fill="#ffa347" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="320" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave3: pkt 12-15</text>
+  <text x="1032" y="332" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="334" x2="1009" y2="352" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="352" width="26" height="26" fill="#f9812f" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="364" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave4: pkt 16-19</text>
+  <text x="1032" y="376" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="378" x2="1009" y2="396" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="396" width="26" height="26" fill="#e85f27" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="408" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave5: pkt 20-23</text>
+  <text x="1032" y="420" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="422" x2="1009" y2="440" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="440" width="26" height="26" fill="#d33f1c" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="452" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave6: pkt 24-27</text>
+  <text x="1032" y="464" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <line x1="1009" y1="466" x2="1009" y2="484" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="996" y="484" width="26" height="26" fill="#bd2414" stroke="#000000" stroke-width="1.2"/>
+  <text x="1032" y="496" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">wave7: pkt 28-31</text>
+  <text x="1032" y="508" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT x4  +tFAW(32CK)</text>
+  <text x="40" y="674" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">READ IT:</text>
+  <text x="40" y="694" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- top 32 pkt each pay ONE ACT, but tFAW caps issue at 4/window -&gt; 8 waves -&gt; ~8*tFAW ~ 256 CK to open all 32 banks. Req WAITS on ACT budget, not data.</text>
+  <text x="40" y="712" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- bottom 32 pkt = same 32 banks, next col, row STILL OPEN -&gt; straight CAS hits, zero ACT. Only the first row-open costs ACTs.</text>
+  <text x="40" y="730" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- opened banks stream CAS at tCCD_S=8 (diff-BG pack) and overlap the next wave's ACTs. Heat = how late a bank gets its ACT slot.</text>
+  <text x="40" y="840" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">One 4KB linear read spreads across CH0/RANK0's 32 banks (8 BG x 4 bank); first-touch cols MISS/ACT, throttled 4 per tFAW (heat waves); next col to the same open rows = all HIT. tFAW is the gate.</text>
+</svg>
