@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2040" height="1180" viewBox="0 0 2040 1180" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="2040" height="1180" fill="#ffffff"/>
+  <text x="2030" y="30" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">BANK_ELIG  -  per-bank legality + stall (fills the bottom box)</text>
+  <text x="2030" y="46" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">at most ONE rdy ever high: need_* are state-exclusive</text>
+  <text x="40" y="74" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">1.  DRIVE LOGIC   (upstream, state-gated -&gt; illegal cannot fire)</text>
+  <rect x="40" y="88" width="600" height="470" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="60" y="118" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">derive (only meaningful in OPEN):</text>
+  <text x="60" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">row_hit  = vpkt &amp; OPEN &amp; !pre_pending &amp; row==open_row</text>
+  <text x="60" y="166" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">row_miss = vpkt &amp; OPEN &amp; !pre_pending &amp; row!=open_row</text>
+  <text x="60" y="200" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">need_cas = row_hit</text>
+  <text x="60" y="224" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">need_pre = row_miss</text>
+  <text x="60" y="248" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">need_act = vpkt &amp; IDLE</text>
+  <text x="60" y="282" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">the 3 rdy  (need is state-exclusive):</text>
+  <text x="60" y="306" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2e7d32">cas_rdy  = need_cas &amp; can_cas</text>
+  <text x="60" y="330" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2e7d32">act_rdy  = need_act &amp; can_act</text>
+  <text x="60" y="354" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2e7d32">pre_rdy  = need_pre &amp; can_pre</text>
+  <text x="60" y="388" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">can_* come from the scoreboard (timing):</text>
+  <text x="60" y="412" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">can_cas: tRCD-done,tCCD_S/L,tWTR/tRTW</text>
+  <text x="60" y="436" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">can_act: tRP,tRC,tRRD_S/L,tFAW</text>
+  <text x="60" y="460" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">can_pre: tRAS,tRTP,tWR</text>
+  <text x="40" y="610" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">2.  BANK_ELIG BOX INTERNALS</text>
+  <rect x="40" y="690" width="600" height="452" fill="none" stroke="#000000" stroke-width="1.8"/>
+  <text x="632" y="708" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">BANK_ELIG</text>
+  <line x1="130" y1="664" x2="130" y2="700" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="130" y="658" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">cas_rdy</text>
+  <line x1="250" y1="664" x2="250" y2="700" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="250" y="658" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">act_rdy</text>
+  <line x1="370" y1="664" x2="370" y2="700" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="370" y="658" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">pre_rdy</text>
+  <line x1="130" y1="700" x2="370" y2="700" stroke="#000000" stroke-width="1.0"/>
+  <rect x="90" y="730" width="300" height="72" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="240.0" y="752" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRIO 1-hot</text>
+  <text x="240.0" y="767" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">cas &gt; act &gt; pre  (safety; already excl.)</text>
+  <line x1="240" y1="802" x2="240" y2="840" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="252" y="828" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank_cmd[1-hot], bank_go = OR(3 rdy)</text>
+  <rect x="90" y="858" width="300" height="84" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="240.0" y="880" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">OCC / STALL FSM</text>
+  <text x="240.0" y="895" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">occupied: set @ DMUX drain-in ; clr @ (grant &amp; cmd==CAS)</text>
+  <text x="110" y="926" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">bank_rdy = !occupied</text>
+  <rect x="430" y="858" width="150" height="132" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="505.0" y="880" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GRANT</text>
+  <text x="505.0" y="895" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">decode</text>
+  <text x="505" y="904" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CAS: pop</text>
+  <text x="505" y="922" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ACT: advance</text>
+  <text x="505" y="940" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">PRE: set</text>
+  <text x="505" y="958" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">pre_pending</text>
+  <line x1="430" y1="900" x2="390" y2="900" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="505" y1="858" x2="505" y2="810" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="505" y="798" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">grant  (BG/RANK arb)</text>
+  <line x1="390" y1="876" x2="640" y2="876" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="632" y="868" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">bank_go, bank_cmd  -&gt;  BG_ARB</text>
+  <path d="M90 926 L62 926 L62 644" fill="none" stroke="#c0392b" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="72" y="840" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#c0392b">bank_rdy -&gt; DMUX</text>
+  <text x="72" y="856" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">(low = STALL)</text>
+  <path d="M505 990 L505 1020 L640 1020" fill="none" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="632" y="1012" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">-&gt; state / pre_pending  (FSM_TABLE writeback)</text>
+  <text x="56" y="1098" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">STALL CHAIN (1-deep cell, pop-on-CAS):</text>
+  <text x="56" y="1116" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">bank busy / can_* low / mid PRE-&gt;ACT-&gt;CAS  =&gt;  occupied stays  =&gt;  bank_rdy=0</text>
+  <text x="56" y="1132" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">=&gt;  lookahead -&gt; WLR -&gt; FIFO -&gt; AR/AWREADY (only the addressed bank blocks)</text>
+  <text x="680" y="74" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">3.  LEGALITY TABLE   (bank state x incoming packet)</text>
+  <rect x="680" y="88" width="190" height="40" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="775.0" y="113" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">state</text>
+  <rect x="870" y="88" width="150" height="40" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="945.0" y="113" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">packet</text>
+  <rect x="1020" y="88" width="160" height="40" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="1100.0" y="113" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">rdy fires</text>
+  <rect x="1180" y="88" width="300" height="40" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="1330.0" y="113" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">hard-blocked (forced 0)</text>
+  <rect x="1480" y="88" width="150" height="40" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="1555.0" y="113" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">stall</text>
+  <rect x="680" y="128" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="158.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">IDLE</text>
+  <rect x="870" y="128" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="158.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">no row = miss</text>
+  <rect x="1020" y="128" width="160" height="52" fill="#cfe8c0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="158.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">act_rdy</text>
+  <rect x="1180" y="128" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="158.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS (no row), PRE (nothing)</text>
+  <rect x="1480" y="128" width="150" height="52" fill="#cfe8c0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="158.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">drain@ACT</text>
+  <rect x="680" y="180" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="210.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACTIVATING (tRCD)</text>
+  <rect x="870" y="180" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="210.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="1020" y="180" width="160" height="52" fill="#eeeeee" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="210.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">none</text>
+  <rect x="1180" y="180" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="210.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS(&lt;tRCD), ACT, PRE</text>
+  <rect x="1480" y="180" width="150" height="52" fill="#ffe0a0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="210.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">STALL</text>
+  <rect x="680" y="232" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="262.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN</text>
+  <rect x="870" y="232" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="262.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">hit</text>
+  <rect x="1020" y="232" width="160" height="52" fill="#cfe8c0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="262.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">cas_rdy</text>
+  <rect x="1180" y="232" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="262.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT (re-open), PRE (needed row)</text>
+  <rect x="1480" y="232" width="150" height="52" fill="#cfe8c0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="262.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">drain@CAS</text>
+  <rect x="680" y="284" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="314.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN</text>
+  <rect x="870" y="284" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="314.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">miss</text>
+  <rect x="1020" y="284" width="160" height="52" fill="#cfe8c0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="314.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">pre_rdy</text>
+  <rect x="1180" y="284" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="314.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS = WRONG ROW!, ACT (open)</text>
+  <rect x="1480" y="284" width="150" height="52" fill="#ffe0a0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="314.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">hold pkt</text>
+  <rect x="680" y="336" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="366.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">PRECHARGING (tRP)</text>
+  <rect x="870" y="336" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="366.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="1020" y="336" width="160" height="52" fill="#eeeeee" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="366.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">none</text>
+  <rect x="1180" y="336" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="366.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT(&lt;tRP), CAS</text>
+  <rect x="1480" y="336" width="150" height="52" fill="#ffe0a0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="366.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">STALL</text>
+  <rect x="680" y="388" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN &amp; pre_pending</text>
+  <rect x="870" y="388" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">mid-seq</text>
+  <rect x="1020" y="388" width="160" height="52" fill="#eeeeee" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">none</text>
+  <rect x="1180" y="388" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">new admit blocked</text>
+  <rect x="1480" y="388" width="150" height="52" fill="#ffe0a0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">bank_rdy=0</text>
+  <rect x="680" y="440" width="190" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="775.0" y="470.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">REFING (gate_rfc)</text>
+  <rect x="870" y="440" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.1"/>
+  <text x="945.0" y="470.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="1020" y="440" width="160" height="52" fill="#eeeeee" stroke="#000000" stroke-width="1.1"/>
+  <text x="1100.0" y="470.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">none</text>
+  <rect x="1180" y="440" width="300" height="52" fill="#f3c0b8" stroke="#000000" stroke-width="1.1"/>
+  <text x="1330.0" y="470.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">all</text>
+  <rect x="1480" y="440" width="150" height="52" fill="#ffe0a0" stroke="#000000" stroke-width="1.1"/>
+  <text x="1555.0" y="470.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">STALL</text>
+  <text x="680" y="518" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">HARD-BLOCKED IN HW (state gate, not can_* alone):</text>
+  <text x="690" y="542" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">1. CAS unless (row_hit &amp; OPEN &amp; !pre_pending)  -&gt; blocks WRONG-ROW read/write (silent corruption)</text>
+  <text x="690" y="566" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">2. ACT while OPEN (diff row, no PRE first)      -&gt; tRAS / double-open</text>
+  <text x="690" y="590" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">3. PRE while state!=OPEN or &lt; tRAS               -&gt; nothing to close / tRAS</text>
+  <text x="690" y="614" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">4. any cmd during ACTIVATING/PRECHARGING/REFING  -&gt; timing violation -&gt; STALL</text>
+  <rect x="680" y="658" width="1300" height="210" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="694" y="684" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">RATING  -  8.5 / 10</text>
+  <text x="694" y="706" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">+ Legality by CONSTRUCTION: state-exclusive need_* -&gt; mutually-exclusive rdy -&gt; an illegal cmd literally cannot assert. Not checked-after.</text>
+  <text x="694" y="728" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">+ Timing fully in can_* (scoreboard) -&gt; ELIG is pure combinational select; clean legality/selection split.</text>
+  <text x="694" y="750" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">+ 1-deep cell + pop-on-CAS + occupied-&gt;bank_rdy = natural PER-BANK back-pressure, no global stall.</text>
+  <text x="694" y="772" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">+ Miss = explicit PRE-&gt;ACT-&gt;CAS with pre_pending fence -&gt; no false state, matches JEDEC.</text>
+  <text x="694" y="794" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">-  pop-only-on-CAS holds the cell the whole ~tRP+tRCD (~80 CK) on a miss -&gt; a HOT bank stalls its lane long (mitigated by spread map + lookahead).</text>
+  <text x="694" y="816" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">-  1-deep = stalled bank blocks lane head; relies on lookahead depth for MLP. No auto-precharge (RDA/WRA) yet = extra PRE bandwidth.</text>
+  <text x="40" y="1165" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">BANK_ELIG turns state + need_* + can_* into the 3 mutually-exclusive rdy and the bank_rdy stall; illegal transitions are blocked by the state gate on need_*, and a stuck bank back-pressures only its own lane via pop-on-CAS occupancy.</text>
+</svg>
