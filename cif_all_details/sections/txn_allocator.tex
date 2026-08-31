@@ -13,7 +13,8 @@ instances.  The allocator's result is an eight-bit \texttt{ROB\_INDEX}.
 Free List & 256-bit free/occupied bitmap per ROB instance\\
 Allocation result & \texttt{ROB\_INDEX[7:0]} selected from a free bit\\
 Ordering storage & 64 per-AXID Slot FIFOs $\times$ depth 4 per instance\\
-Completion identity & \texttt{GLOBAL\_TAG=\{ROB\_INDEX,PACKET\_NUMBER\}}\\
+Completion identity & \texttt{GLOBAL\_TAG = \{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}} (14 bits)\\
+Write footprint & \texttt{\{wr\_line\_base[25:0], wr\_line\_count[6:0]\}} per write entry (\S\ref{sec:samelinehaz})\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -21,14 +22,23 @@ Completion identity & \texttt{GLOBAL\_TAG=\{ROB\_INDEX,PACKET\_NUMBER\}}\\
 \subsection{Allocation flow}
 \begin{enumerate}[noitemsep]
   \item Request acceptance selects either the read or write ROB and presents
-        \texttt{alloc\_req} and \texttt{AXID}.
+        \texttt{alloc\_req} and \texttt{AXID}.  On the read path,
+        \texttt{alloc\_req} is asserted only after the same-line hazard check
+        at the AR Metadata FIFO head passes (\S\ref{sec:samelinehaz}); on
+        overlap the head is held and no index is reserved.
   \item If that AXID's Slot FIFO is full, allocation for that AXID stalls.
         If its Free List is empty, allocation stalls globally for that ROB
         instance.
   \item The Free List selects a free \texttt{ROB\_INDEX} and reserves it.
-  \item Burst Splitter Stage~1 produces \texttt{splitter\_pkt\_count}; the
-        Metadata RAM entry is initialized with that count and a zero
-        completion bitmap.
+  \item Burst Splitter Stage~1 produces \texttt{exp\_pkts}, the number of
+        64-B MC packets for the transaction (\texttt{1..64}); the Metadata
+        RAM entry is initialized with that count and a zero 64-bit
+        completion bitmap.  For the read ROB, \texttt{rd\_dbuf\_base} is set
+        to the base of a contiguous \texttt{exp\_pkts}-line RD\_SRAM
+        allocation.  For the write ROB, the \texttt{wr\_line\_base} and
+        \texttt{wr\_line\_count} footprint fields are written in the same
+        step from \texttt{\{AWADDR, AWLEN, AWSIZE, AWBURST\}}
+        (\S\ref{sec:samelinehaz}).
   \item Only after initialization is the index pushed to the AXID Slot FIFO
         and made visible to retirement.  The index then accompanies the
         transaction to the Burst Splitter.
@@ -38,9 +48,11 @@ Completion identity & \texttt{GLOBAL\_TAG=\{ROB\_INDEX,PACKET\_NUMBER\}}\\
 
 Completion is not release.  The write ROB returns an index only after the
 ordered BRESP is accepted.  The read ROB returns an index only after its final
-AXI R response is fully accepted and the corresponding Read Data Buffer allocations
-have been released.  Retirement performs the Slot FIFO pop and Free List
-update; no external free-by-tag interface exists.
+AXI R response is fully accepted and the corresponding contiguous RD\_SRAM
+range has been released.  Retirement performs the Slot FIFO pop and Free List
+update; no external free-by-tag interface exists.  Freeing a write index
+additionally re-arms the same-line hazard recheck for a held AR Metadata FIFO
+head (\S\ref{sec:samelinehaz}).
 
 \subsection{Removed legacy behavior}
 

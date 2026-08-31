@@ -2,9 +2,11 @@
 \subsection{Overview}
 
 The Request Validator is a purely combinational block instantiated once
-each on the read and write paths. It pops entries from the AR or AW
-Metadata FIFO, performs a single runtime check (address range
-validation), and steers the transaction to one of two downstream paths:
+each on the read and write paths. It inspects the head entry of the AR or AW
+Metadata FIFO, performs a runtime address range check (and, on the read
+path, drives the same-line read/write hazard gate of
+\S\ref{sec:samelinehaz}), and steers the transaction to one of two
+downstream paths:
 
 \begin{itemize}
   \item \textbf{Valid path:} Transaction forwarded to ROB allocation
@@ -14,10 +16,12 @@ validation), and steers the transaction to one of two downstream paths:
 \end{itemize}
 
 The Request Validator contains a Configuration Register that stores the valid physical address range used for runtime address validation. 
-Apart from this internal configuration state, the Request Validator contains no per-transaction storage or counters.
+Apart from this internal configuration state, the Request Validator contains no per-transaction storage or counters; the read-path hazard gate is likewise combinational (\S\ref{sec:samelinehaz}).
 All protocol-level checks (burst type, WRAP legality, alignment, burst
-length) are enforced as design-time assertions in the verification
-environment only. Compliant AXI4 masters are assumed at runtime.
+length, and the 64-B transfer size \texttt{AxSIZE = 6} with 64-B-aligned
+addressing that the MC packet contract requires) are enforced as design-time
+assertions in the verification environment only. Compliant AXI4 masters are
+assumed at runtime.
 
 % -----------------------------------------------------------------------
 \subsection{Design Parameters}
@@ -49,7 +53,7 @@ Represents the only persistent state within the Request Validator.
 \begin{itemize}
   \item \textbf{Type:} Purely combinational.
   \item \textbf{Input:} \texttt{ADDR[31:0]} from the AR/AW Metadata
-        FIFO.
+        FIFO head.
   \item \textbf{Function:} Checks whether \texttt{ADDR} falls within
         the valid physical address range stored in the Configuration Register.
   \item \textbf{Output:} \texttt{addr\_ok} (1-bit) — asserted when the
@@ -86,7 +90,10 @@ Represents the only persistent state within the Request Validator.
 \texttt{ADDR[31:0]}        & 32 & AR/AW Metadata FIFO & Transaction address \\
 \texttt{AXID[5:0]}         & 6  & AR/AW Metadata FIFO & AXI ID \\
 \texttt{ARLEN/AWLEN[7:0]}  & 8  & AR/AW Metadata FIFO & Burst length \\
+\texttt{ARSIZE/AWSIZE[2:0]} & 3 & AR/AW Metadata FIFO & Transfer size; feeds the 64\,B line footprint calc (\S\ref{sec:samelinehaz}) \\
+\texttt{ARBURST/AWBURST[1:0]} & 2 & AR/AW Metadata FIFO & Burst type; feeds the footprint calc (\S\ref{sec:samelinehaz}) \\
 \texttt{STALL}             & 1  & ROB Allocation      & Per-AXID stall; holds output until deasserted \\
+\texttt{HAZ\_HOLD}         & 1  & Same-line hazard gate & Read instance only. Head read overlaps an occupied \texttt{ROB\_WR} footprint (\S\ref{sec:samelinehaz}); behaves as \texttt{STALL} --- holds output, no FIFO pop \\
 \bottomrule
 \caption{Request Validator input signals}
 \end{longtable}
@@ -109,21 +116,47 @@ Represents the only persistent state within the Request Validator.
 \subsection{Functional Behaviour}
 
 \begin{enumerate}
-  \item Request Validator pops the head entry from the AR/AW Metadata
-        FIFO: \texttt{ADDR[31:0]}, \texttt{AXID[5:0]},
-        \texttt{ARLEN/AWLEN[7:0]}.
+  \item Request Validator reads, without popping, the AR/AW Metadata FIFO
+        head entry (\texttt{ADDR}, \texttt{AXID}, \texttt{ARLEN/AWLEN},
+        \texttt{ARSIZE/AWSIZE}, \texttt{ARBURST/AWBURST}; widths in the
+        Inputs table).
   \item Address Range Check compares the incoming address against the physical address range stored in the Configuration Register and evaluates \texttt{addr\_ok} combinationally.
-  \item If \texttt{addr\_ok == 1} and \texttt{STALL} is deasserted:
+  \item If \texttt{addr\_ok == 1} and \texttt{STALL} is deasserted (and, on
+        the read path, \texttt{HAZ\_HOLD} is deasserted):
         Output Mux asserts \texttt{REQ\_VALID} to ROB allocation
-        with \texttt{AXID}.
+        with \texttt{AXID}, and the FIFO head is popped in that cycle
+        --- the transaction has been accepted.
   \item If \texttt{addr\_ok == 0}: Output Mux asserts \texttt{ERR\_VALID}
-        to the Error Handler with \texttt{AXID}. The Error Handler sets
-        \texttt{pkt\_type = Err\_write / Err\_read} and injects the
-        transaction into the normal pipeline via ROB allocation.
+        to the Error Handler with \texttt{AXID}, and the FIFO head is
+        popped when \texttt{ERR\_VALID} is asserted. The Error Handler
+        drives \texttt{alloc\_req} and, at Metadata-RAM initialization,
+        force-fills \texttt{completion\_bitmap} and sets
+        \texttt{resp\_status = SLVERR}; the entry is immediately
+        retirement-eligible. No packet is emitted to the CIF--MC interface
+        (\S\ref{sec:cifmc}, error transactions).
   \item If \texttt{STALL} is asserted (ROB Allocation unavailable for this
-        AXID): the Request Validator holds its outputs stable and does
-        not pop the next FIFO entry until \texttt{STALL} deasserts.
+        AXID), or \texttt{HAZ\_HOLD} is asserted on the read path
+        (\S\ref{sec:samelinehaz}): the Request Validator holds its outputs
+        stable and leaves the current head entry in place. The FIFO is not
+        advanced until the transaction is accepted (step 3) or routed to
+        the Error Handler (step 4).
 \end{enumerate}
+
+% -----------------------------------------------------------------------
+\subsection{Read/write same-line hazard gate}
+
+Read instance only.  Before \texttt{alloc\_req}, the head read's 64\,B line
+footprint --- computed combinationally from
+\texttt{\{ARADDR, ARLEN, ARSIZE, ARBURST\}} by the calculation in
+\S\ref{sec:samelinehaz} --- is tested for interval overlap against every
+occupied \texttt{ROB\_WR} footprint (\texttt{wr\_line\_base},
+\texttt{wr\_line\_count}, occupied bit).  On any overlap the gate asserts
+\texttt{HAZ\_HOLD}, which holds the Request Validator output and the AR
+Metadata FIFO exactly as \texttt{STALL} does.  The overlap result is
+re-evaluated whenever a write \texttt{ROB\_INDEX} is freed
+(\texttt{free\_req}).  The read admits when it overlaps no occupied write
+footprint.  No read-side footprint is stored; see \S\ref{sec:samelinehaz} for
+the full description and the MC-contract dependency.
 
 % -----------------------------------------------------------------------
 \subsection{Timing Notes}
@@ -152,7 +185,12 @@ Represents the only persistent state within the Request Validator.
         outstanding (\texttt{STALL} asserted), the error path is also
         held. \texttt{ERR\_VALID} is not asserted until \texttt{STALL}
         deasserts.
-  \item \textbf{Protocol violations:} Illegal burst type, unaligned
+  \item \textbf{Read held with allocation free:} On the read path a valid
+        transaction may be held at the FIFO head by \texttt{HAZ\_HOLD}
+        (\S\ref{sec:samelinehaz}) even when \texttt{STALL} is deasserted.
+        The write path is unaffected.
+  \item \textbf{Protocol violations:} Illegal burst type, transfers that
+        are not 64-B / \texttt{AxSIZE = 6} or not 64-B-aligned, unaligned
         WRAP, and maximum burst length violations are not checked at
         runtime. They are enforced as design-time assertions in the
         verification environment. A non-compliant master will cause

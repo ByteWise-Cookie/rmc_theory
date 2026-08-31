@@ -2,31 +2,31 @@
 \label{sec:rob}
 \subsection{Overview}
 
-The ROB is a generic transaction-tracking core, instantiated independently for the read path and the write path. Each instance owns a complete, separate copy of every structure described in \S\ref{sec:generic} --- its own 256-entry Free List, its own 256-entry Metadata RAM, and its own bank of 64 Per-AXID Slot FIFOs (depth 4 each). Nothing is shared between the two instances. They differ only in what a completed transaction produces: the read instance additionally holds a Data Buffer association and drives a Read Serializer; the write instance holds an aggregate response-status field and drives \texttt{BRESP} generation directly, since a write completion carries no payload.
+The ROB is a generic transaction-tracking core, instantiated independently for the read path and the write path. Each instance owns a complete, separate copy of every structure described in \S\ref{sec:generic} --- its own 256-entry Free List, its own 256-entry Metadata RAM, and its own bank of 64 Per-AXID Slot FIFOs (depth 4 each). Nothing is shared between the two instances. They differ only in what a completed transaction produces: the read instance additionally holds a Data Buffer association and drives a Read Serializer; the write instance holds an aggregate response-status field and a 64\,B line footprint consumed by read admission (\S\ref{sec:samelinehaz}), and drives \texttt{BRESP} generation directly, since a write completion carries no payload.
 
 Each transaction is identified end-to-end by a single \texttt{GLOBAL\_TAG}, described in \S\ref{sec:tag}.  \texttt{ROB\_INDEX} is the Metadata RAM address end to end.
 
-A transaction becoming \emph{complete} (all packets accounted for in \texttt{completion\_bitmap}) is not the same event as a transaction being \emph{freed}. A completed transaction remains allocated while its ordered AXI response is being emitted and accepted, and (read only) while its Data Buffer allocations are still being drained. \S\ref{sec:retire} makes this lifecycle explicit.
+A transaction becoming \emph{complete} (all its packets accounted for in \texttt{completion\_bitmap}) is not the same event as a transaction being \emph{freed}. A completed transaction remains allocated while its ordered AXI response is being emitted and accepted, and (read only) while its contiguous RD\_SRAM range is still being drained. \S\ref{sec:retire} makes this lifecycle explicit.
 
 \subsection*{Lifecycle Summary}
 The full life of a ROB entry, in order, referenced to the sections that detail each stage:
 \begin{enumerate}[noitemsep]
   \item AXI request accepted (upstream of this file) --- \S\ref{sec:alloc}
   \item \texttt{ROB\_INDEX} allocated from the Free List --- \S\ref{sec:freelist}, \S\ref{sec:alloc}
-  \item Metadata RAM initialized (\texttt{exp\_pkts}, \texttt{completion\_bitmap = 0}) --- \S\ref{sec:alloc}
+  \item Metadata RAM initialized (\texttt{exp\_pkts}, \texttt{completion\_bitmap = 0}, (read) \texttt{rd\_dbuf\_base}) --- \S\ref{sec:alloc}
   \item Entry becomes visible in its AXID's Slot FIFO --- \S\ref{sec:fifo}, \S\ref{sec:alloc}
-  \item Packets emitted, \texttt{GLOBAL\_TAG} attached, (read) \texttt{dbuf\_ptr} recorded --- \S\ref{sec:issue}
+  \item Packets emitted, \texttt{GLOBAL\_TAG} attached --- \S\ref{sec:issue}
   \item Completions decoded, \texttt{completion\_bitmap} updated --- \S\ref{sec:compin}, \S\ref{sec:completion}
   \item Transaction reaches completion; becomes eligible to retire --- \S\ref{sec:retire}
   \item Ordered AXI response emitted and accepted (read: beat by beat; write: single \texttt{BRESP}) --- \S\ref{sec:read}, \S\ref{sec:write}
-  \item Slot FIFO popped, \texttt{ROB\_INDEX} freed, (read) Data Buffer allocations already released --- \S\ref{sec:retire}, \S\ref{sec:release}
+  \item Slot FIFO popped, \texttt{ROB\_INDEX} freed, (read) RD\_SRAM range already released --- \S\ref{sec:retire}, \S\ref{sec:release}
 \end{enumerate}
 
 \subsection*{Architecture principles}
 \begin{itemize}[noitemsep]
   \item Completion directly supplies \texttt{ROB\_INDEX} and \texttt{PACKET\_NUMBER}; RAM access is a bit-slice decode.
   \item Per-AXID ordering is carried entirely by the Per-AXID Slot FIFOs (\S\ref{sec:fifo}).
-  \item Packet position is the low 2 bits of \texttt{GLOBAL\_TAG} (\texttt{PACKET\_NUMBER}).
+  \item Packet position is the low 6 bits of \texttt{GLOBAL\_TAG} (\texttt{PACKET\_NUMBER}).
   \item Read request-issue backpressure is a function of the pooled Read Data Buffer's own 128-entry watermark, a separate structure outside this file's scope (see \S\ref{sec:backpressure}). No watermark applies to Metadata RAM.
 \end{itemize}
 
@@ -39,18 +39,18 @@ The full life of a ROB entry, in order, referenced to the sections that detail e
 \textbf{Field} & \textbf{Width} \\
 \midrule
 \texttt{ROB\_INDEX}     & 8 bits (addresses one of 256 Metadata RAM entries) \\
-\texttt{PACKET\_NUMBER} & 2 bits (segment index, \texttt{0..3}) \\
+\texttt{PACKET\_NUMBER} & 6 bits (64-B MC packet index, \texttt{0..63}) \\
 \midrule
-\texttt{GLOBAL\_TAG}    & 10 bits, \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[1:0]\}} \\
+\texttt{GLOBAL\_TAG}    & 14 bits, \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{Generation.} At allocation, the Allocator (\S\ref{sec:freelist}) issues \texttt{ROB\_INDEX}. At packet emission, the Burst Splitter supplies \texttt{PACKET\_NUMBER} (\texttt{seg\_idx}) for each segment of the transaction. Packet Formation concatenates the two into \texttt{GLOBAL\_TAG}, which is attached to every packet sent to MC Core.
+\textbf{Generation.} At allocation, the Allocator (\S\ref{sec:freelist}) issues \texttt{ROB\_INDEX}. At packet emission, the Burst Splitter supplies \texttt{PACKET\_NUMBER} (\texttt{0..exp\_pkts-1}) for each 64-B MC packet of the transaction. Packet Formation concatenates the two into \texttt{GLOBAL\_TAG}, which is attached to every packet sent to MC Core.
 
-\textbf{Carry.} MC Core is not required to interpret \texttt{GLOBAL\_TAG} --- it echoes the value back unmodified on completion. The exact MC response-unit and burst semantics are defined by the MC\textendash CIF interface contract and remain TBD.
+\textbf{Carry.} MC Core is not required to interpret \texttt{GLOBAL\_TAG} --- it echoes the value back unmodified, \emph{exactly one echo per accepted 64-B request packet}, as required by \S\ref{sec:cifmc-req} (item 1). The \texttt{status[3:0]} to AXI \texttt{RESP} mapping is frozen in \S\ref{sec:cifmc}.
 
-\textbf{Decode.} On completion, Completion Input (\S\ref{sec:compin}) splits the returned \texttt{GLOBAL\_TAG} directly: bits \texttt{[9:2]} address Metadata RAM (\texttt{ROB\_INDEX}); bits \texttt{[1:0]} select the packet position within that entry (\texttt{PACKET\_NUMBER}). Both are pure bit-slices --- no lookup, no associative match.
+\textbf{Decode.} On completion, Completion Input (\S\ref{sec:compin}) splits the returned \texttt{GLOBAL\_TAG} directly: bits \texttt{[13:6]} address Metadata RAM (\texttt{ROB\_INDEX}); bits \texttt{[5:0]} select the packet position within that entry (\texttt{PACKET\_NUMBER}). Both are pure bit-slices --- no lookup, no associative match.
 
 \section{Generic Architecture}
 \label{sec:generic}
@@ -72,8 +72,8 @@ The blocks in this section are instantiated once per ROB instance (i.e.\ once fo
   \item 256-entry RAM, directly addressed by \texttt{ROB\_INDEX} (no CAM, no translation).
   \item Depth is fixed at \texttt{ROB\_DEPTH = 256}; no watermark or occupancy threshold applies to this RAM (see Overview). Allocation is gated by Free List exhaustion or per-AXID Slot FIFO fullness (\S\ref{sec:backpressure}); these are distinct conditions.
   \item Entry contents are defined explicitly in \S\ref{sec:entry}.
-  \item Write port A (allocation): Allocator writes \texttt{exp\_pkts} and clears \texttt{completion\_bitmap} at \texttt{ROB\_INDEX} on allocation, before the entry is exposed to retirement --- see \S\ref{sec:alloc} for the exact ordering.
-  \item Write port B (completion): Completion Input updates \texttt{completion\_bitmap} (both instances) and the instance-specific field (\texttt{dbuf\_ptr} entry for read, \texttt{resp\_status} for write) at \texttt{ROB\_INDEX}.
+  \item Write port A (allocation): Allocator writes \texttt{exp\_pkts}, clears \texttt{completion\_bitmap}, (read instance) writes \texttt{rd\_dbuf\_base}, and (write instance) writes the \texttt{wr\_line\_base} and \texttt{wr\_line\_count} footprint (\S\ref{sec:samelinehaz}) at \texttt{ROB\_INDEX} on allocation, before the entry is exposed to retirement --- see \S\ref{sec:alloc} for the exact ordering.
+  \item Write port B (completion): Completion Input sets one \texttt{completion\_bitmap} bit (both instances) and, for the write instance, folds \texttt{status} into \texttt{resp\_status}, at \texttt{ROB\_INDEX}. \texttt{rd\_dbuf\_base} is not written on completion --- it is consumed to place the returned 64-B data unit at \texttt{rd\_dbuf\_base + PACKET\_NUMBER}.
   \item Read port: Retirement Logic reads the entry at the head-of-FIFO \texttt{ROB\_INDEX} for each AXID to evaluate completion.
   \item No explicit \texttt{valid} bit. A Metadata RAM entry is only meaningful while its \texttt{ROB\_INDEX} is occupied (cleared in the Free List) and present in a Per-AXID Slot FIFO; both conditions are tracked externally to the RAM.
 \end{itemize}
@@ -82,7 +82,7 @@ The blocks in this section are instantiated once per ROB instance (i.e.\ once fo
 \label{sec:fifo}
 \begin{itemize}[noitemsep]
   \item 64 independent FIFOs, one per AXID, depth 4 each --- frozen sizing, identical for both instances. Each entry stores \texttt{ROB\_INDEX[7:0]}.
-  \item Push: only after the corresponding Metadata RAM entry has been initialized (\texttt{exp\_pkts}, \texttt{completion\_bitmap = 0}) --- see \S\ref{sec:alloc}. An entry is never visible in a Slot FIFO before it is safe to read.
+  \item Push: only after the corresponding Metadata RAM entry has been initialized (\texttt{exp\_pkts}, \texttt{completion\_bitmap = 0}, (read) \texttt{rd\_dbuf\_base}) --- see \S\ref{sec:alloc}. An entry is never visible in a Slot FIFO before it is safe to read.
   \item Pop: not on completion. Only when the transaction at the head has fully retired --- i.e.\ its ordered AXI response has been emitted and accepted (\S\ref{sec:retire}).
   \item FIFO order = allocation order = required AXI response order for that AXID, by construction. No separate ordering structure is needed.
   \item FIFO-full for a given AXID is the per-AXID backpressure condition on allocation. Because a completed-but-not-yet-retired entry remains at the head until fully drained, the head slot may stay occupied for several cycles after completion during response emission --- this is expected, not a fault condition.
@@ -97,8 +97,8 @@ The blocks in this section are instantiated once per ROB instance (i.e.\ once fo
       MC--CIF interface contract.
   \item Decodes \texttt{GLOBAL\_TAG} into \texttt{ROB\_INDEX} and \texttt{PACKET\_NUMBER} per \S\ref{sec:tag}.
   \item Sets \texttt{completion\_bitmap[PACKET\_NUMBER] = 1} at \texttt{ROB\_INDEX}.
-  \item Read instance: routes completion data and status to the Read Data Buffer allocation identified by \texttt{dbuf\_ptr[PACKET\_NUMBER]} (the handle was recorded at packet-emission time, not derived here).  The MC completion response-unit semantics and the Data Buffer write protocol are defined by the MC/Data-Buffer interface contract --- see \S\ref{sec:read}.
-  \item Write instance: folds \texttt{status} into \texttt{resp\_status} (worst-of; exact precedence: \textbf{TBD}, see \S\ref{sec:tbd}) --- see \S\ref{sec:write}.
+  \item Read instance: writes the returned 64-B data unit to \texttt{rd\_dbuf\_base + PACKET\_NUMBER} in RD\_SRAM (the base was recorded at allocation, not derived here).  The Data Buffer write protocol is defined by the MC/Data-Buffer interface contract --- see \S\ref{sec:read}.
+  \item Write instance: folds \texttt{status} into \texttt{resp\_status} (worst-of; precedence \texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY}, encoding frozen in \S\ref{sec:cifmc}) --- see \S\ref{sec:write}.
   \item Completion acceptance follows the MC--CIF response interface
       contract. The ROB does not impose a separate completion-side
       handshake beyond that contract.
@@ -111,16 +111,15 @@ The blocks in this section are instantiated once per ROB instance (i.e.\ once fo
 Completion and retirement are distinct events. Completion (\texttt{completion\_bitmap} full) makes a transaction \emph{eligible} to retire; it does not by itself release anything. Release happens only after the transaction's ordered AXI response has been fully accepted.
 
 \begin{itemize}[noitemsep]
-  \item \textbf{Retiring Register} (generic, minimal addition): a single register per instance holding the \texttt{ROB\_INDEX} currently being drained, plus read-instance progress state consisting of a
-\texttt{PACKET\_NUMBER} segment pointer and any within-segment
+  \item \textbf{Retiring Register} (generic, minimal addition): a single register per instance holding the \texttt{ROB\_INDEX} currently being drained, plus read-instance progress state consisting of a 6-bit
+\texttt{PACKET\_NUMBER} packet pointer and any within-beat
 progress state required by the MC/Data-Buffer interface contract.
 The write instance requires no analogous data-stream progress state. At most one transaction is draining at a time per instance, consistent with the single response-channel path each instance already serves.
-  \item Each cycle, while the Retiring Register is idle, Retirement Logic reads the Metadata RAM entry at the head \texttt{ROB\_INDEX} of every AXID's Slot FIFO and checks \texttt{completion\_bitmap == (1 << exp\_pkts) - 1}.
+  \item Each cycle, while the Retiring Register is idle, Retirement Logic reads the Metadata RAM entry at the head \texttt{ROB\_INDEX} of every AXID's Slot FIFO and checks that \texttt{completion\_bitmap} bits \texttt{[exp\_pkts-1:0]} are all set (for \texttt{exp\_pkts = 64}, the all-ones condition).
   \item When idle, a priority encoder selects the lowest-numbered AXID whose head entry is complete and loads its \texttt{ROB\_INDEX} into the Retiring Register, entering the \emph{retiring} state. \textbf{The Slot FIFO is not popped and \texttt{ROB\_INDEX} is not freed at this point.}
   \item While retiring, instance-specific emission proceeds (\S\ref{sec:read} for read, \S\ref{sec:write} for write) until the transaction's full AXI response has been accepted downstream (\texttt{merge\_ready} for read, \texttt{bresp\_ready} for write --- \S\ref{sec:io}).
   \item Only once the full response has been accepted: Retirement Logic pops that AXID's Slot FIFO entry, returns \texttt{ROB\_INDEX} to the Free List (\texttt{free\_req}), and the Retiring Register returns to idle.
-  \item Maximum one transaction draining at a time per instance; draining a single read transaction may itself span multiple cycles (a number of AXI beats determined by the segment \texttt{beat\_cnt}
-values), unlike the previous single-cycle-emit assumption.
+  \item Maximum one transaction draining at a time per instance; draining a single read transaction spans one AXI beat per 64-B MC packet, up to \texttt{exp\_pkts} $\le$ 64 beats, unlike the previous single-cycle-emit assumption.
 \end{itemize}
 
 \section{Read-Instance Extension}
@@ -130,23 +129,23 @@ State and logic in this section exist only in the read-path ROB instance.
 
 \subsection{Metadata RAM Extension}
 \begin{itemize}[noitemsep]
-  \item \texttt{dbuf\_ptr[0..3][7:0]}: one opaque allocation handle per possible \texttt{PACKET\_NUMBER}, into the pooled Read Data Buffer. Written by the packet-emission path at issue time, one handle per segment --- \emph{not} written by Completion Input, which consumes the handle to route the response.
-  \item A handle does not imply one physical buffer entry or one AXI beat.  It identifies the Data Buffer allocation associated with that segment; whether that allocation is a region, a descriptor, or another structure is defined by the MC/Data-Buffer interface contract.
+  \item \texttt{rd\_dbuf\_base[RD\_SRAM\_ADDR\_W-1:0]}: base address of a single contiguously-allocated RD\_SRAM range of \texttt{exp\_pkts} 64-B lines. The returned data for packet \texttt{PACKET\_NUMBER} occupies \texttt{rd\_dbuf\_base + PACKET\_NUMBER}. Written once at allocation (\S\ref{sec:alloc}); \emph{not} written by Completion Input, which consumes it to place the response.
+  \item \texttt{RD\_SRAM\_ADDR\_W} is \textbf{TBD}: RD\_SRAM depth is not specified in any current document (\S\ref{sec:tbd}). The ROB treats \texttt{rd\_dbuf\_base} as an opaque base pointer whose only defined operation is \texttt{+ PACKET\_NUMBER}.
 \end{itemize}
 
 \subsection{Read Data Buffer (cross-reference)}
 \begin{itemize}[noitemsep]
-  \item The pooled Read Data Buffer, its independently managed 128-entry watermark, and its occupancy/backpressure logic are \textbf{out of scope for this file}.  It is a separate structure the read ROB addresses through \texttt{dbuf\_ptr}, not a substructure of Metadata RAM. Data-buffer capacity and watermark are independent of \texttt{ROB\_DEPTH}/Metadata RAM capacity.
-  \item Exact Data Buffer interface signal names, allocation representation, response-unit semantics, and timing are \textbf{TBD} in the MC/Data-Buffer interface contract --- see \S\ref{sec:tbd}.
+  \item The pooled Read Data Buffer (RD\_SRAM), its independently managed 128-entry watermark, and its occupancy/backpressure logic are \textbf{out of scope for this file}.  It is a separate structure the read ROB addresses through \texttt{rd\_dbuf\_base}, not a substructure of Metadata RAM. Data-buffer capacity and watermark are independent of \texttt{ROB\_DEPTH}/Metadata RAM capacity.
+  \item Exact Data Buffer interface signal names, allocation representation, and timing are \textbf{TBD} in the MC/Data-Buffer interface contract --- see \S\ref{sec:tbd}.
 \end{itemize}
 
 \subsection{Read Serializer}
 \begin{itemize}[noitemsep]
   \item Operates only while the Retiring Register (\S\ref{sec:retire}) holds a read transaction.
-  \item Serializes the completed data represented by \texttt{dbuf\_ptr[PACKET\_NUMBER]} in segment order, tagged with the AXID selected from the Slot FIFO context.  The number of AXI beats represented by a segment and the cursor/handshake needed to advance within that segment are defined by the MC/Data-Buffer interface contract; the ROB does not assume one response unit or one buffer entry per segment.
-  \item \texttt{merge\_ready} accepts the AXI beat currently presented by that contract.  Data Buffer release occurs at the allocation granularity specified by that contract, after all data represented by the allocation has been accepted; it is not defined as one release per accepted AXI beat.
-  \item \texttt{rob\_last} is asserted on the final AXI beat of the final segment.  Final-segment selection comes from \texttt{PACKET\_NUMBER == exp\_pkts - 1}; final-beat detection within that segment comes from the MC/Data-Buffer interface contract.
-  \item Once the final AXI beat is accepted and the final segment's Data Buffer allocation has been released according to that contract, Retirement Logic pops the Slot FIFO and frees \texttt{ROB\_INDEX} (\S\ref{sec:retire}).
+  \item Serializes the completed data at \texttt{rd\_dbuf\_base + PACKET\_NUMBER} for \texttt{PACKET\_NUMBER = 0 .. exp\_pkts-1} in packet order, tagged with the AXID selected from the Slot FIFO context.  Each 64-B MC packet is one AXI data beat; the within-beat handshake to the merge path follows the MC/Data-Buffer interface contract.
+  \item \texttt{merge\_ready} accepts the AXI beat currently presented (one per 64-B MC packet).  The contiguous \texttt{rd\_dbuf\_base} range is released as a single unit once the final beat has been accepted.
+  \item \texttt{rob\_last} is asserted on the final beat, i.e.\ when \texttt{PACKET\_NUMBER == exp\_pkts - 1} is accepted.
+  \item Once the final beat is accepted and the \texttt{rd\_dbuf\_base} range is released, Retirement Logic pops the Slot FIFO and frees \texttt{ROB\_INDEX} (\S\ref{sec:retire}).
 \end{itemize}
 
 \subsection*{Read-Instance I/O (in addition to generic I/O in \S\ref{sec:io})}
@@ -154,10 +153,10 @@ State and logic in this section exist only in the read-path ROB instance.
 \toprule
 \textbf{Signal} & \textbf{Width} & \textbf{Dir / Peer} & \textbf{Description} \\
 \midrule
-\texttt{data} & TBD & in, MC Core & Read response data, according to the MC--CIF interface contract \\
-\texttt{data} & TBD & out, Merge Logic & In-order read response data unit \\
+\texttt{data} & 512 & in, MC Core & Read response data, one 64-B unit per completed 64-B MC packet \\
+\texttt{data} & 512 & out, Merge Logic & In-order read response data unit (one 64-B AXI R-channel beat) \\
 \texttt{status[3:0]} & 4   & out, Merge Logic & Status for emitted beat \\
-\texttt{rob\_last}   & 1   & out, Merge Logic & Asserted on the final AXI beat of the final segment \\
+\texttt{rob\_last}   & 1   & out, Merge Logic & Asserted on the final AXI beat (\texttt{PACKET\_NUMBER == exp\_pkts - 1}) \\
 \texttt{merge\_ready} & 1  & in, Merge Logic & Accept for the AXI beat currently emitted by the Read Serializer \\
 \bottomrule
 \caption{Read-instance additional signals}
@@ -170,8 +169,11 @@ State and logic in this section exist only in the write-path ROB instance.
 
 \subsection{Metadata RAM Extension}
 \begin{itemize}[noitemsep]
-  \item \texttt{resp\_status[1:0]}: aggregate \texttt{BRESP} value for the transaction. Initialized to \texttt{OKAY} at allocation; updated by Completion Input as each packet's status arrives, worst-of semantics (exact priority ordering among AXI response codes: \textbf{TBD}, see \S\ref{sec:tbd}).
+  \item \texttt{resp\_status[1:0]}: aggregate \texttt{BRESP} value for the transaction. Initialized to \texttt{OKAY} at allocation; updated by Completion Input as each packet's status arrives, worst-of semantics (priority ordering \texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY}, encoding frozen in \S\ref{sec:cifmc}).
+  \item \texttt{wr\_line\_base[25:0]}: start 64\,B line number (\texttt{ADDR\_W - 6}) of the write's footprint.
+  \item \texttt{wr\_line\_count[6:0]}: contiguous 64\,B line span of the write, in \texttt{[1,64]}.
 \end{itemize}
+Both footprint fields are written by the allocation path from \texttt{\{AWADDR, AWLEN, AWSIZE, AWBURST\}} (\S\ref{sec:samelinehaz}), are never written by Completion Input, are read only by the read-admission same-line hazard check, and remain valid for the whole allocated lifetime of the entry --- released with it (\S\ref{sec:release}).
 
 \subsection{BRESP Generation}
 \begin{itemize}[noitemsep]
@@ -201,11 +203,11 @@ State and logic in this section exist only in the write-path ROB instance.
 \midrule
 \texttt{alloc\_req}       & 1  & in, Accept/Request logic & Pulse: allocate a new ROB slot \\
 \texttt{AXID[5:0]}        & 6  & in, Accept/Request logic & AXID of the transaction being allocated; used only to select the Per-AXID Slot FIFO, not stored in Metadata RAM \\
-\texttt{exp\_pkts[2:0]}   & 3  & in, Burst Splitter & \texttt{splitter\_pkt\_count} for this transaction \\
+\texttt{exp\_pkts[6:0]}   & 7  & in, Burst Splitter & Number of 64-B MC packets for this transaction, \texttt{1..64} \\
 \texttt{ROB\_INDEX[7:0]}  & 8  & out, Accept/Request logic & Allocated slot index, returned for use in \texttt{GLOBAL\_TAG} generation \\
 \texttt{MC\_RESP} & TBD & in, MC Core & MC completion/response unit; exact transport defined by the MC--CIF interface contract \\
-\texttt{GLOBAL\_TAG[9:0]} & 10 & in, MC Core & \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[1:0]\}}, echoed unmodified \\
-\texttt{status[3:0]}      & 4  & in, MC Core & Raw completion status/error code (mapping to AXI \texttt{RESP} encoding: \textbf{TBD}, see \S\ref{sec:tbd}) \\
+\texttt{GLOBAL\_TAG[13:0]} & 14 & in, MC Core & \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}}, echoed unmodified \\
+\texttt{status[3:0]}      & 4  & in, MC Core & Per-packet completion status; \texttt{0}/\texttt{1}/\texttt{2} $=$ OK/SLVERR/DECERR, codes \texttt{3..15} reserved $\rightarrow$ DECERR (\S\ref{sec:cifmc}) \\
 \bottomrule
 \caption{Generic signals, present on both instances}
 \end{longtable}
@@ -220,23 +222,25 @@ State and logic in this section exist only in the write-path ROB instance.
 \toprule
 \textbf{Field} & \textbf{Width} & \textbf{Scope} \\
 \midrule
-\texttt{exp\_pkts[2:0]}          & 3 bits          & generic \\
-\texttt{completion\_bitmap[3:0]} & 4 bits          & generic \\
-\texttt{dbuf\_ptr[0..3][7:0]}    & 4 $\times$ 8 = 32 bits & read-only \\
-\texttt{resp\_status[1:0]}       & 2 bits          & write-only \\
+\texttt{exp\_pkts[6:0]}           & 7 bits          & generic \\
+\texttt{completion\_bitmap[63:0]} & 64 bits         & generic \\
+\texttt{rd\_dbuf\_base}           & \texttt{RD\_SRAM\_ADDR\_W} bits (\textbf{TBD}) & read-only \\
+\texttt{resp\_status[1:0]}        & 2 bits          & write-only \\
+\texttt{wr\_line\_base[25:0]}     & 26 bits         & write-only \\
+\texttt{wr\_line\_count[6:0]}     & 7 bits          & write-only \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent Total entry width: 39 bits (read instance), 9 bits (write instance). AXID is available from Slot FIFO context at retirement and is not stored in the entry. No "retiring" state is stored per entry either --- that state lives entirely in the single Retiring Register described in \S\ref{sec:retire}, since at most one transaction per instance is ever draining at a time.
+\noindent Total entry width: \(71 + \texttt{RD\_SRAM\_ADDR\_W}\) bits (read instance --- \texttt{exp\_pkts} 7 + \texttt{completion\_bitmap} 64 + \texttt{rd\_dbuf\_base}), 106 bits (write instance --- 71 generic + 2-bit \texttt{resp\_status} + the 33-bit 64\,B line footprint, \S\ref{sec:samelinehaz}). AXID is available from Slot FIFO context at retirement and is not stored in the entry. The write entry stores the transaction's 64\,B line footprint; \texttt{rd\_dbuf\_base} is the read entry's only address-like field and is an opaque RD\_SRAM base. No "retiring" state is stored per entry either --- that state lives entirely in the single Retiring Register described in \S\ref{sec:retire}, since at most one transaction per instance is ever draining at a time.
 
 \section{Allocation Path}
 \label{sec:alloc}
 
 \begin{enumerate}[noitemsep]
-  \item Accept/Request logic sends \texttt{alloc\_req} with \texttt{AXID}, following AXI request acceptance upstream of this file.
+  \item Accept/Request logic sends \texttt{alloc\_req} with \texttt{AXID}, following AXI request acceptance upstream of this file. On the read path, \texttt{alloc\_req} is withheld while the AR Metadata FIFO head is held by the same-line hazard check (\S\ref{sec:samelinehaz}); no read entry is allocated during the hold.
   \item Allocator pops \texttt{ROB\_INDEX} from the Free List (priority encoder on the bitmask), clears the bit. \texttt{ROB\_INDEX} is now reserved but not yet visible to Retirement Logic.
-  \item Once Burst Splitter Stage 1 computes \texttt{exp\_pkts} (\texttt{= splitter\_pkt\_count}) for the burst, Metadata RAM is written at \texttt{ROB\_INDEX}: \texttt{exp\_pkts} set, \texttt{completion\_bitmap} cleared to \texttt{0}, and (write instance) \texttt{resp\_status} initialized to \texttt{OKAY}.
+  \item Once Burst Splitter Stage 1 computes \texttt{exp\_pkts} (the number of 64-B MC packets, \texttt{1..64}) for the transaction, Metadata RAM is written at \texttt{ROB\_INDEX}: \texttt{exp\_pkts} set, \texttt{completion\_bitmap} cleared to \texttt{0}, (read instance) \texttt{rd\_dbuf\_base} set to the base of a contiguous \texttt{exp\_pkts}-line RD\_SRAM allocation, and (write instance) \texttt{resp\_status} initialized to \texttt{OKAY} with \texttt{wr\_line\_base} and \texttt{wr\_line\_count} written from \texttt{\{AWADDR, AWLEN, AWSIZE, AWBURST\}} (\S\ref{sec:samelinehaz}).
   \item Only \emph{after} this Metadata RAM initialization write completes is \texttt{ROB\_INDEX} pushed onto the requesting AXID's Slot FIFO. This ordering is deliberate: the Slot FIFO push and the Metadata RAM initialization write are both gated on the same Burst Splitter Stage 1 completion, so an entry can never become visible to Retirement Logic with a stale or uninitialized \texttt{exp\_pkts}/\texttt{completion\_bitmap}.
 \end{enumerate}
 
@@ -244,9 +248,8 @@ State and logic in this section exist only in the write-path ROB instance.
 \label{sec:issue}
 
 \begin{enumerate}[noitemsep]
-  \item For each segment \texttt{PACKET\_NUMBER = 0..num\_segments-1} emitted by the Burst Splitter:
-  \item (read instance) a Read Data Buffer allocation is obtained from its own pool; its opaque handle is written to \texttt{dbuf\_ptr[PACKET\_NUMBER]} in the Metadata RAM entry at \texttt{ROB\_INDEX}.
-  \item Packet Formation attaches \texttt{GLOBAL\_TAG = \{ROB\_INDEX, PACKET\_NUMBER\}} to the packet.
+  \item For each 64-B MC packet \texttt{PACKET\_NUMBER = 0..exp\_pkts-1} emitted by the Burst Splitter:
+  \item Packet Formation attaches \texttt{GLOBAL\_TAG = \{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}} to the packet. No per-packet Read Data Buffer handle is recorded --- the contiguous \texttt{rd\_dbuf\_base} range was allocated at \S\ref{sec:alloc}, and packet \texttt{PACKET\_NUMBER}'s data will land at \texttt{rd\_dbuf\_base + PACKET\_NUMBER}.
   \item Packet is issued to MC Core via the Packet FIFO.
 \end{enumerate}
 
@@ -258,7 +261,7 @@ State and logic in this section exist only in the write-path ROB instance.
       \texttt{status}, and, for reads, response data according to
       the MC--CIF interface contract.
   \item Completion Input decodes \texttt{GLOBAL\_TAG} into \texttt{ROB\_INDEX} and \texttt{PACKET\_NUMBER}.
-  \item (read instance) completion data is routed to the Read Data Buffer allocation identified by \texttt{dbuf\_ptr[PACKET\_NUMBER]}, according to the MC/Data-Buffer interface contract.
+  \item (read instance) the returned 64-B data unit is written to \texttt{rd\_dbuf\_base + PACKET\_NUMBER} in RD\_SRAM.
   \item (write instance) \texttt{resp\_status} is updated with the worst-of comparison against the incoming \texttt{status}.
   \item \texttt{completion\_bitmap[PACKET\_NUMBER]} is set at \texttt{ROB\_INDEX}.
   \item Completion acceptance only marks the corresponding packet
@@ -270,8 +273,8 @@ State and logic in this section exist only in the write-path ROB instance.
 
 \begin{enumerate}[noitemsep]
   \item Each cycle, while the Retiring Register is idle, Retirement Logic reads the Metadata RAM entry at every AXID's Slot FIFO head.
-  \item Priority encoder selects the lowest AXID whose head entry satisfies \texttt{completion\_bitmap == (1 << exp\_pkts) - 1}; its \texttt{ROB\_INDEX} is loaded into the Retiring Register. \textbf{The Slot FIFO entry is not popped yet.}
-  \item (read instance) Read Serializer drains the completed allocations represented by \texttt{dbuf\_ptr[0..num\_segments-1]} in segment order.  Its within-segment progress and Data Buffer release behavior follow the MC/Data-Buffer interface contract.
+  \item Priority encoder selects the lowest AXID whose head entry has \texttt{completion\_bitmap} bits \texttt{[exp\_pkts-1:0]} all set; its \texttt{ROB\_INDEX} is loaded into the Retiring Register. \textbf{The Slot FIFO entry is not popped yet.}
+  \item (read instance) Read Serializer drains \texttt{rd\_dbuf\_base + 0 .. rd\_dbuf\_base + exp\_pkts-1} in packet order, one AXI beat per 64-B MC packet.
   \item (write instance) BRESP Generation emits \texttt{bresp} and holds it until \texttt{bresp\_ready} accepts it.
   \item Only once the transaction's full AXI response has been accepted (final read beat, or the single write response) does Retirement Logic pop that AXID's Slot FIFO and return \texttt{ROB\_INDEX} to the Free List. The Retiring Register returns to idle.
 \end{enumerate}
@@ -282,7 +285,8 @@ State and logic in this section exist only in the write-path ROB instance.
 \begin{enumerate}[noitemsep]
   \item Triggered only by full AXI response acceptance (\S\ref{sec:retire}) --- never by \texttt{completion\_bitmap} reaching its full mask on its own.
   \item \texttt{ROB\_INDEX} is returned to the Free List (\texttt{free\_req}), bit set back to \texttt{1 = free}.
-  \item (read instance) each \texttt{dbuf\_ptr[i]} allocation is returned to the Read Data Buffer's own pool at the allocation granularity and release point defined by the MC/Data-Buffer interface contract.  The final transaction release requires all associated allocations to be released.
+  \item (write instance) the \texttt{free\_req} pulse re-arms the same-line hazard recheck for any AR Metadata FIFO head currently held (\S\ref{sec:samelinehaz}); the freed entry's \texttt{wr\_line\_base} and \texttt{wr\_line\_count} cease to be occupied in the same cycle.
+  \item (read instance) the contiguous \texttt{rd\_dbuf\_base} range (\texttt{exp\_pkts} lines) is returned to RD\_SRAM as a single unit, once the final AXI beat has been accepted.
   \item Retirement needs only the Slot FIFO pop and Free List return.
 \end{enumerate}
 
@@ -296,6 +300,7 @@ State and logic in this section exist only in the write-path ROB instance.
 \midrule
 Slot FIFO full (per AXID) & Blocks new allocation for that AXID. A completed-but-still-draining head entry keeps the FIFO occupied until fully retired, so this condition can now persist slightly longer than "completion" alone would suggest --- expected behavior, not a fault. \\
 FREE\_LIST\_EMPTY         & Blocks new allocation pool-wide. It means all 256 transaction slots are allocated and all Slot FIFO capacity is collectively consumed. A single full AXID FIFO does not imply Free List exhaustion. \\
+AR Metadata FIFO head held & Read path only. The head read overlaps an occupied \texttt{ROB\_WR} 64\,B line footprint (\S\ref{sec:samelinehaz}); read admission on that port is held until every overlapping write has retired. No write-path equivalent. \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -312,16 +317,16 @@ FREE\_LIST\_EMPTY         & Blocks new allocation pool-wide. It means all 256 tr
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
 Metadata RAM depth (\texttt{ROB\_DEPTH}) & 256 entries (\texttt{ROB\_INDEX} is 8 bits) --- frozen, identical for both instances \\
-\texttt{PACKET\_NUMBER} width & 2 bits (\texttt{MAX\_SEGMENTS = 4}) --- frozen \\
-\texttt{GLOBAL\_TAG} width    & 10 bits --- frozen \\
-Entry width, read instance    & 39 bits \\
-Entry width, write instance   & 9 bits \\
+\texttt{PACKET\_NUMBER} width & 6 bits (\texttt{MAX\_PKTS = 64}) --- frozen \\
+\texttt{GLOBAL\_TAG} width    & 14 bits --- frozen \\
+\texttt{exp\_pkts} width      & 7 bits (packet count \texttt{1..64}) --- frozen \\
+\texttt{completion\_bitmap} width & 64 bits --- frozen \\
+Entry width, read instance    & \(71 + \texttt{RD\_SRAM\_ADDR\_W}\) bits (\texttt{RD\_SRAM\_ADDR\_W} \textbf{TBD}) \\
+Entry width, write instance   & 106 bits (71 generic + 2-bit \texttt{resp\_status} + 33-bit 64\,B line footprint, \S\ref{sec:samelinehaz}) \\
 Free list width          & 256 bits, one independent Free List per instance \\
 Per-AXID Slot FIFO        & 64 FIFOs $\times$ depth 4 --- frozen, identical for both instances \\
-Retiring Register         & 1 per instance: \texttt{ROB\_INDEX[7:0]} + read progress state \\
-Max transactions draining & 1 per instance at a time; a single read transaction's drain may span multiple AXI beats;
-the exact number is determined by the segment \texttt{beat\_cnt}
-values and the MC/Data-Buffer response contract \\
+Retiring Register         & 1 per instance: \texttt{ROB\_INDEX[7:0]} + 6-bit read packet pointer + within-beat progress state \\
+Max transactions draining & 1 per instance at a time; a single read transaction's drain spans one AXI beat per 64-B MC packet, up to \texttt{exp\_pkts} $\le$ 64 beats \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -334,9 +339,10 @@ values and the MC/Data-Buffer response contract \\
 Every item below requires an external decision or a separate component's specification --- none can be derived from the frozen ROB architecture itself.
 
 \begin{itemize}[noitemsep]
-  \item \textbf{MC Core raw status encoding.} The exact bit encoding MC Core uses on \texttt{status[3:0]} for packet-level completion status, and therefore the combinational mapping from \texttt{status[3:0]} to AXI \texttt{RESP[1:0]} used when updating \texttt{resp\_status}, is not defined in any document available to this revision. Requires MC Core interface sign-off; \texttt{status[3:0]}'s width itself is inherited from the pre-refactor design and has not been reconfirmed against MC Core's actual encoding.
-  \item \textbf{\texttt{resp\_status} worst-of precedence.} When packets of the same write transaction return different status values (e.g.\ one \texttt{SLVERR}, one \texttt{DECERR}), the exact precedence used to compute the single aggregate \texttt{BRESP} is an internal policy decision for Completion Input, not fixed by the AXI4 specification or by any frozen decision here. Needs an explicit precedence rule before RTL can be written.
-  \item \textbf{Pooled Read Data Buffer / MC response contract.} Signal names, allocation representation, response-unit semantics, and timing for allocating, filling, serializing, and freeing a Data Buffer allocation are defined by a separate MC/Data-Buffer interface specification. This file assumes only that \texttt{dbuf\_ptr[PACKET\_NUMBER]} is a valid segment allocation handle at packet-emission time and remains valid until the contract-defined release point.
+  \item \textbf{MC error-code assignment (codes \texttt{3..15}).} The interface \texttt{status[3:0]} field and its AXI mapping are frozen (\S\ref{sec:cifmc}): \texttt{0}/\texttt{1}/\texttt{2} $=$ OK/SLVERR/DECERR, and any received value in \texttt{3..15} is treated by CIF as \texttt{DECERR}. Which specific fault classes MC Core assigns to codes \texttt{3..15}, if any, is an MC-owned detail and does not affect CIF RTL.
+  \item \textbf{Pooled Read Data Buffer / MC response contract.} Signal names, allocation representation, and timing for allocating, filling, serializing, and freeing the read data range are defined by a separate MC/Data-Buffer interface specification. This file assumes only that the contiguous \texttt{rd\_dbuf\_base} range is valid from allocation until the contract-defined release point, and that packet \texttt{N}'s returned 64-B data unit occupies \texttt{rd\_dbuf\_base + N}.
+  \item \textbf{RD\_SRAM depth / \texttt{RD\_SRAM\_ADDR\_W}.} The depth of RD\_SRAM, and therefore the width of \texttt{rd\_dbuf\_base} and the read-instance entry, is not specified in any current document. The ROB carries \texttt{rd\_dbuf\_base} as an opaque base pointer; RD\_SRAM's depth, occupancy model, and watermark are out of scope for this file. The RD\_SRAM completion-side write port must be available whenever a \texttt{RD\_DATA} response is presented (\S\ref{sec:cifmc}, response-side flow control).
+  \item \textbf{MC write-completion safety (interface requirement).} The property that a write reported complete is visible to a subsequent same-line read is stated as an interface requirement on MC Core (\S\ref{sec:cifmc-req}, item 2), \emph{not} asserted to be implemented. The current MC-core documentation additionally contains an unresolved contradiction about how long a write remains hazard-visible (its hazard-unit admission-station dwell versus its full buffer-to-DRAM lifetime); the MC team must resolve that before the requirement can be signed off. Until then, the conservative interpretation --- \texttt{WR\_ACK} at DRAM commit --- satisfies the requirement without any MC hazard-unit dependency.
 \end{itemize}
 
 \section{Timing Notes}
@@ -347,5 +353,5 @@ Every item below requires an external decision or a separate component's specifi
   \item Simultaneous \texttt{alloc\_req} and \texttt{free\_req} on the Free List bitmask in the same cycle is safe --- they target different bits by construction (allocate clears the lowest free bit; free sets the bit of the just-retired, and therefore currently occupied, slot).
   \item \texttt{GLOBAL\_TAG} decode (\S\ref{sec:tag}) is a pure bit-slice and has no translation latency on the completion path.
   \item The Slot FIFO push at allocation is deliberately deferred until the Metadata RAM initialization write completes (\S\ref{sec:alloc}) --- this introduces a small, bounded latency between \texttt{alloc\_req} and Slot FIFO visibility, bounded by Burst Splitter Stage 1's latency to produce \texttt{exp\_pkts}.
-  \item Draining a read transaction is explicitly multi-cycle through the Retiring Register.  Transfer granularity and within-segment progress follow the MC/Data-Buffer interface contract, so Retirement Logic and the Read Serializer must be read as a small state machine (idle / retiring), not a single combinational selection. The write instance is analogous but single-beat, gated by \texttt{bresp\_ready}.
+  \item Draining a read transaction is explicitly multi-cycle through the Retiring Register.  Transfer granularity is one AXI beat per 64-B MC packet, so Retirement Logic and the Read Serializer must be read as a small state machine (idle / retiring), not a single combinational selection. The write instance is analogous but single-beat, gated by \texttt{bresp\_ready}.
 \end{itemize}
