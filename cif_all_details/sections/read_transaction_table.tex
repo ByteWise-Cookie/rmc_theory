@@ -7,14 +7,25 @@ by the read ROB instance and its Retiring Register (\S\ref{sec:rob}).
 \subsection{Read ROB metadata and completion}
 
 The read Metadata RAM is directly indexed by \texttt{ROB\_INDEX}.  Each entry
-contains \texttt{exp\_pkts[6:0]} (the number of 64-B MC packets for this
-transaction, \texttt{1..64}), a 64-bit completion bitmap, and
+contains \texttt{exp\_pkts[6:0]} (the number of distinct 64-B lines the read
+burst touches, \texttt{1..64}), a 64-bit completion bitmap, and
 \texttt{rd\_dbuf\_base}, the base of a contiguously-allocated RD\_SRAM range
-of \texttt{exp\_pkts} 64-B lines.  The count is initialized from the Burst
-Splitter --- one MC packet per 64-B AXI data beat.  The read entry stores no
-AXI address or 64\,B line footprint: same-line read/write ordering is
-enforced entirely at read admission, before allocation
-(\S\ref{sec:samelinehaz}), and a completed read is never re-checked.
+of \texttt{exp\_pkts} 64-B lines.  \texttt{exp\_pkts} is initialized from the
+Burst Splitter --- one MC packet per distinct 64-B line, not per AXI beat
+(\S\ref{sec:splitter}) --- and is the exact MC read-line count.  The read
+entry stores no AXI address or 64\,B line footprint for hazard purposes:
+same-line read/write ordering is enforced entirely at read admission, before
+allocation (\S\ref{sec:samelinehaz}), and a completed read is never
+re-checked.
+
+\textbf{Read Serializer dependency.}  Reconstructing the AXI R-channel beat
+stream (\S\ref{sec:read-serializer}) needs retained AXI burst metadata ---
+\texttt{ARLEN}, \texttt{ARSIZE}, \texttt{ARBURST}, and a normalized base /
+\texttt{WrapBoundary} --- in addition to \texttt{exp\_pkts} and
+\texttt{rd\_dbuf\_base}.  This metadata is a required input to retirement;
+its exact storage location (Metadata RAM, a side structure, Slot-FIFO
+context, or other) is \textbf{subject to ROB reconciliation} and is not
+fixed here.
 
 On a read completion, \texttt{GLOBAL\_TAG[13:0]} directly selects the entry
 (\texttt{[13:6]}) and its packet-number bit (\texttt{[5:0]}).  The returned
@@ -27,11 +38,49 @@ allocation until the contract-defined release point.
 \subsection{Read retirement}
 
 An AXID Slot FIFO head can retire only after \texttt{completion\_bitmap}
-bits \texttt{[exp\_pkts-1:0]} are all set.  The Retiring Register then
-holds that index while the Read Serializer emits
-\texttt{rd\_dbuf\_base + 0 .. rd\_dbuf\_base + exp\_pkts-1} in packet order,
-one AXI beat per 64-B MC packet.  \texttt{rob\_last} is generated with the
-final beat (\texttt{PACKET\_NUMBER == exp\_pkts - 1}).  Final AXI R
+bits \texttt{[exp\_pkts-1:0]} are all set --- i.e.\ every touched 64-B line
+has returned.  The Retiring Register then holds that index while the Read
+Serializer (\S\ref{sec:read-serializer}) emits \texttt{ARLEN + 1} AXI R
+beats, mapping each beat to the line it is sourced from and reading that
+complete line from RD\_SRAM.  \texttt{rob\_last} is generated with the final
+AXI beat (\texttt{beat\_index == ARLEN}), not the final line.  Final AXI R
 acceptance, after the \texttt{rd\_dbuf\_base} range is released, permits
 retirement to pop the Slot FIFO and return \texttt{ROB\_INDEX} to the read
 Free List.  Completion alone never frees the index.
+
+\subsection{Read Serializer}
+\label{sec:read-serializer}
+
+The Read Serializer reconstructs the original AXI R-channel beat stream from
+the returned 64-B lines while the Retiring Register holds the read
+transaction.  The behavior below is architectural; the storage of its AXI
+metadata inputs is subject to ROB reconciliation (\S\ref{sec:read-completion}).
+
+\begin{itemize}[noitemsep]
+  \item Maintains an AXI beat counter \texttt{beat\_index = 0 .. ARLEN} and
+        emits \texttt{ARLEN + 1} R beats in order.
+  \item For each beat it forms the AXI beat byte address per
+        \texttt{ARBURST}/\texttt{ARSIZE}: \texttt{INCR} increments by
+        \texttt{NB = 1 << ARSIZE} with the AXI4 unaligned-first-transfer
+        rule; \texttt{WRAP} increments modulo \texttt{Total} relative to
+        \texttt{WrapBoundary}; \texttt{FIXED} repeats \texttt{ARADDR}.
+  \item Maps the beat address to a line index
+        \texttt{PACKET\_NUMBER = (beat\_addr >> 6) - first\_line}
+        (\texttt{0..exp\_pkts-1}) and reads the complete 64-B line from
+        \texttt{rd\_dbuf\_base + PACKET\_NUMBER} in RD\_SRAM.
+  \item Drives \texttt{RDATA} directly from that line.  AXI byte lanes and
+        64-B line offsets are congruent, so no barrel shifter or data
+        realignment is used; the addressed master selects its byte lanes.
+  \item Consecutive beats may map to the same line index and re-use the same
+        RD\_SRAM line.
+  \item \texttt{RRESP} for a beat is the per-line status of the line it is
+        sourced from (\S\ref{sec:cifmc}); beats sourced from the same line
+        carry the same \texttt{RRESP}.
+  \item \texttt{rob\_last}/\texttt{RLAST} is asserted on
+        \texttt{beat\_index == ARLEN} and accepted downstream before the
+        \texttt{rd\_dbuf\_base} range is released and the entry retires.
+\end{itemize}
+
+The line-set parameters \texttt{first\_line}, \texttt{NB}, \texttt{Total},
+and \texttt{WrapBoundary} are the ones computed by Burst Splitter Stage~1
+(\S\ref{sec:splitter}).

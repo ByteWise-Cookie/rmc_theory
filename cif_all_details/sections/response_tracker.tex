@@ -9,8 +9,8 @@ described in \S\ref{sec:rob}.
 Each write Metadata RAM entry is directly addressed by \texttt{ROB\_INDEX}
 and contains:
 \begin{itemize}[noitemsep]
-  \item \texttt{exp\_pkts[6:0]}, the number of 64-B MC packets for the
-        transaction (\texttt{1..64}, one per AXI data beat);
+  \item \texttt{exp\_pkts[6:0]}, the number of MC packets for the
+        transaction (\texttt{1..64}, one per AXI write beat, any \texttt{AWSIZE});
   \item \texttt{completion\_bitmap[63:0]}, initially zero;
   \item \texttt{resp\_status[1:0]}, initially \texttt{OKAY}; and
   \item \texttt{wr\_line\_base[25:0]} and \texttt{wr\_line\_count[6:0]}, the
@@ -28,10 +28,10 @@ and folds the packet status into \texttt{resp\_status} as
 worst-of, precedence \texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY},
 with \texttt{status} encoding \texttt{0}/\texttt{1}/\texttt{2} $=$
 OK/SLVERR/DECERR (\S\ref{sec:cifmc}).  MC Core supplies exactly one
-completion per accepted 64-B write packet (\S\ref{sec:cifmc-req}).
-\texttt{exp\_pkts} is the count of 64-B MC packets the Burst Splitter
-generates for the transaction; given the 64-B-beat contract
-(\S\ref{sec:overview}) it equals \texttt{AWLEN + 1}.
+completion per accepted write packet (\S\ref{sec:cifmc-req}).
+\texttt{exp\_pkts} is the count of MC packets the Burst Splitter generates for
+the transaction; because the write path emits one MC packet per AXI write
+beat (any \texttt{AWSIZE}, \S\ref{sec:overview}) it equals \texttt{AWLEN + 1}.
 
 \subsection{Ordered response and release}
 

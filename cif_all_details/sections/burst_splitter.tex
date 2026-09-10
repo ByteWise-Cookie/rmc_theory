@@ -3,17 +3,23 @@
 \subsection{Purpose and bounds}
 
 The Burst Splitter converts one accepted AXI transaction into up to 64 MC
-request packets, one per 64-B AXI data beat.  It is shared by the read and
-write request paths.  Each packet carries one 512-bit / 64-B data unit;
-there is no \texttt{beat\_cnt} field in the packet.
+request packets.  It is shared by the read and write request paths.  On the
+write path (\texttt{AWSIZE = 0..6}) it emits one packet per AXI write beat; on
+the read path (\texttt{ARSIZE = 0..6}) it emits one packet per distinct
+aligned 64-B line touched by the burst.  Each packet carries a 512-bit
+payload on a 64-B byte-lane grid; there is no \texttt{beat\_cnt} field in the
+packet.
 
 The configured \texttt{row\_size} is a run-time parameter and is at least
-1~KB.  AXI4 prohibits a burst from crossing a 4~KB boundary, so a
-transaction spans at most 4~KB, i.e.\ at most
+1~KB.  AXI4 prohibits a burst from crossing a 4~KB boundary, so a read spans
+at most 4~KB, i.e.\ at most
 \[
  \texttt{MAX\_PKTS} = 4\,\mathrm{KB} / 64\,\mathrm{B} = 64
 \]
-64-B MC packets.  A transaction can still cross at most three 1~KB row
+64-B MC packets.  A write emits \texttt{AWLEN + 1} MC packets, bounded to the
+same \texttt{MAX\_PKTS = 64} --- automatic for full-width writes and a
+design-time assertion \texttt{AWLEN + 1 $\le$ 64} for narrow writes
+(\S\ref{sec:overview}).  A transaction can still cross at most three 1~KB row
 boundaries; row crossings affect each packet's address, not the packet
 count.
 
@@ -24,9 +30,11 @@ At transaction acceptance, the selected read or write ROB allocates
 metadata and retains it for the whole transaction.  Stage~1 determines
 \texttt{exp\_pkts}, the number of 64-B MC packets, and presents it to the
 corresponding ROB; this is the sole source of the ROB's \texttt{exp\_pkts}.
-Because every AXI data beat is one 64-B unit (\S\ref{sec:overview}),
-\texttt{exp\_pkts = AxLEN + 1} for every transaction --- \texttt{INCR},
-\texttt{WRAP}, and \texttt{FIXED} alike.
+On the write path there is one MC packet per AXI write beat regardless of
+\texttt{AWSIZE} (\S\ref{sec:overview}), so \texttt{exp\_pkts = AWLEN + 1}.  On
+the read path \texttt{exp\_pkts} is the number of distinct 64-B lines the
+burst touches, computed per burst type in Stage~1; it is \emph{not}
+\texttt{ARLEN + 1}.
 
 \begin{center}
 \begin{tabular}{lll}
@@ -35,7 +43,7 @@ Because every AXI data beat is one 64-B unit (\S\ref{sec:overview}),
 \midrule
 \texttt{ROB\_INDEX} & 8 bits & Transaction index retained while packets issue\\
 \texttt{exp\_pkts} & 7 bits & Number of 64-B MC packets for the transaction, \texttt{1..64}\\
-\texttt{pkt\_idx} & 6 bits & \texttt{PACKET\_NUMBER} of the packet currently being emitted, \texttt{0..exp\_pkts-1}\\
+\texttt{pkt\_idx} & 6 bits & \texttt{PACKET\_NUMBER} of the packet currently being emitted, \texttt{0..exp\_pkts-1} (write: AXI beat index; read: 64-B line index)\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -47,12 +55,39 @@ tracked within it) is not fixed by this document.
 \subsection{Stage 1 --- packet-layout construction}
 
 Stage~1 receives address, burst length, size, burst type, AXID, packet type,
-and \texttt{ROB\_INDEX}.  It computes \texttt{exp\_pkts} --- the number of
-64-B MC packets the transaction requires, equal to \texttt{AxLEN + 1} given
-the 64-B-beat contract (\S\ref{sec:overview}) --- and the per-packet address
-layout.  For an \texttt{INCR} transaction packet \texttt{N} addresses byte
-\texttt{base + 64\,N}.  The AXI 4~KB constraint bounds \texttt{exp\_pkts}
-at 64.
+and \texttt{ROB\_INDEX}.  It computes \texttt{exp\_pkts} --- the number of MC
+packets the transaction requires --- and the per-packet address layout.  The
+per-transaction packet count is bounded at 64 (\S\ref{sec:overview}).
+
+\textbf{Write path} (\texttt{AWSIZE = 0..6}): one MC packet per AXI write
+beat, \texttt{exp\_pkts = AWLEN + 1}, \texttt{PACKET\_NUMBER} $=$ the AXI beat
+index.  Packet \texttt{N} carries \texttt{WDATA[511:0]} and \texttt{WMASK[63:0]}
+verbatim from that beat's \texttt{WSTRB}; its address is beat \texttt{N}'s AXI
+address (\texttt{INCR}: \texttt{base + N*(1 << AWSIZE)}; \texttt{WRAP}: the
+wrap-table entry; \texttt{FIXED}: \texttt{base}), mapped to its containing
+64-B line for \texttt{daddr}.  Narrow beats are not coalesced --- two beats in
+the same 64-B line are still two MC packets with partial \texttt{WMASK}.
+
+\textbf{Read path} (\texttt{ARSIZE = 0..6}): one packet per distinct 64-B
+line touched.  With \texttt{NB = 1 << ARSIZE}:
+\begin{itemize}[noitemsep]
+  \item \texttt{INCR}: \texttt{lo = ARADDR};
+        \texttt{hi = (ARADDR \& \textasciitilde(NB - 1)) + (ARLEN + 1)*NB - 1};
+        \texttt{first\_line = lo >> 6};
+        \texttt{exp\_pkts = (hi >> 6) - first\_line + 1}.
+  \item \texttt{WRAP}: \texttt{Total = (ARLEN + 1) << ARSIZE};
+        \texttt{WrapBoundary = ARADDR \& \textasciitilde(Total - 1)};
+        \texttt{first\_line = WrapBoundary >> 6};
+        \texttt{exp\_pkts = (Total <= 64) ? 1 : (Total >> 6)}.
+  \item \texttt{FIXED}: \texttt{lo = ARADDR};
+        \texttt{first\_line = lo >> 6}; \texttt{exp\_pkts = 1}.
+\end{itemize}
+Read packet \texttt{N} (\texttt{PACKET\_NUMBER = N}, the line index)
+addresses the 64-B line \texttt{first\_line + N}.  Unaligned first transfers
+are handled per AXI4 semantics by the Read Serializer
+(\S\ref{sec:read-serializer}): they change which bytes the first beat
+carries, not the line set, which \texttt{first\_line}/\texttt{exp\_pkts}
+already captures.
 
 For a read allocation, Stage~1 provides \texttt{exp\_pkts} to the read ROB
 before its \texttt{ROB\_INDEX} becomes visible at the relevant per-AXID Slot
@@ -66,9 +101,10 @@ order.  For each accepted packet it forms
  \texttt{GLOBAL\_TAG[13:0]=\{ROB\_INDEX[7:0],PACKET\_NUMBER[5:0]\}},
  \qquad \texttt{PACKET\_NUMBER=pkt\_idx}.
 \]
-Packet Formation receives the packet's 64-B-granular \texttt{addr}, packet
+Packet Formation receives the packet's 64-B line \texttt{addr}, packet
 type, and \texttt{GLOBAL\_TAG}; it serializes one MC request packet, carrying
-one 512-bit / 64-B data unit (write) or none (read).  No per-packet Read
+\texttt{WDATA[511:0]} + \texttt{WMASK[63:0]} for one AXI write beat (write) or
+no payload (read).  No per-packet Read
 Data Buffer handle is recorded --- the read ROB's contiguous
 \texttt{rd\_dbuf\_base} range was allocated at ROB initialization and packet
 \texttt{pkt\_idx}'s data lands at \texttt{rd\_dbuf\_base + pkt\_idx}.
@@ -78,15 +114,24 @@ stalls Stage~1 for the duration of a multi-packet transaction, preserving the
 packet layout and its associated \texttt{ROB\_INDEX}.  After the final
 accepted packet it returns to idle and permits the next Stage~1 transaction.
 
-\subsection{WRAP addressing}
+\subsection{WRAP and FIXED addressing}
 
-For an \texttt{INCR} transaction, packet \texttt{N}'s address is simply
-\texttt{base + 64\,N}.  For a \texttt{WRAP} transaction the beat addresses
-are not contiguous beyond the wrap boundary, so each packet's address is
-taken from the WRAP Beat Address Table --- one entry per beat, i.e.\ one per
-64-B MC packet, consumed in \texttt{pkt\_idx} order.  \texttt{exp\_pkts} and
-the per-packet \texttt{PACKET\_NUMBER} assignment are identical for
-\texttt{INCR} and \texttt{WRAP}; only the address source differs.
+This subsection describes the \emph{read}-path per-line layout.  On the write
+path there is one MC packet per AXI write beat for all three burst types, and
+packet \texttt{N}'s address is beat \texttt{N}'s AXI address (Stage~1, Write
+path).
+
+For a read \texttt{INCR} transaction, packet \texttt{N}'s 64-B line address is
+\texttt{first\_line + N} lines.  For a \texttt{WRAP} transaction the line set
+is the aligned \texttt{Total}-byte window based at \texttt{WrapBoundary}
+(Stage~1); packet \texttt{N} addresses line \texttt{first\_line + N} within
+that window, so the MC packets still cover a contiguous line range.
+\texttt{FIXED} produces a single line (\texttt{exp\_pkts = 1}).  The
+per-line \texttt{PACKET\_NUMBER} assignment (\texttt{0..exp\_pkts-1}) is
+identical across burst types; only \texttt{first\_line}/\texttt{exp\_pkts}
+differ.  Reconstructing the original AXI beat addresses --- \texttt{WRAP}
+wrap-around and narrow strides included --- is the Read Serializer's
+responsibility (\S\ref{sec:read-serializer}), not the splitter's.
 
 \subsection{Backpressure and error packets}
 
@@ -105,8 +150,9 @@ the per-packet \texttt{PACKET\_NUMBER} assignment are identical for
 
 \begin{itemize}[noitemsep]
   \item \texttt{exp\_pkts} is the number of 64-B MC packets generated by this
-        one transaction; it equals the transaction's 64-B AXI data-beat
-        count.
+        one transaction.  Write: the AXI write-beat count
+        (\texttt{AWLEN + 1}).  Read: the count of distinct 64-B lines touched
+        (Stage~1), generally less than \texttt{ARLEN + 1} for narrow bursts.
   \item \texttt{PACKET\_NUMBER} (\texttt{= pkt\_idx}) is assigned at packet
         emission, not allocation.
 \end{itemize}

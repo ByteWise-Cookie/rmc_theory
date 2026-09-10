@@ -17,11 +17,18 @@ downstream paths:
 
 The Request Validator contains a Configuration Register that stores the valid physical address range used for runtime address validation. 
 Apart from this internal configuration state, the Request Validator contains no per-transaction storage or counters; the read-path hazard gate is likewise combinational (\S\ref{sec:samelinehaz}).
-All protocol-level checks (burst type, WRAP legality, alignment, burst
-length, and the 64-B transfer size \texttt{AxSIZE = 6} with 64-B-aligned
-addressing that the MC packet contract requires) are enforced as design-time
-assertions in the verification environment only. Compliant AXI4 masters are
-assumed at runtime.
+All protocol-level checks (burst type, WRAP legality, alignment, and burst
+length) are enforced as design-time assertions in the verification
+environment only; compliant AXI4 masters are assumed at runtime. Both paths
+permit \texttt{AxSIZE = 0..6}, \texttt{INCR}/\texttt{WRAP}/\texttt{FIXED}, and
+unaligned first transfers where AXI4 permits them. On the \emph{read} path
+narrow/unaligned transfers are resolved by the Burst Splitter's per-line
+coalescing (\S\ref{sec:splitter}) and the Read Serializer
+(\S\ref{sec:read-serializer}). On the \emph{write} path each AXI write beat is
+one MC packet carrying \texttt{WDATA}/\texttt{WMASK}, so the only additional
+write-path assertion is \texttt{AWLEN + 1 $\le$ 64} (the per-transaction MC
+packet bound, \S\ref{sec:overview}); this replaces the earlier
+\texttt{AWSIZE = 6} assertion.
 
 % -----------------------------------------------------------------------
 \subsection{Design Parameters}
@@ -90,7 +97,7 @@ Represents the only persistent state within the Request Validator.
 \texttt{ADDR[31:0]}        & 32 & AR/AW Metadata FIFO & Transaction address \\
 \texttt{AXID[5:0]}         & 6  & AR/AW Metadata FIFO & AXI ID \\
 \texttt{ARLEN/AWLEN[7:0]}  & 8  & AR/AW Metadata FIFO & Burst length \\
-\texttt{ARSIZE/AWSIZE[2:0]} & 3 & AR/AW Metadata FIFO & Transfer size; feeds the 64\,B line footprint calc (\S\ref{sec:samelinehaz}) \\
+\texttt{ARSIZE/AWSIZE[2:0]} & 3 & AR/AW Metadata FIFO & Transfer size (\texttt{0..6}); feeds the 64\,B line footprint calc (\S\ref{sec:samelinehaz}) and the Burst Splitter per-beat/per-line layout (\S\ref{sec:splitter}) \\
 \texttt{ARBURST/AWBURST[1:0]} & 2 & AR/AW Metadata FIFO & Burst type; feeds the footprint calc (\S\ref{sec:samelinehaz}) \\
 \texttt{STALL}             & 1  & ROB Allocation      & Per-AXID stall; holds output until deasserted \\
 \texttt{HAZ\_HOLD}         & 1  & Same-line hazard gate & Read instance only. Head read overlaps an occupied \texttt{ROB\_WR} footprint (\S\ref{sec:samelinehaz}); behaves as \texttt{STALL} --- holds output, no FIFO pop \\
@@ -189,12 +196,14 @@ the full description and the MC-contract dependency.
         transaction may be held at the FIFO head by \texttt{HAZ\_HOLD}
         (\S\ref{sec:samelinehaz}) even when \texttt{STALL} is deasserted.
         The write path is unaffected.
-  \item \textbf{Protocol violations:} Illegal burst type, transfers that
-        are not 64-B / \texttt{AxSIZE = 6} or not 64-B-aligned, unaligned
-        WRAP, and maximum burst length violations are not checked at
-        runtime. They are enforced as design-time assertions in the
-        verification environment. A non-compliant master will cause
-        undefined behaviour.
+  \item \textbf{Protocol violations:} Illegal burst type, unaligned
+        \texttt{WRAP}, maximum burst length violations, and a write with
+        \texttt{AWLEN + 1 > 64} MC packets are not checked at runtime. They
+        are enforced as design-time assertions in the verification
+        environment. Narrow (\texttt{AxSIZE < 6}) and unaligned-first-transfer
+        reads \emph{and} writes are legal AXI4 and are supported
+        (\S\ref{sec:splitter}); they are not violations. A non-compliant
+        master will cause undefined behaviour.
   \item \textbf{Simultaneous valid and error:} Not possible —
         \texttt{addr\_ok} is a single-bit result; exactly one output
         path is active per transaction.

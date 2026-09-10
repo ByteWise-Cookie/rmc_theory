@@ -3,28 +3,40 @@
 
 The Client Interface (CIF) accepts AXI read and write transactions, validates
 them, divides each accepted transaction into up to 64 MC request packets (one
-per 64-B AXI data beat), and returns AXI responses in order for each AXID.
-Read and write traffic use independent instances of the same
+per AXI write beat on the write path; one per distinct aligned 64-B memory
+line touched on the read path), and returns AXI responses in order for each
+AXID.  Read and write traffic use independent instances of the same
 transaction-tracking ROB architecture.
 
 \subsection{Global assumptions}
 \begin{itemize}[noitemsep]
   \item AXID is 6 bits (64 AXI IDs); each ROB instance has 64 per-AXID Slot
         FIFOs, each of depth four.
-  \item One MC request packet carries one 512-bit / 64-B AXI data beat.  One
-        accepted AXI transaction produces up to 64 MC packets --- a beat
-        \emph{is} an MC packet.
-  \item Every AXI data beat transfers a full 64-B unit (\texttt{AxSIZE = 6})
-        at a 64-B-aligned address.  Like the other AXI-protocol constraints,
-        this is a design-time assumption verified by assertion, not a
-        runtime check (see the Request Validator); it is what makes one AXI
-        beat correspond to exactly one 64-B MC packet and
-        \texttt{exp\_pkts = AxLEN + 1}.
-  \item An AXI transaction must not cross 4~KB, so it produces at most
-        \texttt{MAX\_PKTS = 4\,KB / 64\,B = 64} MC packets.  With
-        runtime-configured \texttt{row\_size} of at least 1~KB, row
-        crossings are at most three and affect each packet's address, not
-        the packet count.
+  \item An MC request packet carries a 512-bit payload on a 64-B byte-lane
+        grid.  \textbf{Write path} (\texttt{AWSIZE = 0..6}): one MC packet per
+        AXI write beat, carrying \texttt{WDATA[511:0]} and \texttt{WMASK[63:0]}
+        (verbatim \texttt{WSTRB}); \texttt{exp\_pkts = AWLEN + 1}.  A narrow or
+        unaligned write beat occupies its natural byte lanes and \texttt{WMASK}
+        marks the valid bytes; \texttt{WMASK} not all-ones $\Rightarrow$ MC
+        read-modify-write.  \textbf{Read path} (\texttt{ARSIZE = 0..6}): an MC
+        packet is one distinct aligned 64-B line touched by the burst, several
+        narrow AXI read beats may map to one MC packet, and \texttt{exp\_pkts}
+        is the number of distinct 64-B lines (\S\ref{sec:splitter}), not
+        \texttt{ARLEN + 1}.
+  \item Narrow (\texttt{AxSIZE < 6}) and unaligned first transfers are legal
+        AXI4 on both paths and are not runtime-checked; full-width
+        (\texttt{AxSIZE = 6}, 64-B-aligned) transfers remain the common case.
+        This replaces the earlier write-path assumption of a fixed
+        \texttt{AWSIZE = 6} (see the Request Validator).
+  \item An AXI transaction must not cross 4~KB, so a \emph{read} produces at
+        most \texttt{MAX\_PKTS = 4\,KB / 64\,B = 64} MC packets.  A
+        \emph{write} produces \texttt{AWLEN + 1} MC packets; the same bound
+        \texttt{AWLEN + 1 $\le$ MAX\_PKTS = 64} is automatic for full-width
+        writes (4~KB rule) and is a design-time assertion for narrow writes,
+        so \texttt{PACKET\_NUMBER}, \texttt{completion\_bitmap}, and
+        \texttt{exp\_pkts} widths are unchanged.  With runtime-configured
+        \texttt{row\_size} of at least 1~KB, row crossings are at most three
+        and affect each packet's address, not the packet count.
   \item MC Core echoes the packet's \texttt{GLOBAL\_TAG} on completion, one
         response per accepted 64-B request packet (\S\ref{sec:cifmc-req}).
         Completion \texttt{status} encoding is frozen: \texttt{0}/\texttt{1}/\texttt{2}
@@ -40,7 +52,7 @@ transaction-tracking ROB architecture.
 \texttt{AXID\_W} & 6\\
 \texttt{ROB\_DEPTH} & 256 transactions per ROB instance\\
 \texttt{ROB\_INDEX\_W} & 8\\
-\texttt{DATA\_W} & 512: one 64-B AXI data beat per MC packet\\
+\texttt{DATA\_W} & 512: payload per MC packet (one AXI write beat; one returned 64-B read line feeding one or more AXI read beats)\\
 \texttt{PACKET\_NUMBER\_W} & 6\\
 \texttt{GLOBAL\_TAG\_W} & 14: \texttt{\{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}}\\
 \texttt{COMPLETION\_BITMAP\_W} & 64\\
@@ -64,7 +76,10 @@ before the entry becomes eligible for retirement.
 At packet emission, the Burst Splitter assigns \texttt{PACKET\_NUMBER}
 (\texttt{0..exp\_pkts-1}) and Packet Formation attaches
 \texttt{GLOBAL\_TAG = \{ROB\_INDEX[7:0], PACKET\_NUMBER[5:0]\}} (14 bits).
-This is the complete MC completion identity.
+This is the complete MC completion identity.  On the write path
+\texttt{PACKET\_NUMBER} is the AXI write-beat index; on the read path it is
+the 64-B line index within the transaction (\S\ref{sec:splitter}), not the
+AXI beat index.
 
 \section{Write path}
 \label{sec:writepath}
@@ -73,8 +88,8 @@ This is the complete MC completion identity.
 The AW Metadata FIFO, W Data FIFO, Request Validator, Error Handler, Burst
 Splitter, Packet Formation Unit, and Write Packet FIFO retain their existing
 roles.  The accepting write ROB allocates the transaction index.  The splitter
-generates up to 64 MC packets, one per 64-B AXI data beat, and the Write
-Packet FIFO forwards them to MC Core.
+generates one MC packet per AXI write beat (\texttt{AWSIZE = 0..6}), up to 64
+(\S\ref{sec:overview}), and the Write Packet FIFO forwards them to MC Core.
 
 \subsection{Write ROB and response}
 
@@ -105,8 +120,10 @@ The AR Metadata FIFO, Request Validator, Error Handler, Burst Splitter,
 Packet Formation Unit, and Read Packet FIFO retain their existing roles.  The
 read ROB allocates \texttt{ROB\_INDEX} at acceptance, subject to the same-line
 read/write hazard check at the AR Metadata FIFO head
-(\S\ref{sec:samelinehaz}).  The splitter emits up to 64 MC packets, each
-carrying a distinct \texttt{PACKET\_NUMBER} (\texttt{0..exp\_pkts-1}).
+(\S\ref{sec:samelinehaz}).  The splitter emits one MC packet per distinct
+64-B line touched by the read burst, up to 64, each carrying a distinct
+\texttt{PACKET\_NUMBER} (\texttt{0..exp\_pkts-1}) that is the line index, not
+the AXI beat index.
 
 \subsection{Read ROB, Data Buffer, and serializer}
 
@@ -118,15 +135,23 @@ returned 64-B data unit is written to \texttt{rd\_dbuf\_base + PACKET\_NUMBER}
 and \texttt{completion\_bitmap[PACKET\_NUMBER]} is set.
 
 Once a Slot FIFO head is complete, a Retiring Register holds its
-\texttt{ROB\_INDEX} while the Read Serializer emits
-\texttt{rd\_dbuf\_base + 0 .. rd\_dbuf\_base + exp\_pkts-1} in packet order,
-one AXI beat per 64-B MC packet.  \texttt{RLAST} is asserted on the final
-beat (\texttt{PACKET\_NUMBER == exp\_pkts - 1}); only after that beat is
-accepted and the \texttt{rd\_dbuf\_base} range released may the Slot FIFO be
-popped and \texttt{ROB\_INDEX} returned to the read Free List.  RD\_SRAM
-depth (hence \texttt{RD\_SRAM\_ADDR\_W}), its handshakes and latency remain
-\textbf{TBD}; its 128-entry watermark is its own capacity control, not ROB
-occupancy control.
+\texttt{ROB\_INDEX} while the Read Serializer emits \texttt{ARLEN + 1} AXI R
+beats reconstructed from the returned lines (\S\ref{sec:read-serializer}):
+beat \texttt{n}'s address is formed per \texttt{ARBURST}/\texttt{ARSIZE}
+(\texttt{WRAP} relative to \texttt{WrapBoundary}) and mapped to its 64-B line
+index (\texttt{0..exp\_pkts-1}), whose complete 64-B line at
+\texttt{rd\_dbuf\_base + PACKET\_NUMBER} drives \texttt{RDATA} with no lane
+realignment; several beats may share a line.  \texttt{RLAST} is asserted on
+the final AXI beat (\texttt{beat\_index == ARLEN}), not on the final line.
+Only after that beat is accepted and the \texttt{rd\_dbuf\_base} range
+released may the Slot FIFO be popped and \texttt{ROB\_INDEX} returned to the
+read Free List.  The serializer needs retained AXI burst metadata
+(\texttt{ARLEN}, \texttt{ARSIZE}, \texttt{ARBURST}, normalized base /
+\texttt{WrapBoundary}); its storage is subject to ROB reconciliation
+(\S\ref{sec:read-completion}).  RD\_SRAM depth (hence
+\texttt{RD\_SRAM\_ADDR\_W}), its handshakes and latency remain \textbf{TBD};
+its 128-entry watermark is its own capacity control, not ROB occupancy
+control.
 
 \subsection{Same-line read/write ordering}
 \label{sec:samelinehaz}
@@ -173,7 +198,12 @@ footprint, the read conflicts iff
 \]
 The read footprint is transient: used for the check only, stored nowhere.  No
 footprint or hazard state is added to \texttt{ROB\_RD}, and a completed read
-is never re-checked.
+is never re-checked.  This footprint is deliberately conservative
+(outward-rounded to whole 64\,B lines) and is a distinct quantity from the
+read's \texttt{exp\_pkts}: \texttt{exp\_pkts} is the \emph{exact} MC-line
+count (\S\ref{sec:splitter}) that sizes the completion bitmap and the
+RD\_SRAM allocation, whereas the hazard footprint need only be a safe
+superset of the touched lines.  The two are not merged and not shared.
 
 \textbf{Hold and release.} On any overlap the AR Metadata FIFO head is not
 popped and no read \texttt{ROB\_INDEX} is allocated; the hold uses the same
@@ -241,12 +271,19 @@ credit are available.  \texttt{resp\_afifo} is one merged stream;
 \end{tabular}
 \end{center}
 
-\noindent One request packet is one 64-B AXI data beat; up to
-\texttt{MAX\_PKTS = 64} per transaction.  \texttt{PACKET\_NUMBER} is the Burst
-Splitter \texttt{pkt\_idx}, \texttt{0..exp\_pkts-1}.  There is no
-\texttt{beat\_cnt}, \texttt{size}, or \texttt{len} field.  For WRAP bursts the
-CIF-side WRAP Beat Address Table produces the per-packet byte address that is
-then mapped to \texttt{daddr}.
+\noindent Up to \texttt{MAX\_PKTS = 64} request packets per transaction.  On
+the write path one MC packet is one AXI write beat (any \texttt{AWSIZE}),
+carrying \texttt{WDATA[511:0]} and \texttt{WMASK[63:0]} on the write-data
+packet (\S\ref{sec:cifmc}); on the read path one MC packet is one distinct
+64-B line touched by the burst, and multiple narrow AXI beats may map to it.
+\texttt{PACKET\_NUMBER} is the Burst Splitter \texttt{pkt\_idx},
+\texttt{0..exp\_pkts-1} --- the AXI beat index on the write path, the 64-B
+line index on the read path.  There is no \texttt{beat\_cnt}, \texttt{size},
+or \texttt{len} field; MC Core is unaware of
+\texttt{AxSIZE}/\texttt{AxLEN}/\texttt{AxBURST}.  For read \texttt{WRAP}
+bursts the CIF-side per-line address generation (\S\ref{sec:splitter}) uses
+\texttt{WrapBoundary} as the normalized base before the address is mapped to
+\texttt{daddr}.
 
 \subsection{Write-data packet}
 
@@ -255,8 +292,8 @@ then mapped to \texttt{daddr}.
 \toprule
 \textbf{Field} & \textbf{Width} & \textbf{Meaning}\\
 \midrule
-\texttt{wdata} & 512 & one 64-B write beat\\
-\texttt{wmask} & 64  & byte-enable, bit \texttt{i} $\leftrightarrow$ byte \texttt{i}, verbatim from AXI \texttt{WSTRB}.  \texttt{wmask} not all-ones $\Rightarrow$ MC read-modify-write\\
+\texttt{wdata} & 512 & one AXI write beat; a narrow/unaligned beat occupies its natural byte lanes\\
+\texttt{wmask} & 64  & byte-enable, bit \texttt{i} $\leftrightarrow$ byte \texttt{i}, verbatim from AXI \texttt{WSTRB}.  \texttt{wmask} not all-ones (narrow, unaligned, or partial-strobe write) $\Rightarrow$ MC read-modify-write\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -278,9 +315,11 @@ then mapped to \texttt{daddr}.
 \end{center}
 
 \noindent One MC completion sets exactly one \texttt{completion\_bitmap} bit,
-one per 64-B packet.  A packet completing is not \texttt{RLAST}:
-\texttt{RLAST} additionally requires \texttt{PACKET\_NUMBER == exp\_pkts - 1}
-and that beat to have been serialized and accepted downstream.
+one per 64-B line.  A packet completing is not \texttt{RLAST}: on the read
+path \texttt{RLAST} is a property of the reconstructed AXI beat stream
+(\texttt{beat\_index == ARLEN}), asserted by the Read Serializer on the final
+AXI beat once it has been accepted downstream, and is unrelated to which line
+completes last.
 
 \subsection{Flow control}
 
@@ -323,9 +362,9 @@ retirement (\S\ref{sec:fifo}).
 \end{tabular}
 \end{center}
 
-\noindent \texttt{status} is per-packet.  \textbf{Read:} each packet's mapped
-\texttt{RESP} drives \texttt{RRESP} for the AXI R beat it serializes into ---
-no aggregation.  \textbf{Write:} \texttt{resp\_status} is the worst-of over
+\noindent \texttt{status} is per-packet.  \textbf{Read:} each line's mapped
+\texttt{RESP} drives \texttt{RRESP} for every AXI R beat sourced from that
+64-B line --- no aggregation.  \textbf{Write:} \texttt{resp\_status} is the worst-of over
 the transaction's \texttt{exp\_pkts} \texttt{WR\_ACK}s, precedence
 \texttt{DECERR} $>$ \texttt{SLVERR} $>$ \texttt{OKAY} (numeric max of the
 \texttt{status} codes); the single AXI \texttt{BRESP} is
@@ -339,8 +378,10 @@ drives \texttt{alloc\_req}; at Metadata-RAM initialization it force-fills
 \texttt{completion\_bitmap[exp\_pkts-1:0]} and sets
 \texttt{resp\_status = SLVERR}, so the entry is immediately
 retirement-eligible and retires in Slot-FIFO order.  A read error emits
-\texttt{exp\_pkts} R beats with \texttt{RRESP = SLVERR} and undefined data,
-\texttt{rob\_last} on the final beat.  MC-detected faults on \emph{valid}
+\texttt{ARLEN + 1} R beats with \texttt{RRESP = SLVERR} and undefined data,
+\texttt{rob\_last} on the final AXI beat (\texttt{beat\_index == ARLEN}); the
+AXI error-beat count is \texttt{ARLEN + 1}, not \texttt{exp\_pkts}.
+MC-detected faults on \emph{valid}
 transactions are carried in the \texttt{status} field of the owning
 \texttt{RD\_DATA}/\texttt{WR\_ACK}, not as a distinct response type.
 
@@ -356,10 +397,12 @@ documentation is \emph{not} asserted to implement or to have verified them.
         response packet for every accepted 64-B request packet, echoing that
         packet's \texttt{GLOBAL\_TAG} unmodified.  No burst-level or
         transaction-level response grouping.  There is no \texttt{last} field
-        on the interface --- CIF derives \texttt{RLAST} from
-        \texttt{PACKET\_NUMBER == exp\_pkts - 1}.  Response packets for one
-        transaction may arrive in any order; CIF's \texttt{completion\_bitmap}
-        and \texttt{rd\_dbuf\_base + PACKET\_NUMBER} placement tolerate that.
+        on the interface --- on the read path CIF derives \texttt{RLAST} in
+        the Read Serializer from the reconstructed AXI beat stream
+        (\texttt{beat\_index == ARLEN}), independently of MC responses.
+        Response packets for one transaction may arrive in any order; CIF's
+        \texttt{completion\_bitmap} and
+        \texttt{rd\_dbuf\_base + PACKET\_NUMBER} placement tolerate that.
   \item \textbf{Write-completion safety (Issue \#11 dependency).}  MC shall
         issue \texttt{WR\_ACK} for a write packet only when that packet is
         complete \emph{and} a subsequent read to the same 64-B address is
