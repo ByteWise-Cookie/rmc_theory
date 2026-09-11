@@ -1,0 +1,202 @@
+\rowcolors{2}{}{rowg}
+{\footnotesize\begin{longtable}{@{}l r r r@{}}
+\toprule \textbf{Command pair} & \textbf{same bank} & \textbf{diff bank} & \textbf{diff rank}\\ \midrule \endhead
+ACT-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+ACT-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+ACT-BST & NA\,dep & NA\,dep & NA\,dep\\
+ACT-to-RD & 40 & 1 tCK & 1 tCK\\
+ACT-to-RDA & 40 & 1 tCK & 1 tCK\\
+ACT-to-WR & 40 & 1 tCK & 1 tCK\\
+ACT-to-WRA & 40 & 1 tCK & 1 tCK\\
+ACT-to-ACT & 117 & 12 & 1 tCK\\
+ACT-to-PRE & 77 & 1 tCK & 1 tCK\\
+ACT-to-PREA & 77 & 77 & 1 tCK\\
+ACT-to-AREF & 117 & 117 & 1 tCK\\
+ACT-to-SRE & sys & sys & sys\\
+ACT-to-PDE & sys & sys & sys\\
+ACT-to-MRS & sys & sys & sys\\
+RD-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+RD-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+RD-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+RD-to-RD & 12 & 8 & 10\\
+RD-to-RDA & 12 & 8 & 10\\
+RD-to-WR & 12 & 12 & 12\\
+RD-to-ACT & 58 & 1 tCK & 1 tCK\\
+RD-to-PRE & 18 & 1 tCK & 1 tCK\\
+RD-to-PREA & 18 & 18 & 1 tCK\\
+RD-to-WRA & 12 & 12 & 12\\
+RD-to-AREF & 58 & 58 & 1 tCK\\
+RD-to-SRE & sys & sys & sys\\
+RD-to PDE & sys & sys & sys\\
+RD-to-MRS & sys & sys & sys\\
+WR-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+WR-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+WR-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+WR-to-RD & 70 & 52 & 48\\
+WR-to-WRA & 48 & 8 & 10\\
+WR-to-WR & 48 & 8 & 10\\
+WR-to-ACT & 158 & 1 tCK & 1 tCK\\
+WR-to-PRE & 118 & 1 tCK & 1 tCK\\
+WR-to-PREA & 118 & 118 & 1 tCK\\
+WR-to-RDA & 100 & 52 & 48\\
+WR-to-AREF & 158 & 158 & 1 tCK\\
+WR-to-SRE & sys & sys & sys\\
+WR-to-PDE & sys & sys & sys\\
+WR-to-MRS & sys & sys & sys\\
+RDA-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+RDA-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+RDA-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+RDA-to-RD & 12 & 8 & 10\\
+RDA-to-WR & 12 & 12 & 12\\
+RDA-to-ACT & 58 & 1 tCK & 1 tCK\\
+RDA-to-PRE & NA & 1 tCK & 1 tCK\\
+RDA-to-PREA & NA & 18 & 1 tCK\\
+RDA-to-RDA & 12 & 8 & 10\\
+RDA-to-WRA & 12 & 12 & 12\\
+RDA-to-AREF & 58 & 58 & 1 tCK\\
+RDA-to-SRE & sys & sys & sys\\
+RDA-to PDE & sys & sys & sys\\
+RDA-to-MRS & sys & sys & sys\\
+WRA-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+WRA-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+WRA-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+WRA-to-RD & 100 & 52 & 48\\
+WRA-to-WR & 48 & 8 & 10\\
+WRA-to-WRA & 48 & 8 & 10\\
+WRA-to-ACT & 158 & 1 tCK & 1 tCK\\
+WRA-to-PRE & NA & 1 tCK & 1 tCK\\
+WRA-to-RDA & 100 & 52 & 48\\
+WRA-to-PREA & NA & 118 & 1 tCK\\
+WRA-to-AREF & 158 & 158 & 1 tCK\\
+WRA-to-SRE & sys & sys & sys\\
+WRA-to PDE & sys & sys & sys\\
+WRA-to-MRS & sys & sys & sys\\
+BST-to-DES & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-NOP & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-RD & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-WR & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-WRA & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-ACT & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-PRE & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-PREA & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-RDA & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-AREF & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-SRE & NA\,dep & NA\,dep & NA\,dep\\
+BST-to PDE & NA\,dep & NA\,dep & NA\,dep\\
+BST-to-MRS & NA\,dep & NA\,dep & NA\,dep\\
+PRE-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+PRE-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+PRE-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+PRE-to-RD & NA & 1 tCK & 1 tCK\\
+PRE-to-WR & NA & 1 tCK & 1 tCK\\
+PRE-to-WRA & NA & 1 tCK & 1 tCK\\
+PRE-to-ACT & 40 & 1 tCK & 1 tCK\\
+PRE-to-PRE & 1 tCK & 2 & 1 tCK\\
+PRE-to-PREA & 2 & 2 & 1 tCK\\
+PRE-to-RDA & NA & 1 tCK & 1 tCK\\
+PRE-to-AREF & 40 & 40 & 1 tCK\\
+PRE-to-SRE & sys & sys & sys\\
+PRE-to PDE & sys & sys & sys\\
+PRE-to-MRS & sys & sys & sys\\
+PREA-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+PREA-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+PREA-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+PREA-to-RD & NA & NA & 1 tCK\\
+PREA-to-RDA & NA & NA & 1 tCK\\
+PREA-to-WR & NA & NA & 1 tCK\\
+PREA-to-WRA & NA & NA & 1 tCK\\
+PREA-to-ACT & 40 & 40 & 1 tCK\\
+PREA-to-PRE & 2 & 2 & 1 tCK\\
+PREA-to-PREA & 2 & 2 & 1 tCK\\
+PREA-to-AREF & 40 & 40 & 1 tCK\\
+PREA-to-SRE & sys & sys & sys\\
+PREA-to-PDE & sys & sys & sys\\
+PREA-to-MRS & sys & sys & sys\\
+AREF-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+AREF-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+AREF-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+AREF-to-RD & NA & NA & 1 tCK\\
+AREF-to-WR & NA & NA & 1 tCK\\
+AREF-to-WRA & NA & NA & 1 tCK\\
+AREF-to-PRE & 708 & 708 & 1 tCK\\
+AREF-to-PREA & 708 & 708 & 1 tCK\\
+AREF-to-RDA & NA & NA & 1 tCK\\
+AREF-to-SRE & 708 & 708 & sys\\
+AREF-to-PDE & 708 & 708 & sys\\
+AREF-to-MRS & 708 & 708 & sys\\
+AREF-to-ACT & 708 & 708 & 1 tCK\\
+AREF-to-AREF & 708 & 708 & 1 tCK\\
+MRS-to-DES & 1 tCK & 1 tCK & 1 tCK\\
+MRS-to-NOP & 1 tCK & 1 tCK & 1 tCK\\
+MRS-to-BST & NA\,dep & NA\,dep & NA\,dep\\
+MRS-to-RD & 34 & 34 & sys\\
+MRS-to-WR & 34 & 34 & sys\\
+MRS-to-WRA & 34 & 34 & sys\\
+MRS-to-ACT & 34 & 34 & sys\\
+MRS-to-PRE & 34 & 34 & sys\\
+MRS-to-PREA & 34 & 34 & sys\\
+MRS-to-RDA & 34 & 34 & sys\\
+MRS-to-AREF & 34 & 34 & sys\\
+MRS-to-SRE & 34 & 34 & sys\\
+MRS-to PDE & 34 & 34 & sys\\
+MRS-to-MRS & 34 & 34 & sys\\
+SRE-to-DES & sys & sys & sys\\
+SRE-to-NOP & sys & sys & sys\\
+SRE-to-BST & sys & sys & sys\\
+SRE-to-RD & sys & sys & sys\\
+SRE-to-WR & sys & sys & sys\\
+SRE-to-WRA & sys & sys & sys\\
+SRE-to-ACT & sys & sys & sys\\
+SRE-to-PRE & sys & sys & sys\\
+SRE-to-PREA & sys & sys & sys\\
+SRE-to-RDA & sys & sys & sys\\
+SRE-to-AREF & sys & sys & sys\\
+SRE-to-SRE & sys & sys & sys\\
+SRE-to-SRX & sys & sys & sys\\
+SRE-to PDE & sys & sys & sys\\
+SRE-to-MRS & sys & sys & sys\\
+SRX-to-DES & sys & sys & sys\\
+SRX-to-NOP & sys & sys & sys\\
+SRX-to-BST & sys & sys & sys\\
+SRX-to-RD & 720 & 720 & sys\\
+SRX-to-WR & 720 & 720 & sys\\
+SRX-to-WRA & sys & sys & sys\\
+SRX-to-ACT & 720 & 720 & sys\\
+SRX-to-PRE & sys & sys & sys\\
+SRX-to-PREA & sys & sys & sys\\
+SRX-to-RDA & sys & sys & sys\\
+SRX-to-AREF & sys & sys & sys\\
+SRX-to-SRE & sys & sys & sys\\
+SRX-to PDE & sys & sys & sys\\
+SRX-to-MRS & sys & sys & sys\\
+PDE-to-DES & sys & sys & sys\\
+PDE-to-NOP & sys & sys & sys\\
+PDE-to-BST & sys & sys & sys\\
+PDE-to-RD & sys & sys & sys\\
+PDE-to-WR & sys & sys & sys\\
+PDE-to-WRA & sys & sys & sys\\
+PDE-to-ACT & sys & sys & sys\\
+PDE-to-PRE & sys & sys & sys\\
+PDE-to-PREA & sys & sys & sys\\
+PDE-to-RDA & sys & sys & sys\\
+PDE-to-AREF & sys & sys & sys\\
+PDE-to-SRE & sys & sys & sys\\
+PDE-to-PDE & sys & sys & sys\\
+PDE-to-MRS & sys & sys & sys\\
+PDE-to-PDX & sys & sys & sys\\
+PDX-to-DES & sys & sys & sys\\
+PDX-to-NOP & sys & sys & sys\\
+PDX-to-BST & sys & sys & sys\\
+PDX-to-RD & 18 & 18 & sys\\
+PDX-to-WR & 18 & 18 & sys\\
+PDX-to-WRA & sys & sys & sys\\
+PDX-to-ACT & 18 & 18 & sys\\
+PDX-to-PRE & sys & sys & sys\\
+PDX-to-PREA & sys & sys & sys\\
+PDX-to-RDA & sys & sys & sys\\
+PDX-to-AREF & sys & sys & sys\\
+PDX-to-SRE & sys & sys & sys\\
+PDX-to-MRS & sys & sys & sys\\
+PDX-to-PDE & sys & sys & sys\\
+\bottomrule\end{longtable}}

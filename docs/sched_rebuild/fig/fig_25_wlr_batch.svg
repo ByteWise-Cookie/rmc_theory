@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="680" viewBox="0 0 1180 680" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1180" height="680" fill="#ffffff"/>
+  <text x="530" y="44" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">rank r  (one lane)</text>
+  <text x="1140" y="60" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">x N_RANKS</text>
+  <text x="497" y="68" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">split by direction (stage 1)</text>
+  <rect x="380" y="88" width="44" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <rect x="424" y="88" width="44" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <rect x="468" y="88" width="44" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="380" y="80" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">rd_bp_fifo[r]</text>
+  <rect x="548" y="88" width="44" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <rect x="592" y="88" width="44" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <rect x="636" y="88" width="44" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="548" y="80" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">wr_bp_fifo[r]</text>
+  <text x="688" y="100" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">depth 16 - off-dir batch waits HERE (deep),</text>
+  <text x="688" y="118" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">never in the shallow lookahead window</text>
+  <line x1="446" y1="134" x2="446" y2="300" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="614" y1="134" x2="614" y2="300" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="446" y="152" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">rd</text>
+  <text x="614" y="152" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">wr</text>
+  <path d="M430 300 L630 300 L605.7 354 L454.3 354 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="530.0" y="331.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">wlr_sel</text>
+  <rect x="70" y="286" width="250" height="130" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="195.0" y="308" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">wlr_ctrl[r]</text>
+  <text x="82" y="332" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">batch_dir : R | W   (1b)</text>
+  <text x="82" y="356" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">batch_cnt : run length</text>
+  <text x="82" y="380" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">cap_R = 12    cap_W = 24..42</text>
+  <text x="82" y="404" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777" font-style="italic">turnaround_ctrl</text>
+  <line x1="322" y1="327" x2="424" y2="327" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="373" y="320" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">batch_dir</text>
+  <path d="M360 160 H300 V286" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="356" y="150" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">rd/wr empty,full</text>
+  <rect x="70" y="452" width="250" height="74" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="195.0" y="474" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">scoreboard[r]</text>
+  <text x="82" y="486" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas_dir</text>
+  <text x="82" y="508" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">turnaround gate  tWTR | tRTW</text>
+  <line x1="195" y1="452" x2="195" y2="418" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="207" y="438" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">flip price / dir</text>
+  <line x1="530" y1="354" x2="530" y2="470" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="523" y1="417" x2="537" y2="403" stroke="#000000" stroke-width="1.0"/>
+  <text x="540" y="426" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REQ_W</text>
+  <text x="514" y="402" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">{rob_index, phy_adr, op}</text>
+  <text x="514" y="420" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">single-dir stream</text>
+  <text x="530" y="494" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-&gt;  to lookahead (stage 2)</text>
+  <line x1="672" y1="176" x2="672" y2="610" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="700" y="300" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">flip batch_dir when:</text>
+  <text x="700" y="326" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">1. chosen FIFO drained (empty)   -&gt;  free flip, no waste</text>
+  <text x="700" y="348" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">2. batch_cnt == cap              -&gt;  starvation force</text>
+  <text x="700" y="380" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">sequence = drain-then-flip:</text>
+  <text x="716" y="402" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">stop pulling old dir</text>
+  <text x="716" y="422" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">let window + cells clear (old-dir tail issues)</text>
+  <text x="716" y="442" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">turnaround gate holds new-dir CAS (tWTR | tRTW)</text>
+  <text x="716" y="462" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">flip batch_dir, pull new dir</text>
+  <text x="700" y="496" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">asymmetry:</text>
+  <text x="774" y="496" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">R-&gt;W = tRTW 12    W-&gt;R = CWL+BL/2+tWTR 24..42</text>
+  <text x="716" y="516" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">=&gt; write batch runs LONGER (costlier to leave)</text>
+  <text x="700" y="550" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">residual mix:</text>
+  <text x="716" y="570" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">r/w stragglers in cells cleaned downstream by</text>
+  <text x="716" y="590" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">rank-bias (last_cas_dir streak bonus at rank_cas)</text>
+  <text x="40" y="654" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Direction lives ONLY in wlr_ctrl: batch_dir selects which split bp-FIFO feeds the one combined path; off-dir waits in its bp-FIFO. Lookahead sees one direction, stays direction-blind.</text>
+</svg>

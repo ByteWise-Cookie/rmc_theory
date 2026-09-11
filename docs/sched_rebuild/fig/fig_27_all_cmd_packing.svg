@@ -1,0 +1,301 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1030" viewBox="0 0 1120 1030" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="1030" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Every DDR5 command - phase width, scope, co-issue, per gear</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Extends fig_26.  C=CAS  A=ACT  P=PRE  R=REF  M=MRW/MRR  Z=ZQ  - =NOP.   grey border = solo (rank-exclusive).   1:1 dashed = straddles 2 bundles.</text>
+  <text x="55" y="100" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">COMMAND</text>
+  <text x="250" y="100" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">phases</text>
+  <text x="318" y="100" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">scope</text>
+  <text x="490" y="100" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">co-issue (1:4)</text>
+  <text x="765" y="86" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">example bundle</text>
+  <text x="805" y="100" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">1:4</text>
+  <text x="933" y="100" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">1:2</text>
+  <text x="1018" y="100" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">1:1</text>
+  <line x1="40" y1="110" x2="1090" y2="110" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="48" y="136" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">DATA - DQ burst  (&lt;=1 DQ-op / bundle, one shared burst)</text>
+  <line x1="40" y1="144" x2="1090" y2="144" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="55" y="184.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RD / RDA</text>
+  <text x="258" y="184.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2</text>
+  <text x="318" y="184.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank</text>
+  <text x="490" y="184.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">yes: + ACT/PRE diff-bank</text>
+  <rect x="765" y="166" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="793" y="166" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="807.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="821" y="166" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="835.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="849" y="166" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="863.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="905" y="166" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="933" y="166" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="947.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="990" y="166" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="1018" y="166" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1032.0" y="185.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <line x1="1018" y1="163" x2="1018" y2="197" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <text x="55" y="224.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">WR / WRA / MWR</text>
+  <text x="258" y="224.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2</text>
+  <text x="318" y="224.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank</text>
+  <text x="490" y="224.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">yes: + PRE filler</text>
+  <rect x="765" y="206" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="793" y="206" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="807.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="821" y="206" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="835.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="849" y="206" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="905" y="206" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="933" y="206" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="947.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="990" y="206" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="1018" y="206" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1032.0" y="225.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <line x1="1018" y1="203" x2="1018" y2="237" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <text x="55" y="264.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">MRR</text>
+  <text x="258" y="264.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2</text>
+  <text x="318" y="264.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">device (DQ)</text>
+  <text x="490" y="264.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">NO - DQ + device</text>
+  <rect x="765" y="246" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="793" y="246" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="807.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="821" y="246" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="246" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="762" y="243" width="118" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="905" y="246" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="933" y="246" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="947.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="902" y="243" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="990" y="246" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="1018" y="246" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1032.0" y="265.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <line x1="1018" y1="243" x2="1018" y2="277" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="987" y="243" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <text x="48" y="290" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">ROW / PRECHARGE</text>
+  <line x1="40" y1="298" x2="1090" y2="298" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="55" y="338.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ACT</text>
+  <text x="258" y="338.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2</text>
+  <text x="318" y="338.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank</text>
+  <text x="490" y="338.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">yes: + CAS diff-bank</text>
+  <rect x="765" y="320" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="793" y="320" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="807.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="821" y="320" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="835.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="849" y="320" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="863.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="905" y="320" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="933" y="320" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="947.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="990" y="320" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="1018" y="320" width="28" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1032.0" y="339.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <line x1="1018" y1="317" x2="1018" y2="351" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <text x="55" y="378.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">PRE</text>
+  <text x="258" y="378.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="378.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank</text>
+  <text x="490" y="378.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">filler: other bank</text>
+  <rect x="765" y="360" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="793" y="360" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="807.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="821" y="360" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="835.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="849" y="360" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="905" y="360" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="933" y="360" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="990" y="360" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="379.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <text x="55" y="418.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">PREsb</text>
+  <text x="258" y="418.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="418.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank in all BG (8)</text>
+  <text x="490" y="418.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">partial: non-target bank</text>
+  <rect x="765" y="400" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="793" y="400" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="400" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="835.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="849" y="400" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="863.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="905" y="400" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="933" y="400" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="990" y="400" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="419.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <text x="55" y="458.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">PREab</text>
+  <text x="258" y="458.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="458.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">rank (all banks)</text>
+  <text x="490" y="458.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">NO - solo</text>
+  <rect x="765" y="440" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="793" y="440" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="440" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="440" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="762" y="437" width="118" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="905" y="440" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="933" y="440" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="902" y="437" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="990" y="440" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="459.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="987" y="437" width="34" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <text x="48" y="484" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">REFRESH</text>
+  <line x1="40" y1="492" x2="1090" y2="492" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="55" y="532.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REFsb</text>
+  <text x="258" y="532.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="532.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank in all BG (8)</text>
+  <text x="490" y="532.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">partial: 24 banks feed DQ</text>
+  <rect x="765" y="514" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="793" y="514" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="514" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="835.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="849" y="514" width="28" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="863.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="905" y="514" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="933" y="514" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="990" y="514" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="533.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <text x="55" y="572.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REFab</text>
+  <text x="258" y="572.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="572.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">rank (all banks)</text>
+  <text x="490" y="572.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">NO - solo</text>
+  <rect x="765" y="554" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="793" y="554" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="554" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="554" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="762" y="551" width="118" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="905" y="554" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="933" y="554" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="902" y="551" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="990" y="554" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="573.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="987" y="551" width="34" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <text x="55" y="612.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RFMsb / RFMab</text>
+  <text x="258" y="612.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="612.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">BG / rank</text>
+  <text x="490" y="612.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">partial / solo</text>
+  <rect x="765" y="594" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="793" y="594" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="594" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="594" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="762" y="591" width="118" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="905" y="594" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="933" y="594" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="902" y="591" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="990" y="594" width="28" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="613.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R</text>
+  <rect x="987" y="591" width="34" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <text x="48" y="638" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">MODE . CAL . POWER  - device/rank state</text>
+  <line x1="40" y1="646" x2="1090" y2="646" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="55" y="686.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">MRW</text>
+  <text x="258" y="686.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2</text>
+  <text x="318" y="686.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">device</text>
+  <text x="490" y="686.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">NO - solo</text>
+  <rect x="765" y="668" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="793" y="668" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="807.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="821" y="668" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="668" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="762" y="665" width="118" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="905" y="668" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="933" y="668" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="947.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="902" y="665" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="990" y="668" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <rect x="1018" y="668" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1032.0" y="687.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">M</text>
+  <line x1="1018" y1="665" x2="1018" y2="699" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <rect x="987" y="665" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <text x="55" y="726.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ZQCAL (ZQCL/ZQCS)</text>
+  <text x="258" y="726.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1</text>
+  <text x="318" y="726.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">rank / channel</text>
+  <text x="490" y="726.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">NO - solo</text>
+  <rect x="765" y="708" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="779.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Z</text>
+  <rect x="793" y="708" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="708" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="708" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="762" y="705" width="118" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="905" y="708" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="919.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Z</text>
+  <rect x="933" y="708" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="902" y="705" width="62" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <rect x="990" y="708" width="28" height="28" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1004.0" y="727.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Z</text>
+  <rect x="987" y="705" width="34" height="34" fill="none" stroke="#777777" stroke-width="1.3"/>
+  <text x="55" y="766.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">MPC / SRE.SRX / PDE.PDX</text>
+  <text x="258" y="766.0" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1-2</text>
+  <text x="318" y="766.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">rank / device</text>
+  <text x="490" y="766.0" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b">NO - state change</text>
+  <rect x="765" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="779.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="793" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="807.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="821" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="835.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="849" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="863.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="905" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="919.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="933" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="947.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="990" y="748" width="28" height="28" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="1004.0" y="767.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <line x1="40" y1="796" x2="1090" y2="796" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="48" y="814" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">read-out</text>
+  <text x="48" y="836" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Co-issue is a 1:4 LUXURY: at 1:2 a 2-phase cmd fills both slots (no filler); at 1:1 it straddles 2 bundles. One object per bundle at 1:2 / 1:1.</text>
+  <text x="48" y="856" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">DQ rule: RD / WR / MRR share ONE burst -&gt; &lt;=1 DQ-op per bundle; MRR blocks a CAS.</text>
+  <text x="48" y="876" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Rank-exclusive (REFab, PREab, MRW, MRR, ZQ, RFMab, SR/PD) = SOLO bundle at every gear -&gt; gate whole rank.</text>
+  <text x="48" y="896" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Same-bank-scope (REFsb, PREsb, RFMsb) co-issue a CAS only at 1:4; at 1:2/1:1 they still spare the rank across adjacent bundles (stage 9).</text>
+  <text x="40" y="928" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Filler/co-issue exists only at 1:4 (4 slots); 1:2 fits one 2-phase object, 1:1 streams one phase/clk with 2-cyc cmds straddling. Rank-exclusive maintenance is solo at every gear.</text>
+</svg>

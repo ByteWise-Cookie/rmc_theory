@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="720" viewBox="0 0 1240 720" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="720" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Refresh engine - MR4 temperature-poll reload (per rank)</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tREFI reload = f(temp, FGR mode), NOT a fixed 9360. Purple = the MR4 temp-poll path. debt gives the +-8 slip.</text>
+  <circle cx="112" cy="140" r="34" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="112" y="140" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MR4_POLL</text>
+  <text x="112" y="154" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">tMR4</text>
+  <rect x="186" y="113" width="150" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="261.0" y="135" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRR(MR4)</text>
+  <text x="261.0" y="150" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">poll temp</text>
+  <line x1="146" y1="140" x2="184" y2="140" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="336" y1="140" x2="388" y2="140" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="388" y="113" width="180" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="478.0" y="135" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">TEMP_DECODE</text>
+  <text x="478.0" y="150" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">MR4 -&gt; 1x/2x/4x</text>
+  <line x1="261" y1="113" x2="261" y2="84" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="270" y="88" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">-&gt; sched (mrr_rdy)</text>
+  <line x1="478" y1="200" x2="478" y2="167" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="486" y="192" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">temp code (via DQ)</text>
+  <line x1="568" y1="140" x2="610" y2="140" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M610 118 L780 118 L756.6 170 L633.4 170 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="695.0" y="148.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">reload_sel</text>
+  <text x="695" y="108" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">9360 / 4680 / 2340</text>
+  <line x1="695" y1="92" x2="695" y2="116" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="695" y="188" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">sel: rate x FGR</text>
+  <line x1="780" y1="144" x2="835" y2="144" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <circle cx="880" cy="144" r="38" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="880" y="144" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">tREFI_CTR</text>
+  <text x="880" y="158" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">down /rank</text>
+  <text x="560" y="232" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">reload MOVES with temp: hot &gt;85C halves (2x), extreme quarters (4x)</text>
+  <rect x="186" y="113" width="150" height="54" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="261.0" y="135" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRR(MR4)</text>
+  <text x="261.0" y="150" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">poll temp</text>
+  <rect x="388" y="113" width="180" height="54" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="478.0" y="135" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">TEMP_DECODE</text>
+  <text x="478.0" y="150" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">MR4 -&gt; 1x/2x/4x</text>
+  <line x1="880" y1="182" x2="880" y2="250" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="888" y="220" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">hit 0</text>
+  <circle cx="880" cy="284" r="34" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="880" y="284" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DEBT</text>
+  <text x="880" y="298" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">++ / sat 8</text>
+  <rect x="560" y="257" width="250" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="685.0" y="279" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REF_DECIDE</text>
+  <text x="685.0" y="294" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">debt&gt;0 &amp; idle = opp ; ==7 = force</text>
+  <line x1="846" y1="284" x2="812" y2="284" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="300" y="257" width="230" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="415.0" y="279" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFSB_RR</text>
+  <text x="415.0" y="294" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">refresh_ba 0-&gt;3  =&gt; k</text>
+  <line x1="558" y1="284" x2="532" y2="284" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="300" y1="300" x2="300" y2="360" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M300 360 H120" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="116" y="356" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">ref_pending[bank k, BG0..7]  =&gt;  p_bit (CAS arb)</text>
+  <text x="116" y="372" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">assert on the 8 targets; drives drain-priority</text>
+  <rect x="300" y="440" width="210" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="405.0" y="462" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFSB_GO</text>
+  <text x="405.0" y="477" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">8-AND ref_rdy[k, BG0..7]</text>
+  <line x1="405" y1="540" x2="405" y2="496" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="405" y="556" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">ref_rdy[8]  &lt;-  target banks (state==IDLE)</text>
+  <line x1="512" y1="467" x2="556" y2="467" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="556" y="440" width="250" height="54" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="462" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">issue PREsb(k)+REFsb(k)</text>
+  <text x="681.0" y="477" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">override-inject -&gt; packer</text>
+  <line x1="806" y1="455" x2="900" y2="455" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="834" y="448" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">gate_rfc</text>
+  <line x1="806" y1="480" x2="900" y2="480" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="834" y="496" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFING(tRFCsb)</text>
+  <path d="M681 440 V400 H880 V318" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="700" y="396" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">refresh done -&gt; DEBT--</text>
+  <text x="40" y="690" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">MR4 poll sets rate 1x/2x/4x -&gt; reload mux picks 9360/4680/2340 -&gt; tREFI down-counter (per rank). Hit 0 -&gt; debt (+-8 slip). REFsb RR asserts ref_pending on bank k across 8 BGs (= p_bit); 8-AND ref_rdy -&gt; issue PREsb+REFsb, gate_rfc, DEBT--.</text>
+</svg>

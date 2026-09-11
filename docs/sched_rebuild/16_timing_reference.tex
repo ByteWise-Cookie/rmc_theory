@@ -1,0 +1,268 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=16mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+
+\definecolor{hdr}{RGB}{30,80,140}
+\definecolor{l0}{RGB}{207,232,192}
+\definecolor{l1}{RGB}{255,224,160}
+\definecolor{l2}{RGB}{255,193,132}
+\definecolor{l3}{RGB}{200,220,255}
+\definecolor{ff}{RGB}{110,110,110}
+\definecolor{rowg}{RGB}{244,246,240}
+
+\titleformat{\section}{\normalfont\Large\bfseries\color{hdr}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{hdr}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+
+\pagestyle{fancy}\fancyhf{}
+\lhead{\small\color{ff}RMC-core timing reference}
+\rhead{\small\color{ff}DDR5-4800B, one channel}
+\cfoot{\small\thepage}
+
+\newcommand{\tck}{0.4167}
+\newcommand{\p}[1]{\texttt{#1}}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries RMC-core — Timing-Constraint Reference}\\[3pt]
+{\small\color{ff}Every JEDEC delay, its arb-level scope, the command it gates, and the
+datapath-busy budget.\\
+Speed grade \textbf{DDR5-4800B}, $t_{CK}=\tck$\,ns, BL16 (one 64\,B packet = one CAS).
+All values in \textbf{CK} unless noted; ns $= \text{CK}\times\tck$.\\
+\textbf{Source:} JEDEC \texttt{JESD79-5} AC timing (Table 252 for turnaround) and the DDR5-4800B
+bin. Grade \textbf{4800B $=$ 40-40-40}: $t_{RCD}=t_{RP}=40$, $t_{RC}=117$, $t_{RAS}=77$, CWL$=38$.
+Command-pair structure from \texttt{DDR4\_Command\_Timing.csv}, values substituted with DDR5-4800B.
+(An earlier draft used $34/34/111$ from the Xilinx \texttt{DDR5\_timing\_params.csv} row --- that is
+the \textbf{4800A} grade / absolute JEDEC min, not 4800B; reverted to the 4800B bin here.)}
+\end{center}
+\vspace{2pt}
+
+\section{Gate model (recap)}
+Every command a bank can issue is legal only when its \textbf{4 folded 1-bit gates} are all
+high. Each timing parameter is owned by exactly one \emph{scope level} and drives one gate at
+that level; the resident gate the eligibility logic reads is the AND across levels:
+\[
+\p{can\_x} \;=\; \p{can\_x\_L0}\;\&\;\p{can\_x\_L1}\;\&\;\p{can\_x\_L2}\;\&\;\p{can\_x\_L3},
+\qquad x\in\{\p{act},\p{pre},\p{rcas},\p{wcas}\}.
+\]
+Each level bit is a comparator $\p{can\_x\_Ln} = \big(\text{GC} \ge \text{next\_x\_Ln}\big)$,
+where $\text{next\_x} = \text{GC}_{\text{issue}} + t$. Scopes:
+
+\begin{center}\small
+\begin{tabular}{@{}l l l l@{}}
+\toprule
+\textbf{Level} & \textbf{scope} & \textbf{instances} & \textbf{tracks} \\
+\midrule
+\rowcolor{l0}\p{L0} & same bank            & $N_{rank}\!\times\!32=64$ & this bank's own last op \\
+\rowcolor{l1}\p{L1} & same bank-group      & $N_{rank}\!\times\!8=16$  & any sibling bank in the BG \\
+\rowcolor{l2}\p{L2} & diff-BG, same rank   & $N_{rank}=2$              & rank-wide last op + tFAW window \\
+\rowcolor{l3}\p{L3} & diff rank            & $1$ (global)              & DQ-bus rank handoff \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Master parameter table}
+Value @ DDR5-4800B. \textbf{Level} = where the constraint is enforced.
+\textbf{Gates} = which \p{can\_*} it feeds.
+
+\rowcolors{2}{}{rowg}
+\begin{longtable}{@{}l r r l l p{6.1cm}@{}}
+\toprule
+\textbf{Param} & \textbf{CK} & \textbf{ns} & \textbf{Level} & \textbf{Gates} & \textbf{Meaning (from $\rightarrow$ to)} \\
+\midrule
+\endhead
+\p{tRCD}      & 40  & 16.7 & \cellcolor{l0}L0 & rcas,wcas & ACT $\rightarrow$ CAS: row-to-column, sense done \\
+\p{tRP}       & 40  & 16.7 & \cellcolor{l0}L0 & act       & PRE $\rightarrow$ ACT: row precharged, bank re-open-able \\
+\p{tRAS}      & 77  & 32.1 & \cellcolor{l0}L0 & pre       & ACT $\rightarrow$ PRE: min row-open time \\
+\p{tRC}       & 117 & 48.8 & \cellcolor{l0}L0 & act       & ACT $\rightarrow$ ACT same bank ($=$tRAS+tRP) \\
+\p{tRTP}      & 18  & 7.5  & \cellcolor{l0}L0 & pre       & RD $\rightarrow$ PRE: read-to-precharge \\
+\p{tWR}       & 72  & 30.0 & \cellcolor{l0}L0 & pre       & WR(last beat) $\rightarrow$ PRE: write-recovery, cell restore \\
+\p{tRRD\_L}   & 12  & 5.0  & \cellcolor{l1}L1 & act       & ACT $\rightarrow$ ACT same BG \\
+\p{tCCD\_L}   & 12  & 5.0  & \cellcolor{l1}L1 & rcas      & RD $\rightarrow$ RD same BG \\
+\p{tCCD\_L\_WR}& 48 & 20.0 & \cellcolor{l1}L1 & wcas      & WR $\rightarrow$ WR same BG (the write penalty) \\
+\p{tWTR\_L}   & 24  & 10.0 & \cellcolor{l1}L1 & rcas      & WR $\rightarrow$ RD same BG turnaround \\
+\p{tRRD\_S}   & 8   & 3.3  & \cellcolor{l2}L2 & act       & ACT $\rightarrow$ ACT diff BG \\
+\p{tCCD\_S}   & 8   & 3.3  & \cellcolor{l2}L2 & rcas,wcas & CAS $\rightarrow$ CAS diff BG ($=$ DQ heartbeat) \\
+\p{tWTR\_S}   & 6   & 2.5  & \cellcolor{l2}L2 & rcas      & WR $\rightarrow$ RD diff BG turnaround \\
+\p{tRTW}      & 12  & 5.0  & \cellcolor{l2}L2 & wcas      & RD $\rightarrow$ WR turnaround (rank-wide, no S/L split) \\
+\p{tFAW}      & 32  & 13.3 & \cellcolor{l2}L2 & act       & rolling 4-ACT window per rank \\
+\p{tPPD}      & 2   & 0.8  & \cellcolor{l2}L2 & pre       & PRE $\rightarrow$ PRE rank power budget \\
+\p{tRTRS}     & 2   & 0.8  & \cellcolor{l3}L3 & rcas,wcas & CAS $\rightarrow$ CAS diff rank: DQ-bus handoff \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Data-phase latencies (deterministic shift lines, not gates):}}\\
+\p{CL}        & 40  & 16.7 & --- & --- & RD CAS $\rightarrow$ first read beat on DQ (read latency) \\
+\p{CWL}       & 38  & 15.8 & --- & --- & WR CAS $\rightarrow$ first write beat on DQ (write latency) \\
+BL16 burst    & 8   & 3.3  & --- & --- & 8 CK on DQ per CAS ($=$BL/2), the busy window \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Maintenance (maintenance-engine owned, not in the arb gates):}}\\
+\p{tRFC1}     & 708 & 295  & ME  & gate\_rfc & REFab recovery (all-bank refresh) \\
+\p{tRFCsb}    & 312 & 130  & ME  & gate\_rfc & REFsb recovery (same-bank refresh) \\
+\p{tREFI}     & 9360& 3900 & ME  & ---       & average refresh interval (debt counter) \\
+\p{tMOD}      & 36  & 15.0 & ME  & ---       & mode-register update settle \\
+\p{tMRD}      & 16  & 6.7  & ME  & ---       & MRW-to-MRW \\
+\bottomrule
+\end{longtable}
+
+\section{Per-level gate equations}
+\rowcolors{1}{}{}
+
+\subsection{L0 — same bank (per cell $\times64$)}
+\begin{align*}
+\p{can\_act\_L0}  &= (\text{GC}\ge \text{lastPRE}+t_{RP}) \,\&\, (\text{GC}\ge \text{lastACT}+t_{RC})\\
+\p{can\_pre\_L0}  &= (\text{GC}\ge \text{lastACT}+t_{RAS}) \,\&\, (\text{GC}\ge \text{lastRD}+t_{RTP}) \,\&\, (\text{GC}\ge \text{lastWR}+t_{WR})\\
+\p{can\_rcas\_L0} &= (\text{GC}\ge \text{lastACT}+t_{RCD}) \,\&\, (\text{GC}\ge \text{lastCAS}+t_{CCD\_L}) \,\&\, (\text{GC}\ge \text{lastWR}+t_{WTR\_L})\\
+\p{can\_wcas\_L0} &= (\text{GC}\ge \text{lastACT}+t_{RCD}) \,\&\, (\text{GC}\ge \text{lastCAS}+t_{CCD\_L\_WR}) \,\&\, (\text{GC}\ge \text{lastRD}+t_{RTW})
+\end{align*}
+
+\subsection{L1 — same bank-group (per BG $\times16$, broadcast to its 4 banks)}
+\begin{align*}
+\p{can\_act\_L1}  &= \text{GC}\ge \text{lastACT}_{bg}+t_{RRD\_L}\\
+\p{can\_pre\_L1}  &= 1 \quad(\text{no same-BG PRE rule})\\
+\p{can\_rcas\_L1} &= (\text{GC}\ge \text{lastRD}_{bg}+t_{CCD\_L}) \,\&\, (\text{GC}\ge \text{lastWR}_{bg}+t_{WTR\_L})\\
+\p{can\_wcas\_L1} &= \text{GC}\ge \text{lastWR}_{bg}+t_{CCD\_L\_WR}
+\end{align*}
+
+\subsection{L2 — diff-BG, same rank (per rank $\times2$)}
+\begin{align*}
+\p{can\_act\_L2}  &= (\text{GC}\ge \text{lastACT}_{rk}+t_{RRD\_S}) \,\&\, (\text{GC}\ge \text{faw\_ts[oldest]}+t_{FAW})\\
+\p{can\_pre\_L2}  &= \text{GC}\ge \text{lastPRE}_{rk}+t_{PPD}\\
+\p{can\_rcas\_L2} &= (\text{GC}\ge \text{lastCAS}_{rk}+t_{CCD\_S}) \,\&\, (\text{GC}\ge \text{lastWR}_{rk}+t_{WTR\_S})\\
+\p{can\_wcas\_L2} &= (\text{GC}\ge \text{lastCAS}_{rk}+t_{CCD\_S}) \,\&\, (\text{GC}\ge \text{lastRD}_{rk}+t_{RTW})
+\end{align*}
+
+\subsection{L3 — diff rank (global $\times1$)}
+\begin{align*}
+\p{can\_act\_L3}  &= 1 \qquad \p{can\_pre\_L3} = 1 \quad(\text{cross-rank ACT/PRE free})\\
+\p{can\_rcas\_L3} = \p{can\_wcas\_L3} &= \underbrace{(\text{GC}\ge \p{dqFree\_ts})}_{\text{DQ occupancy}} \,\&\, \underbrace{\big[(\text{rank}{=}\text{last\_cas\_rank})\,?\,1:(\text{GC}\ge \text{last\_cas\_ts}+t_{RTRS})\big]}_{\text{bus handoff}}
+\end{align*}
+\noindent where $\p{dqFree\_ts}=\text{last\_cas\_ts}+\text{BL}/2\,(8)$, written by the packer at
+CAS-commit. \textbf{dqFree is the binding cross-rank floor:} same-rank CAS already pay
+$t_{CCD\_S}=8\ge$ burst, but a rank hop pays only $t_{RTRS}=2<8$ — tRTRS covers the electrical
+handoff (ODT/driver), \emph{not} the 8-CK burst occupancy, so without dqFree two ranks would dump
+overlapping bursts on DQ. A \emph{fresh/idle} CAS has $\p{dqFree\_ts}$ in the past $\Rightarrow$
+gate open, issue now. The RD$\leftrightarrow$WR \emph{direction-flip} hole is separate
+($t_{WTR}$/$t_{RTW}$, already carried at L0--L2 rank scope, since there CL$\ne$CWL). The CA-bus
+slot ($t_{caFree}$, 2-cyc $=$ 2 phases) and the data-engine-free check (WD\_SRAM fetch $+$
+splitter/accumulator busy $=$ burst $=$ subsumed by dqFree) live at the \textbf{packer}, not as
+selection gates.
+
+\section{Inter-command delay matrix}
+Effective spacing \textbf{from} the row command \textbf{to} the next, by relationship. This is
+the fold of the tables above into the numbers a scheduler actually waits (CK).
+
+\rowcolors{2}{}{rowg}
+\begin{center}\small
+\begin{tabular}{@{}l l r r r r@{}}
+\toprule
+\textbf{from} & \textbf{to} & \textbf{same bank} & \textbf{same BG} & \textbf{diff BG} & \textbf{diff rank} \\
+\midrule
+ACT & ACT & 117 (tRC)     & 12 (tRRD\_L) & 8 (tRRD\_S) & 0$^\dagger$ \\
+ACT & CAS & 40 (tRCD)     & ---          & ---         & --- \\
+RD  & RD  & 12 (tCCD\_L)  & 12 (tCCD\_L) & 8 (tCCD\_S) & $\sim$10 (tCCD\_S+tRTRS) \\
+WR  & WR  & 48 (tCCD\_L\_WR) & 48 (tCCD\_L\_WR) & 8 (tCCD\_S) & $\sim$10 \\
+WR  & RD  & 70            & 70           & 52          & $\sim$48$^\ddagger$ \\
+RD  & WR  & 12 (tRTW)     & 12           & 12          & 12 \\
+RD  & PRE & 18 (tRTP)     & ---          & ---         & --- \\
+WR  & PRE & 118$^\S$      & ---          & ---         & --- \\
+PRE & ACT & 40 (tRP)      & ---          & ---         & --- \\
+PRE & PRE & ---           & ---          & 2 (tPPD)    & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\footnotesize
+$^\dagger$ cross-rank ACT has no tRRD/tFAW — different rank, own budget (the multi-rank parallelism win).\\
+$^\ddagger$ WR$\rightarrow$RD cross-rank \emph{skips} tWTR (write-recovery is internal to the writing rank's array, no hazard for the other rank), but the write burst must still drain off DQ: $\approx$ CWL$+$burst$+$tRTRS $=38+8+2=48$.\\
+$^\S$ WR$\rightarrow$PRE $= $ CWL(38) $+$ burst(8) $+$ tWR(72) $= 118$ from the write CAS: the bank cannot close until the array cell finishes restoring. Derivations:
+WR$\rightarrow$RD same-BG $=$ CWL$+8+$tWTR\_L $=38+8+24=70$; diff-BG $=38+8+6=52$.}
+
+\section{Datapath-busy timing}
+The DQ bus is the real throughput limiter, not the command bus. One CAS $=$ one BL16 burst $=$
+\textbf{8 CK on DQ}. Sustained ceiling: \textbf{$\le 1$ CAS per 8 CK} $= t_{CCD\_S}$. Back-to-back
+diff-BG CAS at tCCD\_S$=8$ exactly fills the DQ with zero bubble (the DQ heartbeat); same-BG at
+tCCD\_L$=12$ leaves a 4-CK gap; same-BG writes at tCCD\_L\_WR$=48$ leave a 40-CK crater.
+
+\subsection{Read path (CAS to completion)}
+\begin{center}\small
+\begin{tabular}{@{}r l@{}}
+\toprule
+\textbf{CK from RD CAS} & \textbf{event} \\
+\midrule
+0    & RD CAS issued (col on CA bus) \\
+40   & first read beat on DQ ($=$CL); DQ busy \p{40..47} \\
+$\sim$48 & last beat captured; RD accumulator has full 64\,B \\
+$\sim$48 & one wide 512-b write into \p{RD\_SRAM} @ \p{dbuf\_addr} \\
+$\sim$49 & \p{rd\_done\{rob\_index,pkt\_num\}} $\rightarrow$ COMPLETION $\rightarrow$ resp AFIFO \\
+\bottomrule
+\end{tabular}
+\end{center}
+\p{RL\_line} is a deterministic CL-deep shift carrying only \p{\{rob\_index,dbuf\_addr\}}; it
+self-pops at CL. No CAM. Completion never fires before the final beat is committed to SRAM.
+
+\subsection{Write path (CAS to retire) --- two separate completion events}
+\begin{center}\small
+\begin{tabular}{@{}r l@{}}
+\toprule
+\textbf{CK from WR CAS} & \textbf{event} \\
+\midrule
+0    & WR CAS issued (col on CA bus) \\
+38   & first write beat driven on DQ ($=$CWL); WD splitter reads 512\,b from \p{WD\_SRAM} \\
+46   & last beat driven; DQ free \\
+\textbf{46} & \textbf{CIF-facing done}: \p{wr\_done} $\rightarrow$ COMPLETION, \p{wd\_slot} freed (self-timed, no bus ack) \\
+\textbf{118}& \textbf{bank retire}: $46+t_{WR}(72)$ --- earliest the bank may PRE \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Two distinct events} (do not conflate): the CIF completion + slot free at \textbf{46}
+(write is fire-and-forget, controller-generated, no DRAM response), and the array-level retire at
+\textbf{118} (the cell capacitor finished charging). Precharging before 118 disconnects the sense
+amps mid-restore $\Rightarrow$ data loss. This is why a same-bank write streak stacks tWR: each
+different-row write pays the full close cycle.
+
+\subsection{Physical write cycle (why same-bank writes cost 198)}
+\p{WR $\rightarrow$ PRE} $=118$, $+\,t_{RP}(40)\rightarrow$ ACT @ 158, $+\,t_{RCD}(40)\rightarrow$
+WR @ 198. So a same-bank \emph{different-row} write cycle $=198$ CK; a same-row write is just
+$t_{CCD\_L\_WR}=48$ (no PRE, tWR paid once at the final close). Read cycle same-bank different-row
+$= t_{RC}=117$.
+
+\section{Datapath timing constraints (summary)}
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt]
+\item \textbf{DQ ceiling:} $\le1$ CAS / 8 CK sustained. Extra command-bus phases fill with
+      ACT/PRE/REF to \emph{other} banks.
+\item \textbf{Read latency:} data lands CL$=40$ CK after RD CAS; RD accumulator does one 512-b
+      SRAM write per packet (no per-beat dribble).
+\item \textbf{Write latency:} data leaves CWL$=38$ CK after WR CAS; WR splitter does one 512-b
+      SRAM read per packet.
+\item \textbf{Write retire:} bank locked from PRE until CAS$+118$; CIF completion decoupled at
+      CAS$+46$.
+\item \textbf{Turnaround on one DQ bus:} R$\rightarrow$W $=$ tRTW$=12$; W$\rightarrow$R $=$ CWL$+8+$tWTR
+      ($70$/$52$ same/diff-BG), skipped cross-rank ($\sim$tRTRS).
+\item \textbf{RL/WL lines carry no timestamp} --- fixed shift depth \emph{is} the timing; load at
+      CAS-commit, self-pop at CL/CWL.
+\item \textbf{Gear:} at 1:$N$, $1$ mc\_clk $=N$ CK; GC counts CK and advances by $N$/mc\_clk so
+      all deadlines stay CK-granular. Accumulator/splitter are the only gear-aware blocks.
+\end{itemize}
+
+\section{Full JEDEC command-to-command matrix (DDR5-4800B)}
+Every command pair from the JESD79 command matrix (\texttt{DDR4\_Command\_Timing.csv} structure),
+evaluated with the DDR5-4800B constants above (CK). \textbf{same bank} / \textbf{diff bank} /
+\textbf{diff rank} scopes. ``—'' $=$ illegal in that state; ``sys'' $=$ system-dependent (max
+window). Auto-precharge (RDA/WRA), self-refresh (SRE/SRX), power-down (PDE/PDX) and MRS rows are
+included for completeness --- the scheduler uses only the ACT/RD/WR/PRE/REF families; the rest are
+maintenance-engine / init-path.
+\input{_cmd_matrix}
+
+\end{document}
