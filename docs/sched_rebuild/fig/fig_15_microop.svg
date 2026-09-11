@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="660" viewBox="0 0 1160 660" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1160" height="660" fill="#ffffff"/>
+  <text x="1150" y="30" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">enc-tagged micro-op  -  ~36 b / lane, union operand</text>
+  <text x="120" y="60" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">assembled</text>
+  <text x="120" y="74" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">(at packer)</text>
+  <rect x="120.0" y="74" width="50.6" height="52" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="145.3" y="101.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">enc</text>
+  <text x="145.3" y="116.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">2</text>
+  <rect x="170.6" y="74" width="25.3" height="52" fill="#f4f4f4" stroke="#000000" stroke-width="1.6"/>
+  <text x="183.25" y="101.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">dir</text>
+  <text x="183.25" y="116.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">1</text>
+  <rect x="195.9" y="74" width="151.8" height="52" fill="#e3f2f1" stroke="#000000" stroke-width="1.6"/>
+  <text x="271.8" y="101.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">idx</text>
+  <text x="271.8" y="116.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">rank1·bg3·bank2</text>
+  <rect x="347.70000000000005" y="74" width="683.1" height="52" fill="#e9f0dc" stroke="#000000" stroke-width="1.6"/>
+  <text x="689.25" y="101.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">operand  (tagged union)</text>
+  <text x="689.25" y="116.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">27 = widest member (CAS)</text>
+  <text x="335.70000000000005" y="168" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">enc =</text>
+  <text x="120" y="168" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#000000" font-weight="bold">PRE</text>
+  <rect x="347.70000000000005" y="150" width="683.1" height="34" fill="none" stroke="#777777" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="689.25" y="172" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">(idx only - no operand)</text>
+  <text x="120" y="214" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#000000" font-weight="bold">ACT</text>
+  <rect x="347.70000000000005" y="196" width="455.40000000000003" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.6"/>
+  <text x="575.4000000000001" y="214.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">row</text>
+  <text x="575.4000000000001" y="229.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">18</text>
+  <rect x="803.1" y="196" width="227.70000000000002" height="34" fill="none" stroke="#777777" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="916.95" y="217" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">unused</text>
+  <text x="120" y="260" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#000000" font-weight="bold">CAS</text>
+  <rect x="347.70000000000005" y="242" width="253.0" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="474.20000000000005" y="260.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">col</text>
+  <text x="474.20000000000005" y="275.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">10</text>
+  <rect x="600.7" y="242" width="227.70000000000002" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="714.5500000000001" y="260.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">sram_addr</text>
+  <text x="714.5500000000001" y="275.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">9  (dbuf|wd_slot)</text>
+  <rect x="828.4" y="242" width="202.4" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="929.6" y="260.0" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">rob_index</text>
+  <text x="929.6" y="275.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">8</text>
+  <text x="689.25" y="296" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">only enc==CAS carries data + arms the RD/WL engine (via sram_addr)</text>
+  <text x="80" y="350" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">enc rides every level - keys the per-scope timing check:</text>
+  <rect x="60" y="380" width="205" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="162.5" y="402" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CMD_ARB</text>
+  <text x="162.5" y="420" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">L0 same-bank</text>
+  <text x="162.5" y="440" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">PRE:tRAS/tRTP/tWR</text>
+  <text x="162.5" y="453" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT:tRC</text>
+  <text x="162.5" y="466" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS:tCCD_Lsb</text>
+  <line x1="265" y1="428.0" x2="273" y2="428.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="273" y="380" width="205" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="375.5" y="402" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BGB_ARB</text>
+  <text x="375.5" y="420" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">L1 bank-in-BG</text>
+  <text x="375.5" y="440" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS hit-bias · ACT age</text>
+  <line x1="478" y1="428.0" x2="486" y2="428.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="486" y="380" width="205" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="588.5" y="402" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BG_ARB</text>
+  <text x="588.5" y="420" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">L2 BG-in-rank</text>
+  <text x="588.5" y="440" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS:tCCD_S/L +diffBG</text>
+  <text x="588.5" y="453" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT:tRRD_S/L</text>
+  <line x1="691" y1="428.0" x2="699" y2="428.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="699" y="380" width="205" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="801.5" y="402" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RANK_ARB</text>
+  <text x="801.5" y="420" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">L3 cross-rank</text>
+  <text x="801.5" y="440" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS+dir:tWTR/tRTW/tRTRS</text>
+  <text x="801.5" y="453" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT:tFAW</text>
+  <line x1="904" y1="428.0" x2="912" y2="428.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="912" y="380" width="205" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1014.5" y="402" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHASE_PACKER</text>
+  <text x="1014.5" y="420" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">CA + data</text>
+  <text x="1014.5" y="440" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">enc-&gt;CA decode; arm iff CAS</text>
+  <line x1="60" y1="502" x2="1117" y2="502" stroke="#efe6fb" stroke-width="3"/>
+  <text x="60" y="520" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">only {enc, dir} + grant ride the tree (3 b) - operand fetched once at the packer by idx</text>
+  <text x="40" y="640" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">One enc-tagged micro-op rides the arb tree: enc reinterprets a 27-b union operand (ACT row and CAS {col,sram,rob} share slots) and keys the per-scope timing at every level.</text>
+</svg>

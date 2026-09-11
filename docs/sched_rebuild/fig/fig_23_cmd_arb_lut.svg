@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1500" height="760" fill="#ffffff"/>
+  <text x="1490" y="30" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">CMD_ARB lookup  -  legal / illegal / what fires downstream</text>
+  <text x="30" y="58" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">CMD_ARB decision table   (tier-1, per bank)</text>
+  <text x="30" y="78" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">at most ONE bank_cmd fires (need_* are state-exclusive).  FIRE = {bank_go=1, bank_cmd} -&gt; BGB_ARB.   WAIT/STALL = bank_go=0, bank_rdy low = back-pressure.</text>
+  <rect x="30" y="96" width="150" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="105.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">bank state</text>
+  <rect x="180" y="96" width="150" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="255.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">packet vs open_row</text>
+  <rect x="330" y="96" width="78" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="369.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">pre_pend</text>
+  <rect x="408" y="96" width="108" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="462.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">need</text>
+  <rect x="516" y="96" width="320" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="676.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">gate  (can_* required)</text>
+  <rect x="836" y="96" width="214" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="943.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">FIRE  -&gt; BGB_ARB</text>
+  <rect x="1050" y="96" width="118" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="1109.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">gate low</text>
+  <rect x="1168" y="96" width="272" height="32" fill="#e3f2f1" stroke="#000000" stroke-width="1.3"/>
+  <text x="1304.0" y="117" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ILLEGAL here (forced 0)</text>
+  <rect x="30" y="128" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">IDLE</text>
+  <rect x="180" y="128" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">no open row</text>
+  <rect x="330" y="128" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">0</text>
+  <rect x="408" y="128" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">need_act</text>
+  <rect x="516" y="128" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="154.0" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">can_act: tRP · tRC · tRRD_S/L · tFAW[4]</text>
+  <rect x="836" y="128" width="214" height="44" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT  (open_row&lt;-row)</text>
+  <rect x="1050" y="128" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">WAIT</text>
+  <rect x="1168" y="128" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="154.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS (no row) · PRE (nothing)</text>
+  <rect x="30" y="172" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACTIVATING</text>
+  <rect x="180" y="172" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">- (tRCD running)</text>
+  <rect x="330" y="172" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">0</text>
+  <rect x="408" y="172" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="516" y="172" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">tRCD not elapsed</text>
+  <rect x="836" y="172" width="214" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">NOP / STALL</text>
+  <rect x="1050" y="172" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">STALL</text>
+  <rect x="1168" y="172" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="198.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS(&lt;tRCD) · ACT · PRE</text>
+  <rect x="30" y="216" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN</text>
+  <rect x="180" y="216" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">HIT  (row ==)</text>
+  <rect x="330" y="216" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">0</text>
+  <rect x="408" y="216" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">need_cas</text>
+  <rect x="516" y="216" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="242.0" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">can_cas: tCCD_S/L · dir tWTR/tRTW · tCCD_L_WR</text>
+  <rect x="836" y="216" width="214" height="44" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS  (col, arms data)</text>
+  <rect x="1050" y="216" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">WAIT</text>
+  <rect x="1168" y="216" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="242.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT (re-open) · PRE (needed row)</text>
+  <rect x="30" y="260" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN</text>
+  <rect x="180" y="260" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">MISS  (row !=)</text>
+  <rect x="330" y="260" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">0</text>
+  <rect x="408" y="260" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">need_pre</text>
+  <rect x="516" y="260" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">can_pre: tRAS · tRTP · tWR</text>
+  <rect x="836" y="260" width="214" height="44" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">PRE  (sets pre_pending)</text>
+  <rect x="1050" y="260" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">WAIT</text>
+  <rect x="1168" y="260" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="286.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS = WRONG ROW! · ACT (row open)</text>
+  <rect x="30" y="304" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN</text>
+  <rect x="180" y="304" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">MISS</text>
+  <rect x="330" y="304" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">1</text>
+  <rect x="408" y="304" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">- (PRE in flight)</text>
+  <rect x="516" y="304" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">await PRE commit</text>
+  <rect x="836" y="304" width="214" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">NOP -&gt; PRECHARGING</text>
+  <rect x="1050" y="304" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">hold</text>
+  <rect x="1168" y="304" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="330.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS · ACT · new admit</text>
+  <rect x="30" y="348" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">PRECHARGING</text>
+  <rect x="180" y="348" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">- (tRP running)</text>
+  <rect x="330" y="348" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">1-&gt;0</text>
+  <rect x="408" y="348" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="516" y="348" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">tRP not elapsed</text>
+  <rect x="836" y="348" width="214" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">NOP / STALL</text>
+  <rect x="1050" y="348" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">STALL</text>
+  <rect x="1168" y="348" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="374.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT(&lt;tRP) · CAS</text>
+  <rect x="30" y="392" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">IDLE (post-PRE)</text>
+  <rect x="180" y="392" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">act_path held</text>
+  <rect x="330" y="392" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">0</text>
+  <rect x="408" y="392" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">need_act</text>
+  <rect x="516" y="392" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="418.0" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">can_act: tRP-done · tRRD · tFAW[4]</text>
+  <rect x="836" y="392" width="214" height="44" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT</text>
+  <rect x="1050" y="392" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">WAIT</text>
+  <rect x="1168" y="392" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="418.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS · PRE</text>
+  <rect x="30" y="436" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">OPEN (post-ACT)</text>
+  <rect x="180" y="436" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">now HIT</text>
+  <rect x="330" y="436" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">0</text>
+  <rect x="408" y="436" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">need_cas</text>
+  <rect x="516" y="436" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="462.0" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">can_cas: tRCD-done · tCCD · dir</text>
+  <rect x="836" y="436" width="214" height="44" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS</text>
+  <rect x="1050" y="436" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">WAIT</text>
+  <rect x="1168" y="436" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="462.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ACT · PRE</text>
+  <rect x="30" y="480" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">REFING</text>
+  <rect x="180" y="480" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">- (gate_rfc)</text>
+  <rect x="330" y="480" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="408" y="480" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="516" y="480" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">gate_rfc high (bank locked)</text>
+  <rect x="836" y="480" width="214" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">NOP / STALL</text>
+  <rect x="1050" y="480" width="118" height="44" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">STALL</text>
+  <rect x="1168" y="480" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="506.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ALL</text>
+  <rect x="30" y="524" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="105.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">any</text>
+  <rect x="180" y="524" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="255.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">MAINT due</text>
+  <rect x="330" y="524" width="78" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="369.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="408" y="524" width="108" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="462.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ref_pending</text>
+  <rect x="516" y="524" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="676.0" y="550.0" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">ME override priority (init&gt;ref_urgent&gt;..)</text>
+  <rect x="836" y="524" width="214" height="44" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="943.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">REF ; FSM-&gt;IDLE</text>
+  <rect x="1050" y="524" width="118" height="44" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="1109.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">-</text>
+  <rect x="1168" y="524" width="272" height="44" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="1304.0" y="550.0" font-size="10.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">CAS suppressed · open_row lost</text>
+  <rect x="30" y="594" width="22" height="16" fill="#cfe8c0" stroke="#000000" stroke-width="1.0"/>
+  <text x="60" y="607" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">FIRE</text>
+  <text x="170" y="607" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">real cmd to BGB_ARB (bank_go=1)</text>
+  <rect x="30" y="618" width="22" height="16" fill="#ffe0a0" stroke="#000000" stroke-width="1.0"/>
+  <text x="60" y="631" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">WAIT/STALL</text>
+  <text x="170" y="631" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">bank_go=0, bank_rdy low = back-pressure</text>
+  <rect x="30" y="642" width="22" height="16" fill="#f3c0b8" stroke="#000000" stroke-width="1.0"/>
+  <text x="60" y="655" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">ILLEGAL</text>
+  <text x="170" y="655" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">state gate forces rdy=0 - can never assert</text>
+  <text x="30" y="680" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b" font-weight="bold">KEY GUARD:  CAS fires ONLY on (HIT &amp; OPEN &amp; !pre_pending) - a MISS never emits CAS -&gt; no wrong-row read/write (silent corruption).</text>
+  <text x="30" y="700" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">MISS path = PRE -&gt; (tRP) -&gt; ACT -&gt; (tRCD) -&gt; CAS ; cell occupied (bank_rdy=0) the whole sequence, only that bank's lane stalls.</text>
+  <text x="30" y="720" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#c0392b" font-weight="bold">ROW-CLOSE:  PRE / REF close the row -&gt; MUST write FSM (state-&gt;IDLE, valid=0).  CAS is ROWLESS -&gt; state is the ONLY guard ; a refresh-invalidated hit re-qualifies to MISS -&gt; re-ACT.</text>
+  <text x="30" y="748" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">CMD_ARB: index by {bank state, packet vs open_row, pre_pending} -&gt; the gate says wait-or-go, the FIRE column is the single bank_cmd sent to BGB_ARB, the ILLEGAL column is blocked by construction (state-gated need_*).</text>
+</svg>
