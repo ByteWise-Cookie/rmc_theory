@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="760" viewBox="0 0 1240 760" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="760" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Maintenance Engine &lt;-&gt; new scheduler (4 seams)</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ME STEERS the demand arb via p_bit, reads ref_rdy, then INJECTS me_cmd at the packer. No override stage - it rides the class-split arb.</text>
+  <rect x="110" y="100" width="360" height="50" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="470" y="92" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">BANK_CELLS  x32</text>
+  <text x="470" y="76" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">need_* &amp; can_* -&gt; class ready</text>
+  <rect x="110" y="196" width="105" height="48" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="215" y="188" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PRE_ARB</text>
+  <rect x="232" y="196" width="105" height="48" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="337" y="188" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">ACT_ARB</text>
+  <rect x="354" y="196" width="116" height="48" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="412" y="216" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CAS_ARB</text>
+  <text x="412" y="232" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">+ p_bit</text>
+  <line x1="162" y1="150" x2="162" y2="196" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="284" y1="150" x2="284" y2="196" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="412" y1="150" x2="412" y2="196" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="150" y="288" width="320" height="46" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="470" y="280" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">L3   cas/act/pre 2:1 per class</text>
+  <line x1="162" y1="244" x2="162" y2="288" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="284" y1="244" x2="284" y2="288" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="412" y1="244" x2="412" y2="288" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="150" y="372" width="320" height="54" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="470" y="364" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PHASE_PACKER</text>
+  <text x="470" y="348" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">-&gt; token bundle</text>
+  <line x1="310" y1="334" x2="310" y2="372" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="150" y="460" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="470" y="452" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">CA-BEAT ENCODER</text>
+  <line x1="310" y1="426" x2="310" y2="460" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="150" y="528" width="320" height="44" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="470" y="520" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">DFI_MUX  (sel init_done)</text>
+  <line x1="310" y1="504" x2="310" y2="528" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="310" y1="572" x2="310" y2="606" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="322" y="598" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">-&gt; DFI / PHY / DRAM</text>
+  <rect x="600" y="150" width="310" height="176" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="755.0" y="172" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MAINT ENGINE</text>
+  <text x="755.0" y="187" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">6 FSMs -&gt; priority-select</text>
+  <text x="755" y="250" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">refresh . rfm . zq</text>
+  <text x="755" y="268" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">mrr . mrw . init</text>
+  <text x="755" y="292" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">(fig_31)</text>
+  <rect x="600" y="460" width="310" height="74" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="910" y="452" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">SCOREBOARD (shared)</text>
+  <text x="910" y="436" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">gate_rfc/zq . RAA . tREFI . can_*</text>
+  <line x1="598" y1="226" x2="474" y2="220" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="486" y="180" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">(1) ref_pending</text>
+  <text x="486" y="194" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">-&gt; p_bit  (drain-steer)</text>
+  <line x1="472" y1="122" x2="598" y2="180" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="486" y="112" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">(2) ref_rdy 8-AND (drained)</text>
+  <path d="M660 326 V399 H474" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="500" y="356" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">(3) me_cmd token</text>
+  <text x="500" y="370" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">override &gt; demand</text>
+  <path d="M474 414 H590 V344" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="600" y="360" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">sched_ack</text>
+  <line x1="830" y1="326" x2="830" y2="460" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="838" y="400" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">(4) writeback</text>
+  <text x="838" y="414" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">(gate/RAA/tREFI)</text>
+  <path d="M600 500 H70 V150 H108" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="80" y="470" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">can_* -&gt; demand arb (gates issue)</text>
+  <path d="M470 482 H540 V500 H598" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="548" y="492" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">raa_inc (commit)</text>
+  <text x="150" y="592" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">sel = init_done  (from ME/init FSM)</text>
+  <text x="40" y="730" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ME steers the CAS arb via ref_pending/p_bit (scheduler drains the target banks itself), reads ref_rdy, injects me_cmd as a priority token at the packer (sched_ack), and writes the shared scoreboard gates. init owns the DFI mux till init_done. MRR result returns on the RD_CAP sideband (fig_31).</text>
+</svg>
