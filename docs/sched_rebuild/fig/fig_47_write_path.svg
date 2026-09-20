@@ -23,23 +23,26 @@
   <rect x="400" y="96" width="300" height="150" fill="none" stroke="#000000" stroke-width="1.6"/>
   <text x="700" y="88" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">WRITE_ROB</text>
   <text x="700" y="72" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">per-packet rows, grouped by aw_id</text>
-  <text x="416" y="140" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">aw_id  addr  sram_ptr  status</text>
+  <text x="416" y="140" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">aw_id  addr  sram_ptr  status  narrow</text>
   <text x="416" y="164" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">inflow_cnt (pkts left from CIF)</text>
   <text x="416" y="188" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">outflow_cnt (pkts left to write)</text>
   <path d="M300 160 V210 H236 V154" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
   <text x="244" y="226" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ROB full -&gt; back-pressure AW</text>
-  <line x1="210" y1="322" x2="262" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <path d="M300 293.0 L342.0 322 L300 351.0 L258.0 322 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="300" y="322" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">alloc?</text>
-  <text x="300" y="337" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">SRAM free</text>
-  <line x1="342" y1="322" x2="400" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="60" y="250" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">narrow = size&lt;full | wstrb!=1s | sub-64B</text>
+  <line x1="210" y1="322" x2="234" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="234" y="296" width="152" height="62" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="310.0" y="318" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR_ACCUM</text>
+  <text x="310.0" y="333" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">beats -&gt; 64B + WSTRB</text>
+  <line x1="386" y1="322" x2="400" y2="322" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
   <rect x="400" y="296" width="300" height="120" fill="none" stroke="#000000" stroke-width="1.6"/>
   <text x="700" y="288" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">WD_SRAM</text>
-  <text x="416" y="336" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">incremental-order, 512b/line</text>
+  <text x="416" y="336" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">512b/line + strobe</text>
   <text x="416" y="360" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">1 packet = 1 line</text>
   <text x="416" y="382" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">arrival order (OOO across reqs)</text>
-  <path d="M300 351 V400 H250 V344" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
-  <text x="258" y="416" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">SRAM full -&gt; back-pressure W</text>
+  <path d="M311 252 V296" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="318" y="272" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">narrow flag</text>
+  <path d="M400 400 H311 V358" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="150" y="416" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">SRAM full -&gt; back-pressure W</text>
   <path d="M470 296 V250" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
   <text x="410" y="274" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">write_ptr + aw_id -&gt; ROB; inflow_cnt--</text>
   <line x1="700" y1="150" x2="900" y2="150" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
