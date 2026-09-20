@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="780" viewBox="0 0 1120 780" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="780" fill="#ffffff"/>
+  <text x="40" y="40" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">POWER_MGMT FSM (10 states) - PD + SR branches</text>
+  <text x="40" y="60" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">NORMAL branches to power-down (left) or self-refresh (right); both return to NORMAL. arrow label = exit condition.</text>
+  <rect x="461" y="110" width="158" height="48" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="540.0" y="139.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">NORMAL</text>
+  <path d="M500 158 V184 H329.0 V210" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="360" y="178" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">PD entry</text>
+  <rect x="250" y="210" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="329.0" y="239.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">PD_ENTRY_CHECK</text>
+  <rect x="250" y="318" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="329.0" y="347.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">PRECHARGE_PD</text>
+  <line x1="329.0" y1="258" x2="329.0" y2="318" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="337.0" y="274" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">all idle &amp; pd_en</text>
+  <rect x="250" y="426" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="329.0" y="455.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">PDX_WAIT</text>
+  <line x1="329.0" y1="366" x2="329.0" y2="426" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="337.0" y="382" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">cke&lt;-0</text>
+  <rect x="40" y="318" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="119.0" y="347.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ACTIVE_PD</text>
+  <text x="140" y="310" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">(reserved, unreachable)</text>
+  <path d="M250 342 H198" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <path d="M329.0 474 V700 H520 V158" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="400" y="692" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">PDX_WAIT exit -&gt; NORMAL</text>
+  <path d="M580 158 V184 H809.0 V210" fill="none" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="700" y="178" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">SR entry</text>
+  <rect x="730" y="210" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="809.0" y="239.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">SR_ENTRY</text>
+  <rect x="730" y="318" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="809.0" y="347.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_tCKSRE</text>
+  <line x1="809.0" y1="258" x2="809.0" y2="318" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="817.0" y="274" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">sr_entry; cke&lt;-0</text>
+  <rect x="730" y="426" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="809.0" y="455.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">SELF_REFRESHING</text>
+  <line x1="809.0" y1="366" x2="809.0" y2="426" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="817.0" y="382" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">T_CKSRE</text>
+  <rect x="730" y="534" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="809.0" y="563.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">SR_EXIT</text>
+  <line x1="809.0" y1="474" x2="809.0" y2="534" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="817.0" y="490" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">sr_exit</text>
+  <rect x="730" y="642" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="809.0" y="671.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_tXS_tDLLK</text>
+  <line x1="809.0" y1="582" x2="809.0" y2="642" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="817.0" y="598" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">cke&lt;-1</text>
+  <path d="M809.0 690 V720 H580 V158" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="660" y="712" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">WAIT_tXS_tDLLK -&gt; NORMAL</text>
+</svg>
