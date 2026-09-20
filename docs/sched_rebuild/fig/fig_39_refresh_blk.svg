@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="480" fill="#ffffff"/>
+  <text x="40" y="40" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">REFRESH FSM - block logic</text>
+  <text x="40" y="60" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">inputs left -&gt; block (internal logic) -&gt; outputs right.</text>
+  <rect x="330" y="120" width="340" height="290" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="500.0" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFRESH FSM</text>
+  <text x="344" y="170" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">leaky bucket: +1/tREFI, -1/issued</text>
+  <text x="344" y="190" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ref_urgent@8 credits, ref_due normal</text>
+  <text x="344" y="210" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">target = argmin(bank_act_count) + watchdog</text>
+  <text x="344" y="230" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">WAIT_BANKS_IDLE = drain</text>
+  <text x="344" y="250" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb / REFab per REF_MODE</text>
+  <line x1="40" y1="150" x2="328" y2="150" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gc</text>
+  <line x1="40" y1="188" x2="328" y2="188" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="180" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_trefi_out</text>
+  <line x1="40" y1="226" x2="328" y2="226" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="218" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ref_credits_out</text>
+  <line x1="40" y1="264" x2="328" y2="264" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="256" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bank_act_count</text>
+  <line x1="40" y1="302" x2="328" y2="302" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="294" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">all_idle</text>
+  <line x1="40" y1="340" x2="328" y2="340" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="332" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">sched_ack</text>
+  <line x1="40" y1="378" x2="328" y2="378" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="40" y="370" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REF_MODE (CSR)</text>
+  <line x1="672" y1="150" x2="960" y2="150" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">ref_urgent</text>
+  <line x1="672" y1="188" x2="960" y2="188" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="180" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">ref_due</text>
+  <line x1="672" y1="226" x2="960" y2="226" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="218" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">me_cmd{valid,type,rank,bg,bank}</text>
+  <line x1="672" y1="264" x2="960" y2="264" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="256" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">set/clr_gate_rfc</text>
+  <line x1="672" y1="302" x2="960" y2="302" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="294" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">inc/dec_ref_credits</text>
+  <line x1="672" y1="340" x2="960" y2="340" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="332" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">update_next_trefi</text>
+  <line x1="672" y1="378" x2="960" y2="378" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="370" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">set/clr_ref_pending</text>
+</svg>
