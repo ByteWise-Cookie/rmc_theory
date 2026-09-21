@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1020" viewBox="0 0 1280 1020" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="1020" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Timestamp writeback - on issue, which next_* is written, where</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ALL commands. Demand (cas/act/pre) + maintenance/config (ref/rfm/zq/mrw/mrr). Each issue writes next_* = GC + const into a scope reg; can_* gates GC &gt;= next_*.</text>
+  <rect x="50" y="92" width="100" height="34" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">issued</text>
+  <rect x="150" y="92" width="290" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="295.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BANK</text>
+  <rect x="440" y="92" width="250" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="565.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BG</text>
+  <rect x="690" y="92" width="320" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="850.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">RANK</text>
+  <rect x="1010" y="92" width="230" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1125.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">GLOBAL / DQ</text>
+  <rect x="50" y="126" width="100" height="81" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="170.5" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ACT</text>
+  <rect x="150" y="126" width="290" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;ACT  tRC=117</text>
+  <text x="160" y="165" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;CAS  tRCD=40</text>
+  <text x="160" y="182" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;PRE  tRAS=77</text>
+  <rect x="440" y="126" width="250" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;ACT  tRRD_L=12</text>
+  <rect x="690" y="126" width="320" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;ACT  tRRD_S=8</text>
+  <text x="700" y="165" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">faw_ts push (tFAW=32)</text>
+  <rect x="1010" y="126" width="230" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="207" width="100" height="81" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="251.5" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD</text>
+  <rect x="150" y="207" width="290" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="229" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;PRE  tRTP=18</text>
+  <rect x="440" y="207" width="250" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="229" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;CAS  tCCD_L=12</text>
+  <rect x="690" y="207" width="320" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="229" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;WR  tRTW=12</text>
+  <text x="700" y="246" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas_dir=R</text>
+  <rect x="1010" y="207" width="230" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="229" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dqFree +BL/2=8</text>
+  <text x="1020" y="246" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas_{ts,rank,bg}</text>
+  <text x="1020" y="263" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tRTRS (x-rank)</text>
+  <rect x="50" y="288" width="100" height="81" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="332.5" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR</text>
+  <rect x="150" y="288" width="290" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="310" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;PRE  CWL+BL/2+tWR=118</text>
+  <rect x="440" y="288" width="250" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="310" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;CAS  tCCD_L_WR=48</text>
+  <rect x="690" y="288" width="320" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="310" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;RD  CWL+BL/2+tWTR</text>
+  <text x="700" y="327" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">   L=70 / S=52</text>
+  <text x="700" y="344" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas_dir=W</text>
+  <rect x="1010" y="288" width="230" height="81" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="310" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dqFree +BL/2=8</text>
+  <text x="1020" y="327" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas_{ts,rank,bg}</text>
+  <rect x="50" y="369" width="100" height="64" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="405.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRE</text>
+  <rect x="150" y="369" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="391" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;ACT  tRP=40</text>
+  <text x="160" y="408" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">(PREab: ALL banks; PREsb: 8)</text>
+  <rect x="440" y="369" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="391" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="690" y="369" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="391" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt;PRE  tPPD=2 (diff bank)</text>
+  <rect x="1010" y="369" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="391" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="433" width="100" height="64" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="469.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFsb</text>
+  <rect x="150" y="433" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="455" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc/REFING</text>
+  <text x="160" y="472" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">  +tRFCsb=312 (8 targets)</text>
+  <rect x="440" y="433" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="455" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">targets span BGs</text>
+  <rect x="690" y="433" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="455" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">debt--</text>
+  <rect x="1010" y="433" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="455" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="497" width="100" height="64" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="533.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFab</text>
+  <rect x="150" y="497" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="519" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="440" y="497" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="519" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="690" y="497" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="519" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc ALL banks</text>
+  <text x="700" y="536" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">  +tRFC1=708 ; debt--</text>
+  <rect x="1010" y="497" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="519" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="561" width="100" height="64" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="597.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFM</text>
+  <rect x="150" y="561" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="583" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfm +tRFM (targets)</text>
+  <text x="160" y="600" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RAA -= RAAIMT</text>
+  <rect x="440" y="561" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="583" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RFMsb spans BGs</text>
+  <rect x="690" y="561" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="583" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">(RFMab: whole rank)</text>
+  <rect x="1010" y="561" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="583" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="625" width="100" height="64" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="661.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ZQ</text>
+  <rect x="150" y="625" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="647" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="440" y="625" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="647" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="690" y="625" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="647" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_zq +tZQCAL</text>
+  <text x="700" y="664" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">  then LATCH +tZQLAT=30</text>
+  <rect x="1010" y="625" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="647" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DQ driver busy (cal)</text>
+  <rect x="50" y="689" width="100" height="64" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="725.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRW</text>
+  <rect x="150" y="689" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="711" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="440" y="689" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="711" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="690" y="689" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="711" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_mr +tMRD=16</text>
+  <text x="700" y="728" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">  setting live +tMOD=36 (device)</text>
+  <rect x="1010" y="689" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="711" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">blocks issue in tMRD</text>
+  <rect x="50" y="753" width="100" height="64" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="789.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRR</text>
+  <rect x="150" y="753" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="775" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="440" y="753" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="450" y="775" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="690" y="753" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="700" y="775" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dir=R (DQ read)</text>
+  <rect x="1010" y="753" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="775" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dqFree +BL/2=8</text>
+  <text x="1020" y="792" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">sideband return (no gate)</text>
+  <text x="40" y="843" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">reading it:</text>
+  <text x="40" y="865" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Each issued cmd stamps `next_x = GC + const` into the scope reg for the relationship it constrains. A later cmd is legal when GC &gt;= its next_x.</text>
+  <text x="40" y="885" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Same value, different scope: CAS-&gt;CAS diff-BG = tCCD_S=8 = dqFree (GLOBAL); CAS-&gt;CAS same-BG = tCCD_L/L_WR (BG). Use whichever scope the pair falls in.</text>
+  <text x="40" y="905" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Cross-bank constraints are WRITTEN into the shared scope reg at issue (stage 6): e.g. ACT writes the BG's next_act (tRRD_L) that all 4 banks read.</text>
+  <text x="40" y="925" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tFAW = rolling 4-ACT window per rank (faw_ts[4]); WR-&gt;RD tWTR measured from end of write burst (L=same-BG 24, S=diff-BG 6); turnaround REPLACES dqFree at a flip.</text>
+  <text x="40" y="961" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">The timestamp path = this writeback. On each of the &lt;=3 issued cmds (+ref), stamp next_* at bank/BG/rank/global per the table; comparators turn next_* into the can_* gates the arb reads. ref writes gate_rfc (a +tRFCsb timestamp) - it's in this path too.</text>
+</svg>
