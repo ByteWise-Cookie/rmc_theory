@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">RD&lt;-&gt;WR turnaround - component breakdown by scope</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Turnaround REPLACES the dqFree=8 gap AT A FLIP - it is NOT dqFree + tRTW. Same-dir back-to-back = dqFree/tCCD; a direction change = the value below.</text>
+  <text x="40" y="84" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">DDR5-4800B CK:  CL=40  CWL=38  BL/2=8  tRTRS=2  tWTR_S=6  tWTR_L=24  tRTW=12</text>
+  <rect x="60" y="120" width="140" height="46" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="130.0" y="140" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000"></text>
+  <rect x="200" y="120" width="300" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="350.0" y="140" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">same BG</text>
+  <text x="350.0" y="156" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">(bank / diff-bank)</text>
+  <rect x="500" y="120" width="290" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="645.0" y="140" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">diff BG</text>
+  <text x="645.0" y="156" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">(same rank)</text>
+  <rect x="790" y="120" width="300" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="940.0" y="140" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">diff rank</text>
+  <rect x="60" y="166" width="140" height="80" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="130.0" y="200" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD -&gt; WR</text>
+  <rect x="200" y="166" width="300" height="80" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text x="350.0" y="206" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">tRTW = 12</text>
+  <rect x="500" y="166" width="290" height="80" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text x="645.0" y="206" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">12</text>
+  <rect x="790" y="166" width="300" height="80" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text x="940.0" y="206" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">~12  (bus)</text>
+  <text x="208" y="232" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">flat - reads have no tWTR-style internal recovery</text>
+  <rect x="60" y="246" width="140" height="96" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="130.0" y="298" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR -&gt; RD</text>
+  <rect x="200" y="246" width="300" height="96" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="350.0" y="286" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CWL+BL/2+tWTR_L</text>
+  <text x="350.0" y="308" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">= 38+8+24 = 70</text>
+  <rect x="500" y="246" width="290" height="96" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="645.0" y="286" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CWL+BL/2+tWTR_S</text>
+  <text x="645.0" y="308" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">= 38+8+6 = 52</text>
+  <rect x="790" y="246" width="300" height="96" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="940.0" y="286" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CWL+BL/2+tRTRS</text>
+  <text x="940.0" y="308" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">= 38+8+2 = 48</text>
+  <text x="798" y="328" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">cross-rank: other device, no tWTR</text>
+  <text x="40" y="382" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">what is happening:</text>
+  <text x="40" y="408" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RD -&gt; WR  =  CL + BL/2 + tRTRS  -  CWL   = 40+8+2-38 = 12</text>
+  <text x="60" y="426" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">read data must return (CL) + burst (BL/2) + bus turn (tRTRS); write leads by CWL, so subtract it -&gt; 12, flat across scopes.</text>
+  <text x="40" y="458" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">WR -&gt; RD  =  CWL + BL/2 + { tWTR_L | tWTR_S | tRTRS }</text>
+  <text x="60" y="476" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">write data drives late (CWL) + burst (BL/2), THEN internal write recovery before a same-device read:</text>
+  <text x="60" y="492" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">same BG -&gt; tWTR_L=24 (70) ; diff BG -&gt; tWTR_S=6 (52) ; diff rank -&gt; no tWTR, just bus turn tRTRS=2 (48).</text>
+  <rect x="40" y="516" width="1100" height="60" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="56" y="538" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">WR-&gt;RD &gt;&gt; RD-&gt;WR</text>
+  <text x="200" y="538" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">because the write must COMMIT internally (tWTR) before a same-device read, and its data starts late (CWL). Read has no such recovery -&gt; RD-&gt;WR flat 12.</text>
+  <text x="56" y="560" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">At a flip the turnaround is the WHOLE gap and replaces one dqFree; it is NOT dqFree(8) + turnaround. WR batches run longer (costlier to leave).</text>
+</svg>
