@@ -25,40 +25,41 @@ per speed bin from \texttt{timing\_reg\_file}; DDR5-4800B is our reference.}
 \end{center}
 
 \section*{1. Structural / count parameters}
-{\footnotesize
-\newcommand{\LastCol}{6}
-\begin{longtable}{>{\raggedright\arraybackslash}p{3.1cm} p{2.0cm} p{2.0cm} p{2.4cm} c >{\raggedright\arraybackslash}p{4.6cm}}
+{\scriptsize
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.5cm} p{1.5cm} p{1.5cm} p{1.4cm} p{1.5cm} p{1.7cm} c >{\raggedright\arraybackslash}p{3.5cm}}
 \toprule
-\textbf{Param} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind} & \textbf{Note}\\
+\textbf{Param} & \textbf{DDR1} & \textbf{DDR2} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind} & \textbf{Note}\\
 \midrule\endhead
-N\_BANKS        & 8 (flat)      & 16          & 32           & \P  & count only\\
-N\_BG           & 1 (none)      & 4           & 8            & \Su & adds a whole BG arb level\\
-BANKS\_PER\_BG  & 8             & 4           & 4            & \P  & \\
-BL (burst)      & 8             & 8           & 16           & \P  & \\
-dqFree = BL/2   & 4             & 4           & 8            & \P  & derived; DQ heartbeat\\
-N\_RANKS        & cfg           & cfg         & cfg          & \P  & lane replication\\
-Gear range      & 1:1           & 1:1..1:2    & 1:1..1:4     & \P  & phaser slot mask\\
-CA form         & parallel addr & parallel    & 2-cyc 14-bit & \Su & 1-cyc vs 2-beat encoder\\
-Sub-channel     & 64b           & 64b         & 2$\times$32b & \Su & changes packet$\to$DQ map\\
-Row/Col width   & density       & density     & density      & \P  & address-map slice\\
+N\_BANKS        & 4        & 4/8      & 8         & 16          & 32           & \P  & count only\\
+N\_BG           & 1        & 1        & 1         & 4           & 8            & \Su & adds a BG arb level (DDR4+)\\
+BANKS\_PER\_BG  & 4        & 8        & 8         & 4           & 4            & \P  & \\
+BL (burst)      & 2/4/8    & 4/8      & 8         & 8           & 16           & \P  & \\
+dqFree = BL/2   & 1/2/4    & 2/4      & 4         & 4           & 8            & \P  & DQ heartbeat\\
+N\_RANKS        & cfg      & cfg      & cfg       & cfg         & cfg          & \P  & lane replication\\
+Gear range      & 1:1      & 1:1      & 1:1       & 1:1..1:2    & 1:1..1:4     & \P  & phaser slot mask\\
+CA form         & parallel & parallel & parallel  & parallel    & 2-cyc 14-bit & \Su & 1-cyc vs 2-beat encoder\\
+ODT             & board    & on-die   & on-die    & on-die      & on-die       & \P/\Su & DDR2+ on-die\\
+AL (posted CAS) & no       & yes      & yes       & yes         & no           & \Su & additive latency DDR2-4\\
+Row/Col width   & density  & density  & density   & density     & density      & \P  & address-map slice\\
 \bottomrule
 \end{longtable}}
 
 \section*{2. Timing constants -- which EXIST per generation}
-{\footnotesize
-\begin{longtable}{>{\raggedright\arraybackslash}p{3.2cm} p{2.4cm} p{2.4cm} p{2.4cm} c}
+{\scriptsize
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.7cm} p{1.8cm} p{1.8cm} p{1.9cm} p{2.0cm} p{2.2cm} c}
 \toprule
-\textbf{Timing} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind}\\
+\textbf{Timing} & \textbf{DDR1} & \textbf{DDR2} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind}\\
 \midrule\endhead
-tCCD (CAS-CAS)   & one (tCCD)    & S/L split     & S/L split     & \Su\\
-tRRD (ACT-ACT)   & one (tRRD)    & S/L split     & S/L split     & \Su\\
-tCCD\_L\_WR      & no            & yes           & yes           & \Su\\
-tFAW (4-ACT win) & yes           & yes           & yes           & \P\\
-tWTR (WR-RD)     & one           & S/L split     & S/L split     & \Su\\
-tPPD (PRE-PRE)   & no            & no            & yes           & \Su\\
-tRTRS / tRTW     & yes           & yes           & yes           & \P\\
-tRC/tRCD/tRP/tRAS/\dots & yes & yes           & yes           & \P\\
-tRFC / tREFI     & yes           & yes           & yes (+tRFCsb)  & \P/\Su\\
+tCCD (CAS-CAS)   & one      & one          & one (tCCD)    & S/L split     & S/L split     & \Su\\
+tRRD (ACT-ACT)   & one      & one          & one (tRRD)    & S/L split     & S/L split     & \Su\\
+tCCD\_L\_WR      & no       & no           & no            & yes           & yes           & \Su\\
+tFAW (4-ACT win) & no       & yes (8-bank) & yes           & yes           & yes           & \P\\
+tWTR (WR-RD)     & one      & one          & one           & S/L split     & S/L split     & \Su\\
+tPPD (PRE-PRE)   & no       & no           & no            & no            & yes           & \Su\\
+tRTRS / tRTW     & yes      & yes          & yes           & yes           & yes           & \P\\
+tRC/tRCD/tRP/tRAS/\dots & yes & yes        & yes           & yes           & yes           & \P\\
+tRFC / tREFI     & yes      & yes          & yes           & yes           & yes (+tRFCsb) & \P/\Su\\
+ZQ cal           & no (OCD) & no (OCD)     & yes (ZQCL/CS) & ZQCL/CS       & MPC ZQCAL     & \Su\\
 \bottomrule
 \end{longtable}
 \emph{Consequence:} DDR3 has NO bank groups $\Rightarrow$ no S/L split $\Rightarrow$ the
@@ -111,6 +112,13 @@ CA-beat encoder (2-cyc$\to$1-cyc), INIT sequence. BG level \textbf{stays}.
 \textbf{DDR4 $\rightarrow$ DDR3:} additionally set N\_BG 4$\to$1 $\Rightarrow$ \textbf{delete the
 BG arb level, collapse BGS/BGD} into bank+rank, and drop all S/L timing splits (single tCCD/
 tRRD/tWTR); remove DM/write-CRC; simpler ZQ; simpler init. Gear 1:1 only.
+
+\textbf{DDR3 $\rightarrow$ DDR2:} N\_BANKS 8$\to$4/8, BL 8$\to$4/8; remove ZQ (OCD instead),
+add AL (posted-CAS / additive latency into the timing model). Still no BG.
+
+\textbf{DDR2 $\rightarrow$ DDR1:} N\_BANKS $\to$4, BL $\to$2/4/8; \textbf{remove tFAW} (4-bank,
+no 4-ACT window), board-level ODT (no on-die), no AL. The arb tree is at its simplest:
+bank$\to$rank only, no BG, no FAW.
 
 \textbf{Stays parametric across all three (plug-and-play):} bank/rank counts, BL/dqFree,
 timing CK values (from \texttt{timing\_reg\_file}), gear range, address-map slice, GC+comparator,
