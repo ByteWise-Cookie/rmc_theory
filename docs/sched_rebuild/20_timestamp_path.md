@@ -106,6 +106,26 @@ self-refresh -> DFI freq-change handshake `dfi_freq_ratio` -> PHY relock/retrain
 SRX -> update gear -> resume), by a freq-change FSM (maint sub-engine, stub). No in-flight
 deadline survives (self-refresh drained), so no stale-timestamp problem; GC stays CK-valued.
 
+## Parallel writeback -- 3-4 updates in one mc_clk (DECIDED)
+
+**YES, all <=3-4 issued commands' writebacks land in ONE mc_clk, contention-free.** Three
+structural facts, no write-port arbitration needed:
+1. **Scoreboard = flop array (per-entry WE), not a ported RF** -> any number of distinct entries
+   written same cycle; no port to contend.
+2. **Different-bank bundle (packer rule)** -> the <=3 demand cmds (1 cas+1 act+1 pre) hit
+   DIFFERENT bank entries -> independent WEs, zero BANK collision.
+3. **Class-split -> <=1 writer per shared field:** `next_act_bg`<-only ACT, `next_cas_bg`<-only
+   CAS, `next_act_dbg`/`faw_ts`<-only ACT, `turnaround`/`last_cas`/`dqFree`<-only CAS. No two
+   commands write the same field of the same entry. Cross-rank corners (2 ACT / 2 PRE) hit
+   different rank/BG entries -> still parallel.
+- **Cost (RAW):** adder replication -- each (cmd x relationship) stamped needs its own
+  `GC_ph + const` adder; worst bundle ACT(5)+CAS(4)+PRE(2) ~= 11 adders in parallel, each with
+  its own `phase_off`. All combinational -> fits the cycle. SR-flop RESETs are per-flop WE too
+  -> parallel, no limit. Optimize later by SHARING adders across scopes; the parallelism is free.
+- **Safety invariant:** never 2 writers to one shared field -- guaranteed by class-split (1
+  cas/act/pre) + different-bank + dqFree(1 CAS/bundle). If that broke you'd need write-arb; the
+  rules make it impossible.
+
 ## Sizing (13-bit timestamps, N_RANKS=2)
 BANK 64×(state~26 + 3×13=39) ; BGS 16×(2×13=26) ; BGD 2×13 ; RANK 2×~85 (faw fat) ; GLOBAL ~40b.
 Timing-const table (tRC/tRCD/… ≈20 consts) shared ONCE, feeds every `*_UPD` adder — NOT per-bank.
