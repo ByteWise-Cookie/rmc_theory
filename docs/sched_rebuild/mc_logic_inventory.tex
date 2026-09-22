@@ -14,6 +14,8 @@
 \definecolor{done}{RGB}{26,122,58}
 \definecolor{open}{RGB}{192,57,43}
 \definecolor{stub}{RGB}{180,120,0}
+\definecolor{headbg}{RGB}{38,66,105}
+\renewcommand{\arraystretch}{1.3}
 
 \newcommand{\st}[1]{\textbf{\textcolor{done}{#1}}}
 \newcommand{\op}[1]{\textbf{\textcolor{open}{#1}}}
@@ -41,7 +43,7 @@ Companion to the stage plan + figs \texttt{fig\_00..52}.}
 \midrule
 \endhead
 
-\multicolumn{3}{l}{\textbf{1. Ingress (per rank lane, $\times$N\_RANKS)}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{1. Ingress (per rank lane, $\times$N\_RANKS)}}\\
 \midrule
 R/W\_REQ\_AFIFO      & Async request in from CIF -- the only true CDC in. & \st{done}\\
 RD/WR\_BP\_FIFO      & Per-rank back-pressure FIFOs, split by direction (depth 16). & \st{done}\\
@@ -51,7 +53,7 @@ LOOKAHEAD           & 4-entry bypass window (e0..e3 + bank\_cmp + prio\_enc); yo
 BANK\_DEC           & 1-of-32 decode to \{rank,bank\}. & \st{done}\\
 \midrule
 
-\multicolumn{3}{l}{\textbf{2. Per-bank + arb tree}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{2. Per-bank + arb tree}}\\
 \midrule
 BANK cell / FSM\_TABLE & Per-\{rank,bank\} state: state[4], open\_row, pre\_pending, valid, ref\_pending, last\_op. & \st{done}\\
 CMD\_ARB            & Per bank: pick cas/act/pre by weights (CAS\_W row-lock, ACT\_W age, PRE\_W close-row) + W\_MAX. & \st{done}\\
@@ -61,7 +63,7 @@ p\_bit (ref drain)  & ref\_pending as a priority MSB into CAS arb so target bank
 weights: age/cap/ref & 4-bit age-of-need, saturates at cap; across ref: no reset/freeze, cap fences both ways. & \st{done}\\
 \midrule
 
-\multicolumn{3}{l}{\textbf{3. Scoreboard / timestamp path}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{3. Scoreboard / timestamp path}}\\
 \midrule
 GC                 & CK-valued timebase, \texttt{GC += gear} per mc\_clk; the only gear-aware element. & \st{decided}\\
 scope tables       & BANK / BGS (same-BG) / BGD (cross-BG) / RANK / GLOBAL-DQ next\_* stores. & \st{done}\\
@@ -71,7 +73,7 @@ comparators        & \texttt{can\_x = (GC-next\_x)[MSB]==0} ($\geq$, wrap-safe);
 TIMING\_CONST      & JEDEC addends (tRC/tRCD/\dots) -- one shared copy, feeds every UPD adder. & \st{done}\\
 \midrule
 
-\multicolumn{3}{l}{\textbf{4. Phaser / packer}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{4. Phaser / packer}}\\
 \midrule
 PHASE\_PACKER      & Token domain: 1 token/command \{cmd,bank,addr,phase\_off,len\}; assigns offsets. & \st{done}\\
 CA-beat encoder    & Expands each token to 1--2 dfi phases; \texttt{tail\_pending} straddles 2 bundles at 1:1. & \st{done}\\
@@ -79,7 +81,7 @@ gear mask + gear reg & Slot mask by gear (fill 0..gear-1, rest NOP); gear = pres
 DFI\_MUX           & init FSM vs scheduler encoder, sel = init\_done (one-way). Only 2 DFI drivers. & \st{done}\\
 \midrule
 
-\multicolumn{3}{l}{\textbf{5. Data path (write + read)}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{5. Data path (write + read)}}\\
 \midrule
 WR\_ACCUM          & Burst accumulator: AXI beats $\to$ 64B line + WSTRB; narrow flag picks DM-mask vs full. & \st{done}\\
 WD\_SRAM + wr\_ptr  & Allocate-on-arrival write buffer, incremental order; back-pressure on full. & \st{done}\\
@@ -92,7 +94,7 @@ ECC / RMW          & On-die ECC $\to$ DM mask (no RMW); controller ECC $\to$ RMW
 Segmentation owner & CIF pre-segment vs MC-side WR\_ACCUM packetization -- pick one. & \op{open}\\
 \midrule
 
-\multicolumn{3}{l}{\textbf{6. Maintenance engine (peer, never CAS; flags to scheduler)}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{6. Maintenance engine (peer, never CAS; flags to scheduler)}}\\
 \midrule
 INIT FSM (16)      & DDR5 power-on: reset$\to$MRW-train$\to$ZQCL$\to$training$\to$init\_done (drives DFI till done). & \st{done}\\
 REFRESH FSM (6)    & Leaky-bucket credits; REFsb-preferred, drain (policy B) $\to$ PRE $\to$ REF; gate\_rfc. & \st{done}\\
@@ -106,7 +108,7 @@ MR Read Arbiter    & Grants 1 of \{MR\_POLL, MR\_WRITE\} the MRR sideband; mrr\_
 ERROR / ALERT\_n   & Watch dfi\_alert\_n (write-CRC/CA-parity); single recovery point. & \su{stub}\\
 \midrule
 
-\multicolumn{3}{l}{\textbf{7. Still open / to write}}\\
+\rowcolor{headbg}\multicolumn{3}{l}{\color{white}\normalsize\textbf{7. Still open / to write}}\\
 \midrule
 Address Map Unit   & daddr $\to$ \{rank,bg,bank,row,col\}; is any hash left MC-side (vs CIF)? & \op{open}\\
 RAW-hazard doc     & Same-line R/W ordering owned by CIF (MC = pure reorderable engine); write the doc. & PENDING\\
