@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1060" viewBox="0 0 1640 1060" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1640" height="1060" fill="#ffffff"/>
+  <text x="40" y="40" font-size="16" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">MC-Core module map - blocks, connections, glue (one channel)</text>
+  <rect x="40" y="110" width="300" height="320" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="52" y="134" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">INGRESS  (per rank lane)</text>
+  <text x="60" y="160" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">axi_if  (req in)</text>
+  <text x="60" y="182" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">r/w_req_afifo  (CDC)</text>
+  <text x="60" y="204" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">rd/wr_bp_fifo  (split)</text>
+  <text x="60" y="226" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">turn_ctrl + wlr_sel</text>
+  <text x="60" y="248" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">lookahead  (4-entry)</text>
+  <text x="60" y="270" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bank_dec  (1-of-32)</text>
+  <rect x="380" y="110" width="320" height="320" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="392" y="134" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">ARB TREE</text>
+  <text x="400" y="160" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bank_cells x32  (FSM)</text>
+  <text x="400" y="182" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">cmd_arb  (cas/act/pre W)</text>
+  <text x="400" y="204" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bgb_arb x8  (bank-in-BG)</text>
+  <text x="400" y="226" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bg_arb  (BG-in-rank)</text>
+  <text x="400" y="248" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">l3  class-split 2:1</text>
+  <text x="400" y="270" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; &lt;=3 class winners</text>
+  <rect x="740" y="110" width="280" height="320" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="752" y="134" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">PHASER</text>
+  <text x="760" y="160" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">phase_packer  (tokens</text>
+  <text x="760" y="182" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">   + phase_off)</text>
+  <text x="760" y="204" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ca_beat_encoder</text>
+  <text x="760" y="226" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">   (2-cyc -&gt; 2 beats)</text>
+  <text x="760" y="248" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_mux  (init sel)</text>
+  <rect x="1050" y="170" width="120" height="110" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1110" y="210" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">DFI / PHY</text>
+  <text x="1110" y="230" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">-&gt; DRAM</text>
+  <rect x="380" y="470" width="320" height="250" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="392" y="494" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">SCOREBOARD  (timestamp)</text>
+  <text x="400" y="520" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gc  (CK, += gear)</text>
+  <text x="400" y="542" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">timing_const  (shared)</text>
+  <text x="400" y="564" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bank/bgs/bgd/rank/global</text>
+  <text x="400" y="586" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  next_* regs (13b)</text>
+  <text x="400" y="608" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">cmp: (gc-next)[MSB]</text>
+  <text x="400" y="630" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  -&gt; can_act/cas/pre</text>
+  <rect x="40" y="470" width="300" height="250" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="52" y="494" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">MAINT ENGINE  (peer)</text>
+  <text x="60" y="520" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">7 FSMs: init/refresh/rfm</text>
+  <text x="60" y="542" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">   /zqcal/mr_poll/mr_write/pwr</text>
+  <text x="60" y="564" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">mr_read_arb</text>
+  <text x="60" y="586" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">freq_change  (stub)</text>
+  <text x="60" y="608" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">error/alert_n  (stub)</text>
+  <rect x="740" y="470" width="280" height="250" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="752" y="494" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">GLUE  (portability)</text>
+  <text x="760" y="520" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">mc_pkg  (params,</text>
+  <text x="760" y="542" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  timing_t, typedefs)</text>
+  <text x="760" y="564" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_if   axi_if</text>
+  <text x="760" y="586" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">arb_if   sb_if</text>
+  <text x="760" y="608" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; swap pkg = diff DDR</text>
+  <rect x="1200" y="110" width="400" height="610" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1212" y="134" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">DATA PATH</text>
+  <text x="1220" y="160" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">WRITE:</text>
+  <text x="1220" y="182" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  wr_accum (64B+WSTRB)</text>
+  <text x="1220" y="204" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  wd_sram + wr_ptr</text>
+  <text x="1220" y="226" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  write_rob {N,gen,done}</text>
+  <text x="1220" y="248" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  wr_split + wl_launch</text>
+  <text x="1220" y="270" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">     -&gt; dfi_wrdata</text>
+  <text x="1220" y="292" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="1220" y="314" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">READ:</text>
+  <text x="1220" y="336" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  rd_cap + rd_accum</text>
+  <text x="1220" y="358" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">     &lt;- dfi_rddata</text>
+  <text x="1220" y="380" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  -&gt; rd_sram</text>
+  <text x="1220" y="402" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="1220" y="424" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">COMPLETION:</text>
+  <text x="1220" y="446" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  rd_done/wr_done merge</text>
+  <text x="1220" y="468" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  -&gt; resp_afifo -&gt; CIF</text>
+  <line x1="10" y1="200" x2="38" y2="200" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="20" y="192" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">AXI</text>
+  <line x1="340" y1="250" x2="378" y2="250" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="360" y="242" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">REQ</text>
+  <line x1="700" y1="250" x2="738" y2="250" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="720" y="242" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">&lt;=3 grants</text>
+  <line x1="1020" y1="225" x2="1048" y2="225" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1034" y="217" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">dfi_if</text>
+  <line x1="1170" y1="225" x2="1210" y2="225" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1210" y="217" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">DRAM</text>
+  <line x1="520" y1="468" x2="520" y2="432" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="516" y="450" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">can_*</text>
+  <path d="M560 432 V468" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="566" y="450" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">commit</text>
+  <path d="M700 555 H720 V430" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="724" y="450" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">gc/dqFree</text>
+  <path d="M340 545 H358 V430" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="344" y="450" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">flags</text>
+  <path d="M300 470 V455 H1090 V280" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="1000" y="300" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">init_done -&gt; dfi_mux</text>
+  <line x1="1020" y1="340" x2="1198" y2="340" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1110" y="332" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">arm wr/rd @ CAS-commit</text>
+  <path d="M120 110 V80 H1300 V110" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="700" y="74" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">AXI write data -&gt; wr_accum</text>
+  <line x1="1400" y1="720" x2="1400" y2="760" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1412" y="752" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">-&gt; CIF (resp)</text>
+  <text x="40" y="1030" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Build as parametric SystemVerilog: mc_pkg + interfaces (dfi/axi/arb/sb) glue the modules; ports come from figs 39-51. Ingress -&gt; arb (scoreboard folds legality into can_*) -&gt; phaser -&gt; DFI; maint injects flags; data path arms at CAS-commit. IP Integrator only at the SoC top - internals stay text SV (git + DDR-portable).</text>
+</svg>
