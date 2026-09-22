@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="700" viewBox="0 0 1340 700" font-family="Inter, DejaVu Sans, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="700" viewBox="0 0 1460 700" font-family="Inter, DejaVu Sans, sans-serif">
   <defs>
     <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M1 1L9 5L1 9Z" fill="#000000"/>
     </marker>
   </defs>
-  <rect width="1340" height="700" fill="#ffffff"/>
+  <rect width="1460" height="700" fill="#ffffff"/>
   <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">RAW ACT-issue timestamp path - bank level, one rank</text>
-  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT grant -&gt; stamp bank next_act/cas/pre = (GC+phase_off)+const -&gt; comparators -&gt; can_* (1-bit each). Per-bank regs+cmps, x32. Optimize later.</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT grant -&gt; stamp bank next_act/cas/pre = (GC+phase_off)+const. can_* is an SR flop: RESET on issue (block now), SET when GC&gt;=next (&gt;=, not ==). x32/rank.</text>
   <rect x="40" y="100" width="170" height="64" fill="none" stroke="#000000" stroke-width="1.6"/>
   <text x="210" y="92" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">ACT_GRANT</text>
   <text x="210" y="76" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">{rank,bg,bank,row,phase_off}</text>
@@ -63,34 +63,48 @@
   <rect x="716" y="256" width="268" height="32" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
   <text x="724" y="277" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_pre[13]</text>
   <text x="716" y="356" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">1 row = 1 bank; WE selects the winner</text>
-  <line x1="984" y1="192" x2="1040" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <path d="M1075 175.0 L1108.0 192 L1075 209.0 L1042.0 192 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1075" y="197" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GE</text>
-  <text x="1046" y="170" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC &gt;= next</text>
-  <line x1="1108" y1="192" x2="1160" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <rect x="1160" y="179" width="90" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="1205" y="197" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_act</text>
-  <line x1="1250" y1="192" x2="1300" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="984" y1="232" x2="1040" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <path d="M1075 215.0 L1108.0 232 L1075 249.0 L1042.0 232 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1075" y="237" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GE</text>
-  <text x="1046" y="210" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC &gt;= next</text>
-  <line x1="1108" y1="232" x2="1160" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <rect x="1160" y="219" width="90" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="1205" y="237" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_cas</text>
-  <line x1="1250" y1="232" x2="1300" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="984" y1="272" x2="1040" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <path d="M1075 255.0 L1108.0 272 L1075 289.0 L1042.0 272 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="1075" y="277" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GE</text>
-  <text x="1046" y="250" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC &gt;= next</text>
-  <line x1="1108" y1="272" x2="1160" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <rect x="1160" y="259" width="90" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="1205" y="277" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_pre</text>
-  <line x1="1250" y1="272" x2="1300" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <path d="M120 282 V470 H1075 V284" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
-  <text x="700" y="462" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC broadcast to all comparators</text>
-  <text x="1300" y="232" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#000000">-&gt; ARB</text>
-  <text x="1160" y="300" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">1-bit flops (can_act/cas/pre) - 3 x 32 per rank</text>
-  <text x="716" y="400" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT also: state ACTING-&gt;OPEN (after tRCD), open_row&lt;-row</text>
-  <text x="40" y="668" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">RAW: ACT grant decodes to one bank; (GC+phase_off) feeds three adders (+tRC/tRCD/tRAS) that load that bank's next_act/cas/pre; every bank's three deadlines run a GC&gt;=next comparator each cycle -&gt; can_act/cas/pre 1-bit flops to the arb. 3x32 comparators/rank - shared const table, no other sharing yet.</text>
+  <path d="M510 404 H1141 V296" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="1000" y="462" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">RESET = issue-decode -&gt; all affected can_* (reset-dominant)</text>
+  <line x1="984" y1="192" x2="1014" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M1040 176.0 L1069.0 192 L1040 208.0 L1011.0 192 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1040" y="197" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GE</text>
+  <text x="1012" y="170" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC&gt;=next</text>
+  <line x1="1069" y1="192" x2="1104" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1086" y="186" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">S</text>
+  <rect x="1104" y="176" width="74" height="32" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1141" y="196" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">SR</text>
+  <line x1="1178" y1="192" x2="1224" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1224" y="179" width="96" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1272" y="197" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_act</text>
+  <line x1="1320" y1="192" x2="1372" y2="192" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="984" y1="232" x2="1014" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M1040 216.0 L1069.0 232 L1040 248.0 L1011.0 232 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1040" y="237" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GE</text>
+  <text x="1012" y="210" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC&gt;=next</text>
+  <line x1="1069" y1="232" x2="1104" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1086" y="226" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">S</text>
+  <rect x="1104" y="216" width="74" height="32" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1141" y="236" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">SR</text>
+  <line x1="1178" y1="232" x2="1224" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1224" y="219" width="96" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1272" y="237" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_cas</text>
+  <line x1="1320" y1="232" x2="1372" y2="232" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="984" y1="272" x2="1014" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M1040 256.0 L1069.0 272 L1040 288.0 L1011.0 272 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1040" y="277" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GE</text>
+  <text x="1012" y="250" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC&gt;=next</text>
+  <line x1="1069" y1="272" x2="1104" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1086" y="266" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">S</text>
+  <rect x="1104" y="256" width="74" height="32" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1141" y="276" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">SR</text>
+  <line x1="1178" y1="272" x2="1224" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1224" y="259" width="96" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1272" y="277" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_pre</text>
+  <line x1="1320" y1="272" x2="1372" y2="272" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M120 282 V460 H1040 V296" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="600" y="452" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC -&gt; all GE comparators</text>
+  <text x="1372" y="232" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#000000">-&gt; ARB</text>
+  <text x="1224" y="300" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">can_* = SR flop: RESET on issue, SET on deadline (x3 x32/rank)</text>
+  <text x="490" y="440" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ACT also: state ACTING-&gt;OPEN (after tRCD), open_row&lt;-row</text>
+  <text x="40" y="668" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">RAW: ACT grant decodes to one bank; (GC+phase_off) feeds three adders (+tRC/tRCD/tRAS) that load that bank's next_act/cas/pre. can_* is a reset-dominant SR flop: the issue-decode RESETS it (block now), the GC&gt;=next comparator SETS it when the deadline passes (&gt;=, never ==, or gear skips it). 3x32 flops+cmps/rank; shared const table.</text>
 </svg>

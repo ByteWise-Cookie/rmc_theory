@@ -6,7 +6,7 @@ from rtlfig import (Fig, MUTED, FILL_NEW, FILL_LOGIC, FILL_CELL, FILL_ACTIVE,
 # (GC+phase_off)+const -> comparators -> can_act/cas/pre (1-bit each). x32/rank.
 # Unoptimized on purpose; optimize later.
 
-f = Fig(1340, 700)
+f = Fig(1460, 700)
 
 
 def cnote(x, y, s, anchor="start"):
@@ -15,8 +15,8 @@ def cnote(x, y, s, anchor="start"):
 
 f.text(40, 38, "RAW ACT-issue timestamp path - bank level, one rank", size=15,
        mono=False, bold=True)
-f.note(40, 58, "ACT grant -> stamp bank next_act/cas/pre = (GC+phase_off)+const -> "
-               "comparators -> can_* (1-bit each). Per-bank regs+cmps, x32. Optimize later.")
+f.note(40, 58, "ACT grant -> stamp bank next_act/cas/pre = (GC+phase_off)+const. can_* is an "
+               "SR flop: RESET on issue (block now), SET when GC>=next (>=, not ==). x32/rank.")
 
 # ---- ACT grant ----
 g = f.block(40, 100, 170, 64, "ACT_GRANT", "{rank,bg,bank,row,phase_off}")
@@ -62,29 +62,36 @@ for i, nm in enumerate(["next_act[13]", "next_cas[13]", "next_pre[13]"]):
     f.text(724, 197 + i * 40, nm, size=11, mono=True)
 cnote(716, 356, "1 row = 1 bank; WE selects the winner")
 
-# ---- comparators -> can_* ----
+# ---- SET (comparator) + RESET (issue) -> SR flop -> can_* ----
+# reset bus from issue-decode into the SR-flop stack (shared, reset-dominant)
+f.path("M510 404 H1141 V296", arrow=True, dashed=True)
+cnote(1000, 462, "RESET = issue-decode -> all affected can_* (reset-dominant)")
 for i, (nm, y) in enumerate([("can_act", 192), ("can_cas", 232), ("can_pre", 272)]):
-    f.line(984, y, 1040, y, arrow=True)
-    cmp = f.decision(1075, y, 66, 34, "GE")
-    cnote(1046, y - 22, "GC >= next")
-    f.line(1108, y, 1160, y, arrow=True)
-    f.rect(1160, y - 13, 90, 26, fill=FILL_NEW, width=W_CELL)
-    f.text(1205, y + 5, nm, size=11, mono=True, anchor="middle")
-    f.line(1250, y, 1300, y, arrow=True)
-# GC into comparators
-f.path("M120 282 V470 H1075 V284", arrow=True, dashed=True)
-cnote(700, 462, "GC broadcast to all comparators")
-f.text(1300, 232, "-> ARB", size=12, mono=False, anchor="end")
-cnote(1160, 300, "1-bit flops (can_act/cas/pre) - 3 x 32 per rank")
+    f.line(984, y, 1014, y, arrow=True)
+    f.decision(1040, y, 58, 32, "GE")
+    cnote(1012, y - 22, "GC>=next")
+    f.line(1069, y, 1104, y, arrow=True)
+    cnote(1086, y - 6, "S")
+    f.rect(1104, y - 16, 74, 32, fill=FILL_LOGIC, width=W_CELL)
+    f.text(1141, y + 4, "SR", size=11, anchor="middle", bold=True)
+    f.line(1178, y, 1224, y, arrow=True)
+    f.rect(1224, y - 13, 96, 26, fill=FILL_NEW, width=W_CELL)
+    f.text(1272, y + 5, nm, size=11, mono=True, anchor="middle")
+    f.line(1320, y, 1372, y, arrow=True)
+# GC broadcast to all GE
+f.path("M120 282 V460 H1040 V296", arrow=True, dashed=True)
+cnote(600, 452, "GC -> all GE comparators")
+f.text(1372, 232, "-> ARB", size=12, mono=False, anchor="end")
+cnote(1224, 300, "can_* = SR flop: RESET on issue, SET on deadline (x3 x32/rank)")
 
 # ---- state note ----
-cnote(716, 400, "ACT also: state ACTING->OPEN (after tRCD), open_row<-row")
+cnote(490, 440, "ACT also: state ACTING->OPEN (after tRCD), open_row<-row")
 
 f.caption(40, 668,
-          "RAW: ACT grant decodes to one bank; (GC+phase_off) feeds three adders "
-          "(+tRC/tRCD/tRAS) that load that bank's next_act/cas/pre; every bank's three "
-          "deadlines run a GC>=next comparator each cycle -> can_act/cas/pre 1-bit flops to "
-          "the arb. 3x32 comparators/rank - shared const table, no other sharing yet.")
+          "RAW: ACT grant decodes to one bank; (GC+phase_off) feeds three adders (+tRC/tRCD/tRAS) "
+          "that load that bank's next_act/cas/pre. can_* is a reset-dominant SR flop: the "
+          "issue-decode RESETS it (block now), the GC>=next comparator SETS it when the deadline "
+          "passes (>=, never ==, or gear skips it). 3x32 flops+cmps/rank; shared const table.")
 
 f.save("fig_52_act_timestamp_raw.svg")
 print("wrote fig_52_act_timestamp_raw.svg")
