@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="640" viewBox="0 0 1120 640" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="640" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Single-rank max command combo per gear</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Single-rank limits:  &lt;=1 CAS (dqFree=8)  .  &lt;=1 ACT (tRRD_S=8 &gt; 4; two ACTs need TWO ranks)  .  &lt;=2 PRE (tPPD=2).  So richest bundle = 1 CAS + 1 ACT.</text>
+  <rect x="720" y="30" width="16" height="16" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="742" y="43" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">CAS</text>
+  <rect x="820" y="30" width="16" height="16" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="842" y="43" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">ACT</text>
+  <rect x="920" y="30" width="16" height="16" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="942" y="43" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">PRE</text>
+  <text x="40" y="108" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">gear 1:4  -  4 slots</text>
+  <rect x="60" y="124" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="83.0" y="153.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="106" y="124" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="129.0" y="153.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="152" y="124" width="46" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="175.0" y="153.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="198" y="124" width="46" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="221.0" y="153.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <text x="280" y="152" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">MAX = 1 CAS + 1 ACT  (diff bank)  -  2 objects, all 4 phases</text>
+  <rect x="60" y="210" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="83.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="106" y="210" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="129.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="152" y="210" width="46" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="175.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="198" y="210" width="46" height="46" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="221.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <text x="60" y="288" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">CAS + PRE filler</text>
+  <rect x="320" y="210" width="46" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="343.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="366" y="210" width="46" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="389.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="412" y="210" width="46" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="435.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="458" y="210" width="46" height="46" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="481.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <text x="320" y="288" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">ACT + PRE filler</text>
+  <rect x="580" y="210" width="46" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="603.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="626" y="210" width="46" height="46" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="649.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="672" y="210" width="46" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="695.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="718" y="210" width="46" height="46" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="741.0" y="239.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <text x="580" y="288" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2 PRE @0,@2 (tPPD)</text>
+  <text x="40" y="340" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">gear 1:2  -  2 slots</text>
+  <rect x="60" y="356" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="83.0" y="385.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="106" y="356" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="129.0" y="385.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="220" y="356" width="46" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="243.0" y="385.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="266" y="356" width="46" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="289.0" y="385.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">A</text>
+  <rect x="380" y="356" width="46" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="403.0" y="385.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">P</text>
+  <rect x="426" y="356" width="46" height="46" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.4"/>
+  <text x="449.0" y="385.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <text x="500" y="384" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">MAX = ONE 2-cyc object (CAS or ACT); or 1 PRE.  No CAS+ACT (needs 4 slots).</text>
+  <text x="40" y="452" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">gear 1:1  -  1 slot</text>
+  <rect x="60" y="468" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="83.0" y="497.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <rect x="106" y="468" width="46" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="129.0" y="497.0" font-size="17" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C</text>
+  <line x1="106" y1="465" x2="106" y2="517" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <text x="200" y="496" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">MAX = 1 cmd/bundle.  A 2-cyc (CAS/ACT) STRADDLES 2 bundles; PRE = 1 bundle.</text>
+  <text x="40" y="600" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Per single rank: never 2 CAS (one DQ burst), never 2 ACT (tRRD_S=8 &gt; the 4-CK window - a second ACT needs a SECOND rank, [A A A A] cross-rank). PRE is the only x2 (tPPD=2). 1:4 is the only gear that fits two objects (CAS+ACT); 1:2 fits one; 1:1 streams one phase/bundle.</text>
+</svg>
