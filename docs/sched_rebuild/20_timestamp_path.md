@@ -76,6 +76,30 @@ Figures: writeback = `fig_50`, scope tables = `fig_51`.
 
 **Notes:** same value diff scope — CAS→CAS diff-BG = tCCD_S=8 = dqFree (global); same-BG = tCCD_L/L_WR (BGS). Cross-bank constraints are written into the SHARED scope reg at issue. Turnaround REPLACES the dqFree gap at a flip (not added). MRR/ZQ touch DQ like a CAS; MRW/REF/RFM are gate-only.
 
+## GC + comparator (DECIDED)
+
+**GC = CK-valued, mc_clk-domain register:** `@ mc_clk: GC <= GC + gear` (1:1→+1, 1:2→+2,
+1:4→+4). Free-running timebase (advances every mc_clk whether or not a cmd issues), starts 0
+after `init_done`. `gear` is the mc_clk:CK ratio (config reg; sole gear-aware element). GC is
+NOT a CK-rate counter (CK is PHY-side) and NOT mc_clk-valued — it *holds* CK, *ticks* at mc_clk.
+Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
+
+**Comparator = `≥` via subtract-MSB, NEVER `==`/XOR:**
+```
+can_x = (GC - next_x)[MSB] == 0        // = GC >= next_x, 13-bit wrap-safe
+placement: (GC + phase_off) - next_x   // per phase, CK-granular
+```
+Two reasons == fails: (1) gear>1 SKIPS the exact value (140→144 skips 142) → == never matches
+→ deadlock; (2) can_x is a persistent LEVEL ("legal now and onward"), == is a 1-cycle pulse
+(wrong even at 1:1). 13-bit unambiguous within 2^12; max interval tRFC1=708 << 4096, safe.
+phase_off (0..gear-1) recovers sub-mc_clk CK resolution at placement (STAGE 6).
+
+**Freq change (DVFS):** timings are fixed in ns but their CK counts shift with tCK, so a real
+speed change reloads `timing_reg_file` + reprograms MRs (CL/CWL) + ZQ — done QUIESCED (drain ->
+self-refresh -> DFI freq-change handshake `dfi_freq_ratio` -> PHY relock/retrain -> reprogram ->
+SRX -> update gear -> resume), by a freq-change FSM (maint sub-engine, stub). No in-flight
+deadline survives (self-refresh drained), so no stale-timestamp problem; GC stays CK-valued.
+
 ## Sizing (13-bit timestamps, N_RANKS=2)
 BANK 64×(state~26 + 3×13=39) ; BGS 16×(2×13=26) ; BGD 2×13 ; RANK 2×~85 (faw fat) ; GLOBAL ~40b.
 Timing-const table (tRC/tRCD/… ≈20 consts) shared ONCE, feeds every `*_UPD` adder — NOT per-bank.
