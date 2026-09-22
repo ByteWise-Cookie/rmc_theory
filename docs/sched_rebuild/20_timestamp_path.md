@@ -84,6 +84,12 @@ after `init_done`. `gear` is the mc_clk:CK ratio (config reg; sole gear-aware el
 NOT a CK-rate counter (CK is PHY-side) and NOT mc_clk-valued — it *holds* CK, *ticks* at mc_clk.
 Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
 
+**can_x = reset-dominant SR flop (fig_52):** `RESET = issue-decode` (block now, immediate,
+reset-dominant so a fresh issue beats a coincident set); `SET = (GC >= next_x)` comparator.
+Registered form of the pure comparator: the issue that stamps next_x also clears can_x, the
+comparator re-sets it when the deadline passes. SET stays `≥` (or a gear-decrementing
+countdown), NEVER `==`.
+
 **Comparator = `≥` via subtract-MSB, NEVER `==`/XOR:**
 ```
 can_x = (GC - next_x)[MSB] == 0        // = GC >= next_x, 13-bit wrap-safe
