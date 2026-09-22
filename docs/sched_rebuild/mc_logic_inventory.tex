@@ -1,0 +1,119 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=16mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{rowg}{gray}{0.95}
+\definecolor{done}{RGB}{26,122,58}
+\definecolor{open}{RGB}{192,57,43}
+\definecolor{stub}{RGB}{180,120,0}
+
+\newcommand{\st}[1]{\textbf{\textcolor{done}{#1}}}
+\newcommand{\op}[1]{\textbf{\textcolor{open}{#1}}}
+\newcommand{\su}[1]{\textbf{\textcolor{stub}{#1}}}
+
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+\setlength{\LTpre}{2pt}\setlength{\LTpost}{6pt}
+
+\begin{document}
+
+\begin{center}
+{\Large\textbf{MC-Core Logic Inventory}}\\[2pt]
+{\small One channel. Status: \st{DONE} / RAW (unoptimized) / \su{STUB} / \op{OPEN}.
+Companion to the stage plan + figs \texttt{fig\_00..52}.}
+\end{center}
+
+\newcolumntype{B}{>{\raggedright\arraybackslash}p{3.4cm}}
+\newcolumntype{P}{>{\raggedright\arraybackslash}p{11.4cm}}
+\newcolumntype{S}{>{\raggedright\arraybackslash}p{1.9cm}}
+
+{\footnotesize
+\begin{longtable}{B P S}
+\toprule
+\textbf{Block} & \textbf{What it does (one line)} & \textbf{Status}\\
+\midrule
+\endhead
+
+\multicolumn{3}{l}{\textbf{1. Ingress (per rank lane, $\times$N\_RANKS)}}\\
+\midrule
+R/W\_REQ\_AFIFO      & Async request in from CIF -- the only true CDC in. & \st{done}\\
+RD/WR\_BP\_FIFO      & Per-rank back-pressure FIFOs, split by direction (depth 16). & \st{done}\\
+WLR\_SEL + TURN\_CTRL & Weighted R/W admission: batch\_dir + batch/age counter; drives the single combined path. & \st{done}\\
+\quad straggler adaptive-batch & Shorten new batch when old-dir stragglers pending; sweep on flip-back (bus-level dir only). & \op{judged}\\
+LOOKAHEAD           & 4-entry bypass window (e0..e3 + bank\_cmp + prio\_enc); younger-to-ready-bank bypass. & \st{done}\\
+BANK\_DEC           & 1-of-32 decode to \{rank,bank\}. & \st{done}\\
+\midrule
+
+\multicolumn{3}{l}{\textbf{2. Per-bank + arb tree}}\\
+\midrule
+BANK cell / FSM\_TABLE & Per-\{rank,bank\} state: state[4], open\_row, pre\_pending, valid, ref\_pending, last\_op. & \st{done}\\
+CMD\_ARB            & Per bank: pick cas/act/pre by weights (CAS\_W row-lock, ACT\_W age, PRE\_W close-row) + W\_MAX. & \st{done}\\
+BGB / BG / RANK arb & bank$\to$BG$\to$rank selection; hit-bias + diff-BG rotation + tRTRS-weighted L3. & \st{done}\\
+class-split + L3    & cas/act/pre lanes, 2:1-per-class across ranks; N-winner bundle (max 3, +ref). & \st{done}\\
+p\_bit (ref drain)  & ref\_pending as a priority MSB into CAS arb so target banks drain first. & \st{done}\\
+weights: age/cap/ref & 4-bit age-of-need, saturates at cap; across ref: no reset/freeze, cap fences both ways. & \st{done}\\
+\midrule
+
+\multicolumn{3}{l}{\textbf{3. Scoreboard / timestamp path}}\\
+\midrule
+GC                 & CK-valued timebase, \texttt{GC += gear} per mc\_clk; the only gear-aware element. & \st{decided}\\
+scope tables       & BANK / BGS (same-BG) / BGD (cross-BG) / RANK / GLOBAL-DQ next\_* stores. & \st{done}\\
+writeback (\*\_UPD) & On issue stamp next\_* = (GC+phase\_off)+const per fig\_50; ACT bank-level drawn. & RAW\\
+\quad CAS/PRE/other-scope & Extend the same UPD/compare to CAS, PRE, and BGS/BGD/RANK writes. & PENDING\\
+comparators        & \texttt{can\_x = (GC-next\_x)[MSB]==0} ($\geq$, wrap-safe); never ==/XOR. & \st{decided}\\
+TIMING\_CONST      & JEDEC addends (tRC/tRCD/\dots) -- one shared copy, feeds every UPD adder. & \st{done}\\
+\midrule
+
+\multicolumn{3}{l}{\textbf{4. Phaser / packer}}\\
+\midrule
+PHASE\_PACKER      & Token domain: 1 token/command \{cmd,bank,addr,phase\_off,len\}; assigns offsets. & \st{done}\\
+CA-beat encoder    & Expands each token to 1--2 dfi phases; \texttt{tail\_pending} straddles 2 bundles at 1:1. & \st{done}\\
+gear mask + gear reg & Slot mask by gear (fill 0..gear-1, rest NOP); gear = preset config reg. & \st{done}\\
+DFI\_MUX           & init FSM vs scheduler encoder, sel = init\_done (one-way). Only 2 DFI drivers. & \st{done}\\
+\midrule
+
+\multicolumn{3}{l}{\textbf{5. Data path (write + read)}}\\
+\midrule
+WR\_ACCUM          & Burst accumulator: AXI beats $\to$ 64B line + WSTRB; narrow flag picks DM-mask vs full. & \st{done}\\
+WD\_SRAM + wr\_ptr  & Allocate-on-arrival write buffer, incremental order; back-pressure on full. & \st{done}\\
+WRITE\_ROB tracker & Per aw\_id \{vld, N, gen\_idx, done\_cnt\}: gen\_idx$\to$addr offset, retire at done\_cnt==N. & \st{done}\\
+WR\_SPLIT + WL\_LAUNCH & 512b $\to$ 2$\times$gear beats to dfi\_wrdata (CWL-delayed). & \st{done}\\
+RD\_CAP + RD\_ACCUM & dfi\_rddata beats $\to$ 64B $\to$ one 512b write to RD\_SRAM (RL line). & \st{done}\\
+POP\_CTRL          & Free the SRAM line only past the ALERT\_n window (write-CRC retry from SRAM). & \st{done}\\
+COMPLETION         & Merge rd\_done/wr\_done $\to$ resp AFIFO, tag-only \{rob\_index,pkt,status\}. & \st{done}\\
+ECC / RMW          & On-die ECC $\to$ DM mask (no RMW); controller ECC $\to$ RMW read-allocate + interlock. & \op{open}\\
+Segmentation owner & CIF pre-segment vs MC-side WR\_ACCUM packetization -- pick one. & \op{open}\\
+\midrule
+
+\multicolumn{3}{l}{\textbf{6. Maintenance engine (peer, never CAS; flags to scheduler)}}\\
+\midrule
+INIT FSM (16)      & DDR5 power-on: reset$\to$MRW-train$\to$ZQCL$\to$training$\to$init\_done (drives DFI till done). & \st{done}\\
+REFRESH FSM (6)    & Leaky-bucket credits; REFsb-preferred, drain (policy B) $\to$ PRE $\to$ REF; gate\_rfc. & \st{done}\\
+RFM FSM (6)        & Per-bank RAA (+ACT, $-$ref); RAA$\geq$RAAIMT $\to$ RFMsb/ab. & \st{done}\\
+ZQCAL FSM (7)      & MPC ZQ start/latch; gate\_zq (rank). & \st{done}\\
+MR\_POLL FSM (6)   & Periodic MRR(MR4); TUF=1 (>85C) $\to$ tREFI/2 (temp reload). & \st{done}\\
+MR\_WRITE FSM (9)  & CSR mode-reg write + optional verify + timing-apply; shares MR Read Arbiter. & \st{done}\\
+POWER\_MGMT (10)   & Power-down + self-refresh branches (CKE, T\_XP/T\_XS/T\_DLLK). & \st{done}\\
+MR Read Arbiter    & Grants 1 of \{MR\_POLL, MR\_WRITE\} the MRR sideband; mrr\_requester tags return. & \st{done}\\
+\textbf{FREQ\_CHANGE FSM} & DVFS: quiesce$\to$self-refresh$\to$DFI freq-change handshake$\to$PHY relock$\to$reload timing\_reg\_file + MRW + ZQ$\to$SRX$\to$update gear. & \su{stub}\\
+ERROR / ALERT\_n   & Watch dfi\_alert\_n (write-CRC/CA-parity); single recovery point. & \su{stub}\\
+\midrule
+
+\multicolumn{3}{l}{\textbf{7. Still open / to write}}\\
+\midrule
+Address Map Unit   & daddr $\to$ \{rank,bg,bank,row,col\}; is any hash left MC-side (vs CIF)? & \op{open}\\
+RAW-hazard doc     & Same-line R/W ordering owned by CIF (MC = pure reorderable engine); write the doc. & PENDING\\
+Packer detail      & Bundle-assembly rules, $\geq$2-live-BG preference, spill handling. & PENDING\\
+fig\_52 comparator & Redraw as \texttt{(GC+phase)$\geq$next} + ``GC=CK, += gear'' note. & minor\\
+\bottomrule
+\end{longtable}
+}
+
+\end{document}
