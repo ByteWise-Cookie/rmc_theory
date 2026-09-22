@@ -1,0 +1,123 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=15mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{para}{RGB}{26,122,58}
+\definecolor{stru}{RGB}{192,57,43}
+\renewcommand{\arraystretch}{1.28}
+\renewcommand{\P}{\textbf{\textcolor{para}{P}}}
+\newcommand{\Su}{\textbf{\textcolor{stru}{S}}}
+
+\begin{document}
+\begin{center}
+{\Large\textbf{DDR-Version Portability -- Scheduler Parameterization}}\\[2pt]
+{\small One channel. \P\ = parametric (change a value/reg, plug-and-play).
+\Su\ = structural (logic must be added / removed / rewired). Timing CK values are
+per speed bin from \texttt{timing\_reg\_file}; DDR5-4800B is our reference.}
+\end{center}
+
+\section*{1. Structural / count parameters}
+{\footnotesize
+\newcommand{\LastCol}{6}
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.1cm} p{2.0cm} p{2.0cm} p{2.4cm} c >{\raggedright\arraybackslash}p{4.6cm}}
+\toprule
+\textbf{Param} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind} & \textbf{Note}\\
+\midrule\endhead
+N\_BANKS        & 8 (flat)      & 16          & 32           & \P  & count only\\
+N\_BG           & 1 (none)      & 4           & 8            & \Su & adds a whole BG arb level\\
+BANKS\_PER\_BG  & 8             & 4           & 4            & \P  & \\
+BL (burst)      & 8             & 8           & 16           & \P  & \\
+dqFree = BL/2   & 4             & 4           & 8            & \P  & derived; DQ heartbeat\\
+N\_RANKS        & cfg           & cfg         & cfg          & \P  & lane replication\\
+Gear range      & 1:1           & 1:1..1:2    & 1:1..1:4     & \P  & phaser slot mask\\
+CA form         & parallel addr & parallel    & 2-cyc 14-bit & \Su & 1-cyc vs 2-beat encoder\\
+Sub-channel     & 64b           & 64b         & 2$\times$32b & \Su & changes packet$\to$DQ map\\
+Row/Col width   & density       & density     & density      & \P  & address-map slice\\
+\bottomrule
+\end{longtable}}
+
+\section*{2. Timing constants -- which EXIST per generation}
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.2cm} p{2.4cm} p{2.4cm} p{2.4cm} c}
+\toprule
+\textbf{Timing} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind}\\
+\midrule\endhead
+tCCD (CAS-CAS)   & one (tCCD)    & S/L split     & S/L split     & \Su\\
+tRRD (ACT-ACT)   & one (tRRD)    & S/L split     & S/L split     & \Su\\
+tCCD\_L\_WR      & no            & yes           & yes           & \Su\\
+tFAW (4-ACT win) & yes           & yes           & yes           & \P\\
+tWTR (WR-RD)     & one           & S/L split     & S/L split     & \Su\\
+tPPD (PRE-PRE)   & no            & no            & yes           & \Su\\
+tRTRS / tRTW     & yes           & yes           & yes           & \P\\
+tRC/tRCD/tRP/tRAS/\dots & yes & yes           & yes           & \P\\
+tRFC / tREFI     & yes           & yes           & yes (+tRFCsb)  & \P/\Su\\
+\bottomrule
+\end{longtable}
+\emph{Consequence:} DDR3 has NO bank groups $\Rightarrow$ no S/L split $\Rightarrow$ the
+\textbf{BGS/BGD scope tables collapse} and the \textbf{BG arb level disappears} (bank$\to$rank
+directly). That is the single biggest structural change going DDR4/5 $\rightarrow$ DDR3.}
+
+\section*{3. Scheduler logic diff (block by block)}
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm} p{2.2cm} p{2.2cm} p{2.6cm} c}
+\toprule
+\textbf{Block} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind}\\
+\midrule\endhead
+Bank cells / FSM   & 8            & 16          & 32            & \P (count)\\
+BGB arb (bank-in-BG) & --         & 4-way       & 4-way         & \Su\\
+BG arb (BG-in-rank)  & \emph{absent} & 4-way    & 8-way         & \Su\\
+BGS / BGD scoreboard & collapse   & present     & present       & \Su\\
+class-split + L3     & yes         & yes         & yes           & \P\\
+GC + comparators     & yes         & yes         & yes           & \P (const values)\\
+phaser slot mask     & 1 slot      & $\le$2      & $\le$4        & \P\\
+CA-beat encoder      & 1-cyc cmds  & 1-cyc       & 2-cyc (2 beats) & \Su\\
+DM / write-CRC path  & --          & yes         & yes           & \P (present/absent)\\
+on-die ECC assume    & --          & optional    & yes           & \Su\\
+\bottomrule
+\end{longtable}}
+
+\section*{4. Maintenance engine diff}
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm} p{2.2cm} p{2.2cm} p{2.6cm} c}
+\toprule
+\textbf{Sub-engine} & \textbf{DDR3} & \textbf{DDR4} & \textbf{DDR5} & \textbf{Kind}\\
+\midrule\endhead
+REFab              & yes          & yes         & yes           & \P\\
+REFsb + drain (policy B) & --     & --          & yes           & \Su (DDR5 add)\\
+RFM / RAA (row-hammer) & --       & --          & yes           & \Su (DDR5 add)\\
+ZQ command form    & ZQCL/ZQCS    & ZQCL/ZQCS   & MPC ZQCAL start/latch & \Su\\
+MR\_POLL (MR4 TUF) & -- (external) & yes        & yes           & \P/\Su\\
+MR\_WRITE (+timing-apply) & basic MRS & MRS     & MRW + verify  & \P/\Su\\
+INIT sequence      & DDR3 seq     & DDR4 seq    & DDR5 seq (MPC/train) & \Su\\
+FREQ\_CHANGE (DVFS) & limited     & yes         & yes (DFI freq-change)  & \P\\
+tREFI temp scaling & --           & MR4/TUF     & MR4/TUF (+tRFCsb) & \P\\
+\bottomrule
+\end{longtable}}
+
+\section*{5. Port cost summary (what to touch)}
+\textbf{DDR5 $\rightarrow$ DDR4:} params: N\_BANKS 32$\to$16, N\_BG 8$\to$4, BL 16$\to$8
+(dqFree 8$\to$4), gear cap 1:4$\to$1:2, reload timing bin. \emph{Remove:} RFM/RAA engine,
+REFsb + same-bank drain, tPPD, on-die-ECC assumption. \emph{Rewire:} ZQ (MPC$\to$ZQCL/CS),
+CA-beat encoder (2-cyc$\to$1-cyc), INIT sequence. BG level \textbf{stays}.
+
+\textbf{DDR4 $\rightarrow$ DDR3:} additionally set N\_BG 4$\to$1 $\Rightarrow$ \textbf{delete the
+BG arb level, collapse BGS/BGD} into bank+rank, and drop all S/L timing splits (single tCCD/
+tRRD/tWTR); remove DM/write-CRC; simpler ZQ; simpler init. Gear 1:1 only.
+
+\textbf{Stays parametric across all three (plug-and-play):} bank/rank counts, BL/dqFree,
+timing CK values (from \texttt{timing\_reg\_file}), gear range, address-map slice, GC+comparator,
+class-split arb, REFab, FAW window, turnaround (tWTR/tRTW), completion + data-path SRAMs.
+
+\textbf{The irreducibly structural set (needs RTL, not a knob):} presence of the BG arb level +
+S/L scoreboard, RFM engine, REFsb drain, the 2-cyc CA-beat encoder, and the ZQ/INIT command
+encodings. Everything else is a parameter or a timing-reg reload.
+
+\end{document}
