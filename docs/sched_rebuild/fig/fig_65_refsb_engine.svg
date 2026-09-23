@@ -6,16 +6,18 @@
   </defs>
   <rect width="1500" height="900" fill="#ffffff"/>
   <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">REFsb engine  (bank k across all 8 BGs = 8 banks)</text>
-  <rect x="40" y="90" width="220" height="60" fill="none" stroke="#000000" stroke-width="1.6"/>
-  <text x="260" y="82" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">tREFI down-counter</text>
-  <text x="260" y="66" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">expire -&gt; debt++  (&gt;&gt;rr_shift, temp)</text>
-  <circle cx="120" cy="240" r="36" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="120" y="240" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">debt</text>
-  <text x="120" y="254" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">0..8 sat</text>
-  <line x1="150" y1="150" x2="150" y2="208" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="158" y="185" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">debt++</text>
-  <text x="200" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">debt&gt;=7 -&gt; force</text>
-  <text x="200" y="238" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">debt&gt;0 &amp; idle -&gt; opp</text>
+  <rect x="40" y="82" width="250" height="74" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="290" y="74" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">GC upper-slice compare</text>
+  <text x="290" y="58" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">hit = GC[20:7] &gt;= ref_ts[20:7]</text>
+  <text x="48" y="168" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">ref_ts += tREFI (full add, no drift)</text>
+  <text x="48" y="182" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">temp: &gt;&gt; rr_shift (1x/2x/4x)</text>
+  <circle cx="120" cy="250" r="34" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="120" y="250" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">debt</text>
+  <text x="120" y="264" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">3b, sat 7</text>
+  <line x1="160" y1="156" x2="130" y2="216" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="150" y="200" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">hit -&gt; debt++</text>
+  <text x="200" y="235" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">&amp;debt (==7) -&gt; force</text>
+  <text x="200" y="253" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">debt&gt;0 &amp; idle -&gt; opp</text>
   <rect x="40" y="320" width="220" height="60" fill="none" stroke="#000000" stroke-width="1.6"/>
   <text x="260" y="312" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">target RR</text>
   <text x="260" y="296" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">ba 0-&gt;3 , rank_sel</text>
@@ -87,6 +89,7 @@
   <text x="1096" y="672" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">release: GC&gt;=gate_rfc -&gt; IDLE, debt--</text>
   <text x="1096" y="692" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">ref_rdy FLAG -&gt; scheduler (override inject)</text>
   <text x="40" y="760" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb(ba=k) targets bank k in ALL 8 BGs = 8 banks (diff-BG = drain-optimal, tCCD_S). refsb_ready = AND of 8 (not OR - all must be precharged).</text>
-  <text x="40" y="780" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Trigger: opportunistic (8 idle &amp; debt&gt;0) or forced (debt&gt;=7). Drain budget ~406 CK &lt;&lt; tREFI 9360 (or 4680 at 2x temp). ME emits ref_rdy; scheduler ranks with demand.</text>
+  <text x="40" y="780" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Interval = GC upper-slice compare (reuse 24b GC): hit=GC[20:7]&gt;=ref_ts[20:7], ref_ts+=tREFI full-add (no drift), debt=3b, force=&amp;debt. No 2nd counter, no wide compare.</text>
+  <text x="40" y="800" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Trigger: opportunistic (8 idle &amp; debt&gt;0) or forced (debt==7). Drain ~406 CK &lt;&lt; tREFI 9360 (4680 at 2x). ME emits ref_rdy; scheduler ranks with demand.</text>
   <text x="40" y="872" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb: tREFI-&gt;debt (temp-scaled); pick ba (RR) -&gt; set REF_pending on the 8 target banks -&gt; freeze admit + policy-B drain -&gt; 8-AND ref_rdy = refsb_ready -&gt; REFsb issue (gate_rfc[8] = GC+tRFCsb) -&gt; release at GC&gt;=gate_rfc, debt--, ba++. ME flag override-injects at the phaser.</text>
 </svg>

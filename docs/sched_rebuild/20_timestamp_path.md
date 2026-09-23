@@ -87,9 +87,20 @@ Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
 **One 24b counter, two compare widths (shared with refresh):**
 - **timestamp compare (can_*)** = low **13b** `GC[12:0]`. Max interval tRFC1=708 ≪ 2^12=4096 →
   wrap-safe. next_x stored 13b; `can_x = (GC[12:0] − next_x)[12]==0`.
-- **refresh interval / debt** = WIDE. tREFI=9360 > 4096 (can't 13b-wrap — why it was never in the
-  scoreboard); 8× postpone budget = 74880 CK. 24b wrap window = 2^23 = 8.4M → 112× headroom
-  (20b = only ~7×, too tight). So GC=24b kills the wrap-margin worry; refresh reads the wide slice.
+- **refresh interval = GC upper-slice compare (DECIDED).** Don't full-compare and don't add a
+  second free-running counter — reuse the 24b GC on its UPPER bits:
+  ```
+  ref_ts (24b deadline reg, full width for the add)
+  hit = ( GC[20:7] >= ref_ts[20:7] )        // narrow ~14b slice, subtract-MSB, 128-CK res
+  on hit:  debt <= debt + 1 (sat 7)          // 3-bit
+           ref_ts <= ref_ts + tREFI          // FULL-precision add (9360 / 4680 / 2340), NO drift
+  ref_pending = &debt                        // 3-input AND (debt==7 = force)
+  ```
+  Key: **add at full precision (exact tREFI), compare only the upper slice.** Rounding tREFI into
+  coarse units (73/36) drifts — instead keep ref_ts full width, the low bits carry, only the top
+  bits feed the comparator (refresh timing to 128-CK resolution is plenty). No wide comparator, no
+  extra counter, no drift. debt=3b (force at 7 keeps it under the 8-cap so 3 bits suffice).
+  Temp: `ref_ts += tREFI >> rr_shift` (1x/2x/4x, all exact integers).
 - **tRFC gate release** (tRFCsb=312 / tRFC1=708) ≤ 4096 → rides the 13b compare like a timestamp.
 - **phase_off:** adders take `GC_ph = GC + phase_off` (phase_off ∈ 0..gear−1) for sub-mc_clk CK
   resolution at gear>1; the compare is on `GC_ph[12:0]`.

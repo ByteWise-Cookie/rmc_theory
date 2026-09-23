@@ -17,13 +17,15 @@ def state(cx, cy, name, fill=PAPER, w=120, h=44):
 f.text(40, 32, "REFsb engine  (bank k across all 8 BGs = 8 banks)", size=15,
        mono=False, bold=True)
 
-# ---------- left: interval + debt ----------
-f.block(40, 90, 220, 60, "tREFI down-counter", "expire -> debt++  (>>rr_shift, temp)")
-f.counter(120, 240, 36, "debt", "0..8 sat")
-f.line(150, 150, 150, 208, arrow=True)
-f.text(158, 185, "debt++", size=8, mono=True, fill=MUTED)
-f.text(200, 220, "debt>=7 -> force", size=9, mono=True, fill=ME)
-f.text(200, 238, "debt>0 & idle -> opp", size=9, mono=True, fill=MUTED)
+# ---------- left: GC-slice interval + debt ----------
+f.block(40, 82, 250, 74, "GC upper-slice compare", "hit = GC[20:7] >= ref_ts[20:7]")
+f.text(48, 168, "ref_ts += tREFI (full add, no drift)", size=8, mono=True, fill=MUTED)
+f.text(48, 182, "temp: >> rr_shift (1x/2x/4x)", size=8, mono=True, fill=MUTED)
+f.counter(120, 250, 34, "debt", "3b, sat 7")
+f.line(160, 156, 130, 216, arrow=True)
+f.text(150, 200, "hit -> debt++", size=8, mono=True, fill=MUTED)
+f.text(200, 235, "&debt (==7) -> force", size=9, mono=True, fill=ME)
+f.text(200, 253, "debt>0 & idle -> opp", size=9, mono=True, fill=MUTED)
 
 # target rotation
 f.block(40, 320, 220, 60, "target RR", "ba 0->3 , rank_sel")
@@ -93,8 +95,11 @@ f.text(1096, 692, "ref_rdy FLAG -> scheduler (override inject)", size=9, mono=Tr
 f.text(40, 760, "REFsb(ba=k) targets bank k in ALL 8 BGs = 8 banks (diff-BG = drain-optimal, "
         "tCCD_S). refsb_ready = AND of 8 (not OR - all must be precharged).", size=9,
         mono=False, fill=MUTED)
-f.text(40, 780, "Trigger: opportunistic (8 idle & debt>0) or forced (debt>=7). Drain budget "
-        "~406 CK << tREFI 9360 (or 4680 at 2x temp). ME emits ref_rdy; scheduler ranks with demand.",
+f.text(40, 780, "Interval = GC upper-slice compare (reuse 24b GC): hit=GC[20:7]>=ref_ts[20:7], "
+        "ref_ts+=tREFI full-add (no drift), debt=3b, force=&debt. No 2nd counter, no wide compare.",
+        size=9, mono=False, fill=MUTED)
+f.text(40, 800, "Trigger: opportunistic (8 idle & debt>0) or forced (debt==7). Drain ~406 CK << "
+        "tREFI 9360 (4680 at 2x). ME emits ref_rdy; scheduler ranks with demand.",
         size=9, mono=False, fill=MUTED)
 
 f.caption(40, 872,
