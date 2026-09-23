@@ -57,12 +57,13 @@ f.text(COLS["cas_bg"] - 20, 762, "tCCD_L / tCCD_L_WR (2:1)", size=8, mono=True, 
 # write route
 WY = 690
 for k, cx in COLS.items():
-    f.path(f"M{cx-46} {WY+34} L{cx+46} {WY+34} L{cx+26} {WY} L{cx-26} {WY} Z",
+    # DEMUX: narrow input (adder) -> wide output (N cells)
+    f.path(f"M{cx-26} {WY+34} L{cx+26} {WY+34} L{cx+46} {WY} L{cx-46} {WY} Z",
            arrow=False, stroke=INK)
     f.line(cx, ADDY - 20, cx, WY + 34, arrow=True)
-f.text(300, WY + 15, "{rank,bg} ->", size=9, mono=True, fill=ISSUE)
-f.line(400, WY + 12, COLS["act_bg"] - 46, WY + 12, arrow=True, stroke=ISSUE)
-f.text(150, WY + 60, "write route = one-hot WE[16] + field mask (ACT->act_bg, RD/WR->cas_bg)",
+f.text(300, WY + 8, "{rank,bg} ->", size=9, mono=True, fill=ISSUE)
+f.line(400, WY + 5, COLS["act_bg"] - 36, WY + 5, arrow=True, stroke=ISSUE)
+f.text(150, WY + 60, "write DEMUX = 1 adder -> 1 of 16 (one-hot WE + field mask: ACT->act_bg, RD/WR->cas_bg)",
        size=8, mono=False, fill=ISSUE)
 
 # cells

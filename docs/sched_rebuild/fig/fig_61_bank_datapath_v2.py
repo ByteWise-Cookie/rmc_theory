@@ -63,14 +63,13 @@ for cx in COLS.values():
 # ---------- write route ({bg,bank} WE + field mask) ----------
 WY = 690
 for k, cx in COLS.items():
-    # trapezoid mux
-    f.path(f"M{cx-46} {WY+34} L{cx+46} {WY+34} L{cx+26} {WY} L{cx-26} {WY} Z",
+    # DEMUX: narrow input (adder, bottom) -> wide output (N cells, top)
+    f.path(f"M{cx-26} {WY+34} L{cx+26} {WY+34} L{cx+46} {WY} L{cx-46} {WY} Z",
            arrow=False, stroke=INK)
-    f.line(cx, ADDY - 20, cx, WY + 34, arrow=True)        # adder sum down? up
-    f.text(cx + 30, WY + 26, "", size=8)
-f.text(300, WY + 18, "{bg,bank} ->", size=9, mono=True, fill=ISSUE)
-f.line(395, WY + 15, COLS["pre"] - 46, WY + 15, arrow=True, stroke=ISSUE)
-f.text(150, WY + 60, "write route = one-hot WE[32] + field mask[cmd]  (broadcast D)",
+    f.line(cx, ADDY - 20, cx, WY + 34, arrow=True)        # adder sum up into demux
+f.text(300, WY + 8, "{bg,bank} ->", size=9, mono=True, fill=ISSUE)
+f.line(395, WY + 5, COLS["pre"] - 36, WY + 5, arrow=True, stroke=ISSUE)
+f.text(150, WY + 60, "write DEMUX = 1 adder -> 1 of 32 (one-hot WE + field mask[cmd], bcast D)",
        size=8, mono=False, fill=ISSUE)
 
 # ---------- cell arrays ----------
