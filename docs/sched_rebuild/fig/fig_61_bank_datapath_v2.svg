@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1180" viewBox="0 0 1180 1180" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1180" height="1180" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Bank timestamp datapath v2  (all fixes)</text>
+  <rect x="40" y="1090" width="320" height="56" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="360" y="1082" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">r0  GRANT</text>
+  <text x="360" y="1066" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">{cmd, bank, bg, ph_off, row}</text>
+  <rect x="430" y="1090" width="260" height="56" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="690" y="1082" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">FEEDBACK_CTL</text>
+  <text x="690" y="1066" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">cmd -&gt; op_code</text>
+  <line x1="360" y1="1118" x2="428" y2="1118" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="40" y="980" width="320" height="70" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="360" y="972" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">TIME_CONST_REGS (bank)</text>
+  <text x="360" y="956" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">6x8b: tRC tRCD tRAS tRTP tRP WR_TAIL</text>
+  <text x="48" y="1062" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">flat, all outputs wired (no read port); cfg/freq-FSM writable</text>
+  <rect x="410" y="975" width="540" height="80" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="680.0" y="997" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">const_sel  (op_code)</text>
+  <text x="680.0" y="1012" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">was bit_field_offset</text>
+  <line x1="360" y1="1010" x2="408" y2="1010" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M560 1090 V1057" fill="none" stroke="#777777" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="568" y="1075" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">op_code</text>
+  <rect x="40" y="855" width="320" height="60" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="360" y="847" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">global_counter_24b</text>
+  <text x="360" y="831" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">count &lt;= count + gear</text>
+  <text x="48" y="930" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">compare low 13b GC[12:0]  .  wide GC[23:0] -&gt; refresh</text>
+  <circle cx="410" cy="885" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="410" y="889" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="410" y="889" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <line x1="360" y1="885" x2="388" y2="885" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="430" y="862" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">+ph_off</text>
+  <line x1="410" y1="862" x2="410" y2="848" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="415" y="845" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">phase_off</text>
+  <path d="M432 885 H980 V820" fill="none" stroke="#3d8c40" stroke-width="1.0"/>
+  <text x="760" y="878" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#3d8c40">GC_ph -&gt; all adders + (13b) all compares</text>
+  <circle cx="430" cy="800" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="804" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="430" y="804" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <line x1="430" y1="975" x2="430" y2="820" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="438" y="950" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tc_pre</text>
+  <line x1="430" y1="820" x2="430" y2="820" stroke="#000000" stroke-width="1.0"/>
+  <circle cx="660" cy="800" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="660" y="804" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="660" y="804" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <line x1="660" y1="975" x2="660" y2="820" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="668" y="950" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tc_cas</text>
+  <line x1="660" y1="820" x2="660" y2="820" stroke="#000000" stroke-width="1.0"/>
+  <circle cx="890" cy="800" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="890" y="804" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="890" y="804" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <line x1="890" y1="975" x2="890" y2="820" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="898" y="950" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tc_act</text>
+  <line x1="890" y1="820" x2="890" y2="820" stroke="#000000" stroke-width="1.0"/>
+  <line x1="390" y1="820" x2="424" y2="794" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="620" y1="820" x2="654" y2="794" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="850" y1="820" x2="884" y2="794" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M384 724 L476 724 L456 690 L404 690 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <line x1="430" y1="780" x2="430" y2="724" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="460" y="716" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <path d="M614 724 L706 724 L686 690 L634 690 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <line x1="660" y1="780" x2="660" y2="724" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="690" y="716" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <path d="M844 724 L936 724 L916 690 L864 690 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <line x1="890" y1="780" x2="890" y2="724" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="920" y="716" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="300" y="708" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">{bg,bank} -&gt;</text>
+  <line x1="395" y1="705" x2="384" y2="705" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="150" y="750" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a4fb0">write route = one-hot WE[32] + field mask[cmd]  (broadcast D)</text>
+  <rect x="404" y="470" width="52" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="540" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">t*</text>
+  <text x="430" y="560" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">vld</text>
+  <line x1="430" y1="690" x2="430" y2="620" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="470" y="480" width="40" height="130" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="490" y="635" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">....</text>
+  <rect x="634" y="470" width="52" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="660" y="540" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">t*</text>
+  <text x="660" y="560" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">vld</text>
+  <line x1="660" y1="690" x2="660" y2="620" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="700" y="480" width="40" height="130" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="720" y="635" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">....</text>
+  <rect x="864" y="470" width="52" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="890" y="540" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">t*</text>
+  <text x="890" y="560" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">vld</text>
+  <line x1="890" y1="690" x2="890" y2="620" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="930" y="480" width="40" height="130" fill="#ffffff" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="950" y="635" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">....</text>
+  <text x="985" y="490" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">{vld, time_stamp}  x32 flops</text>
+  <text x="985" y="508" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">broadcast D, one-hot WE</text>
+  <circle cx="430" cy="380" r="22" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="384" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;=</text>
+  <line x1="430" y1="470" x2="430" y2="402" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="386" y="384" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">GC13</text>
+  <line x1="370" y1="380" x2="408" y2="380" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <circle cx="660" cy="380" r="22" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="660" y="384" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;=</text>
+  <line x1="660" y1="470" x2="660" y2="402" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="616" y="384" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">GC13</text>
+  <line x1="600" y1="380" x2="638" y2="380" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <circle cx="890" cy="380" r="22" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="890" y="384" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;=</text>
+  <line x1="890" y1="470" x2="890" y2="402" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="846" y="384" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">GC13</text>
+  <line x1="830" y1="380" x2="868" y2="380" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="370" y="210" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="230" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_pre</text>
+  <line x1="440" y1="358" x2="440" y2="244" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="445" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">set</text>
+  <line x1="418" y1="640" x2="418" y2="244" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="396" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rst</text>
+  <rect x="600" y="210" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="660" y="230" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_cas</text>
+  <line x1="670" y1="358" x2="670" y2="244" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="675" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">set</text>
+  <line x1="648" y1="640" x2="648" y2="244" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="626" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rst</text>
+  <rect x="830" y="210" width="120" height="34" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="890" y="230" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_act</text>
+  <line x1="900" y1="358" x2="900" y2="244" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="905" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">set</text>
+  <line x1="878" y1="640" x2="878" y2="244" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="856" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rst</text>
+  <text x="730" y="270" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas.set &amp;= vld (state==OPEN)</text>
+  <line x1="726" y1="266" x2="672" y2="250" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="40" y="150" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a4fb0">RST = issue-decode (reset-dominant, beats coincident set).</text>
+  <text x="40" y="168" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#2a8f86">SET = GC[12:0] &gt;= time_stamp (&gt;=, never ==).</text>
+  <text x="40" y="186" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">2 control units / rank (CAS+ACT slots) -&gt; 2 WE decodes, different banks.</text>
+  <text x="40" y="1168" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">GC 24b +=gear -&gt; +phase_off -&gt; GC_ph; const_sel routes 6 consts to tc_act/cas/pre by op_code; 3 adders -&gt; {bg,bank} write-route (one-hot WE + field mask) into x32 {vld,ts} cells; each cell compares GC[12:0]&gt;=ts -&gt; SET, issue -&gt; RST (reset-dominant). can_cas also ANDs vld(OPEN). Refresh reuses the wide GC[23:0].</text>
+</svg>

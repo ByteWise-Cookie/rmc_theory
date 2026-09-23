@@ -78,11 +78,21 @@ Figures: writeback = `fig_50`, scope tables = `fig_51`.
 
 ## GC + comparator (DECIDED)
 
-**GC = CK-valued, mc_clk-domain register:** `@ mc_clk: GC <= GC + gear` (1:1→+1, 1:2→+2,
+**GC = 24-bit CK-valued, mc_clk-domain register:** `@ mc_clk: GC <= GC + gear` (1:1→+1, 1:2→+2,
 1:4→+4). Free-running timebase (advances every mc_clk whether or not a cmd issues), starts 0
 after `init_done`. `gear` is the mc_clk:CK ratio (config reg; sole gear-aware element). GC is
 NOT a CK-rate counter (CK is PHY-side) and NOT mc_clk-valued — it *holds* CK, *ticks* at mc_clk.
 Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
+
+**One 24b counter, two compare widths (shared with refresh):**
+- **timestamp compare (can_*)** = low **13b** `GC[12:0]`. Max interval tRFC1=708 ≪ 2^12=4096 →
+  wrap-safe. next_x stored 13b; `can_x = (GC[12:0] − next_x)[12]==0`.
+- **refresh interval / debt** = WIDE. tREFI=9360 > 4096 (can't 13b-wrap — why it was never in the
+  scoreboard); 8× postpone budget = 74880 CK. 24b wrap window = 2^23 = 8.4M → 112× headroom
+  (20b = only ~7×, too tight). So GC=24b kills the wrap-margin worry; refresh reads the wide slice.
+- **tRFC gate release** (tRFCsb=312 / tRFC1=708) ≤ 4096 → rides the 13b compare like a timestamp.
+- **phase_off:** adders take `GC_ph = GC + phase_off` (phase_off ∈ 0..gear−1) for sub-mc_clk CK
+  resolution at gear>1; the compare is on `GC_ph[12:0]`.
 
 **can_x = reset-dominant SR flop (fig_52):** `RESET = issue-decode` (block now, immediate,
 reset-dominant so a fresh issue beats a coincident set); `SET = (GC >= next_x)` comparator.
