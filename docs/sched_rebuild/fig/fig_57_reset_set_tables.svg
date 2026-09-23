@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1560" viewBox="0 0 1240 1560" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="1560" fill="#ffffff"/>
+  <text x="40" y="34" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Timestamp path - RESET table + SET table (companion pair)</text>
+  <text x="50" y="70" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">A.  RESET on issue  (can_* cleared -&gt; block now)</text>
+  <text x="50" y="88" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">issue-decode clears the SR flop. count = SR flops written: x1 bank / x1 BG / x1 rank / x1 ch  (x8 = the 8 REF/RFM targets).</text>
+  <rect x="50" y="100" width="100" height="30" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="120" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">issued</text>
+  <rect x="150" y="100" width="320" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="310.0" y="120" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BANK</text>
+  <rect x="470" y="100" width="230" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="585.0" y="120" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BG</text>
+  <rect x="700" y="100" width="280" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="840.0" y="120" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">RANK</text>
+  <rect x="980" y="100" width="240" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1100.0" y="120" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">CH / DQ</text>
+  <rect x="50" y="130" width="100" height="71" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="169.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ACT</text>
+  <rect x="150" y="130" width="320" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="150" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act, can_cas,</text>
+  <text x="159" y="165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre   x1 bank</text>
+  <rect x="470" y="130" width="230" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="150" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act_bgs</text>
+  <text x="479" y="165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 BG</text>
+  <rect x="700" y="130" width="280" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="150" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act_bgd +</text>
+  <text x="709" y="165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">faw-&gt;can_act_rank</text>
+  <text x="709" y="180" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 rank</text>
+  <rect x="980" y="130" width="240" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="150" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="201" width="100" height="56" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="233.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD</text>
+  <rect x="150" y="201" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre   x1 bank</text>
+  <rect x="470" y="201" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_bgs</text>
+  <text x="479" y="236" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 BG</text>
+  <rect x="700" y="201" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_wr   x1 rank</text>
+  <rect x="980" y="201" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq</text>
+  <text x="989" y="236" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 ch</text>
+  <rect x="50" y="257" width="100" height="56" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="289.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR</text>
+  <rect x="150" y="257" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre   x1 bank</text>
+  <rect x="470" y="257" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_bgs</text>
+  <text x="479" y="292" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 BG</text>
+  <rect x="700" y="257" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_rd   x1 rank</text>
+  <rect x="980" y="257" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq</text>
+  <text x="989" y="292" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 ch</text>
+  <rect x="50" y="313" width="100" height="56" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="345.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRE</text>
+  <rect x="150" y="313" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="333" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act;</text>
+  <text x="159" y="348" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas(state)  x1 bank</text>
+  <rect x="470" y="313" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="333" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="313" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="333" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre   x1 rank</text>
+  <rect x="980" y="313" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="333" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="369" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="401.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFsb</text>
+  <rect x="150" y="369" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="389" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act/cas/pre</text>
+  <text x="159" y="404" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x8 bank (gate_rfc)</text>
+  <rect x="470" y="369" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="389" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">span BGs</text>
+  <rect x="700" y="369" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="389" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">debt--</text>
+  <rect x="980" y="369" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="389" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="425" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="457.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFab</text>
+  <rect x="150" y="425" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="445" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="425" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="445" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="425" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="445" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc:can_a/c/p</text>
+  <text x="709" y="460" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 rank</text>
+  <rect x="980" y="425" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="445" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="481" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="513.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFMsb</text>
+  <rect x="150" y="481" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="501" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_a/c/p (gate_rfm)</text>
+  <text x="159" y="516" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x8 bank, RAA--</text>
+  <rect x="470" y="481" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="501" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">span BGs</text>
+  <rect x="700" y="481" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="501" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="980" y="481" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="501" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="537" width="100" height="41" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="561.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFMab</text>
+  <rect x="150" y="537" width="320" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="557" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="537" width="230" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="557" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="537" width="280" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="557" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfm   x1 rank</text>
+  <rect x="980" y="537" width="240" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="557" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="578" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="610.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ZQ</text>
+  <rect x="150" y="578" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="598" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="578" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="598" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="578" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="598" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_zq   x1 rank</text>
+  <rect x="980" y="578" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="598" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq</text>
+  <text x="989" y="613" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 ch</text>
+  <rect x="50" y="634" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="666.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRW</text>
+  <rect x="150" y="634" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="654" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="634" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="654" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="634" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="654" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_mr(tMRD)</text>
+  <text x="709" y="669" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 rank</text>
+  <rect x="980" y="634" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="654" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="690" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="722.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRR</text>
+  <rect x="150" y="690" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="710" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="690" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="710" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="690" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="710" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_mr; dir=R</text>
+  <text x="709" y="725" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 rank</text>
+  <rect x="980" y="690" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="710" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq</text>
+  <text x="989" y="725" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 ch</text>
+  <text x="50" y="790" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">B.  SET at deadline  (can_* re-armed; next_* = GC + const)</text>
+  <text x="50" y="808" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">same gates as A, same x-scope. GE comparator SETs can_* when GC &gt;= next_*. const in CK.</text>
+  <rect x="50" y="820" width="100" height="30" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="840" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">issued</text>
+  <rect x="150" y="820" width="320" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="310.0" y="840" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BANK</text>
+  <rect x="470" y="820" width="230" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="585.0" y="840" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BG</text>
+  <rect x="700" y="820" width="280" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="840.0" y="840" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">RANK</text>
+  <rect x="980" y="820" width="240" height="30" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1100.0" y="840" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">CH / DQ</text>
+  <rect x="50" y="850" width="100" height="71" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="889.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ACT</text>
+  <rect x="150" y="850" width="320" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="870" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act(tRC 117),</text>
+  <text x="159" y="885" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas(tRCD 40),</text>
+  <text x="159" y="900" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre(tRAS 77)  x1 bank</text>
+  <rect x="470" y="850" width="230" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="870" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act_bgs</text>
+  <text x="479" y="885" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (tRRD_L 12)  x1 BG</text>
+  <rect x="700" y="850" width="280" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="870" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act_bgd(tRRD_S 8),</text>
+  <text x="709" y="885" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">faw(tFAW 32)  x1 rank</text>
+  <rect x="980" y="850" width="240" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="870" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="921" width="100" height="56" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="953.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD</text>
+  <rect x="150" y="921" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="941" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre(tRTP 18)  x1 bank</text>
+  <rect x="470" y="921" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="941" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_bgs</text>
+  <text x="479" y="956" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (tCCD_L 12)  x1 BG</text>
+  <rect x="700" y="921" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="941" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_wr(tRTW 12)  x1 rank</text>
+  <rect x="980" y="921" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="941" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq</text>
+  <text x="989" y="956" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (+BL/2=8)  x1 ch</text>
+  <rect x="50" y="977" width="100" height="71" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1016.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR</text>
+  <rect x="150" y="977" width="320" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="997" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre</text>
+  <text x="159" y="1012" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (CWL+BL/2+tWR=118)</text>
+  <text x="159" y="1027" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 bank</text>
+  <rect x="470" y="977" width="230" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="997" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_bgs</text>
+  <text x="479" y="1012" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (tCCD_L_WR 48)  x1 BG</text>
+  <rect x="700" y="977" width="280" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="997" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_rd</text>
+  <text x="709" y="1012" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (CWL+BL/2+tWTR 70/52)</text>
+  <text x="709" y="1027" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 rank</text>
+  <rect x="980" y="977" width="240" height="71" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="997" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq</text>
+  <text x="989" y="1012" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (+8)  x1 ch</text>
+  <rect x="50" y="1048" width="100" height="41" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1072.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRE</text>
+  <rect x="150" y="1048" width="320" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1068" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act(tRP 40)  x1 bank</text>
+  <rect x="470" y="1048" width="230" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1068" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="1048" width="280" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1068" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre(tPPD 2)  x1 rank</text>
+  <rect x="980" y="1048" width="240" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1068" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="1089" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1121.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFsb</text>
+  <rect x="150" y="1089" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1109" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc rel</text>
+  <text x="159" y="1124" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  +tRFCsb 312   x8 bank</text>
+  <rect x="470" y="1089" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1109" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">span BGs</text>
+  <rect x="700" y="1089" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1109" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">debt--</text>
+  <rect x="980" y="1089" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1109" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="1145" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1177.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFab</text>
+  <rect x="150" y="1145" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="1145" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="1145" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc rel +tRFC1 708</text>
+  <text x="709" y="1180" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  x1 rank</text>
+  <rect x="980" y="1145" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1165" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="1201" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1233.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFMsb</text>
+  <rect x="150" y="1201" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfm rel</text>
+  <text x="159" y="1236" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  +tRFM   x8 bank</text>
+  <rect x="470" y="1201" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">span BGs</text>
+  <rect x="700" y="1201" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RAA -= RAAIMT</text>
+  <rect x="980" y="1201" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1221" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="1257" width="100" height="41" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1281.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFMab</text>
+  <rect x="150" y="1257" width="320" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="1257" width="230" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="1257" width="280" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfm rel +tRFM  x1 rank</text>
+  <rect x="980" y="1257" width="240" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1277" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="1298" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1330.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ZQ</text>
+  <rect x="150" y="1298" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1318" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="1298" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1318" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="1298" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1318" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_zq rel +tZQCAL,</text>
+  <text x="709" y="1333" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">latch +tZQLAT 30  x1 rank</text>
+  <rect x="980" y="1298" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1318" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq  x1 ch</text>
+  <rect x="50" y="1354" width="100" height="56" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1386.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRW</text>
+  <rect x="150" y="1354" width="320" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1374" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="1354" width="230" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1374" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="1354" width="280" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1374" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_mr rel +tMRD 16,</text>
+  <text x="709" y="1389" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">live +tMOD 36  x1 rank</text>
+  <rect x="980" y="1354" width="240" height="56" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1374" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="1410" width="100" height="41" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="1434.5" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRR</text>
+  <rect x="150" y="1410" width="320" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="159" y="1430" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="470" y="1410" width="230" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="479" y="1430" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="700" y="1410" width="280" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="709" y="1430" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_mr +tMRD 16  x1 rank</text>
+  <rect x="980" y="1410" width="240" height="41" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="989" y="1430" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq(+8)  x1 ch</text>
+  <text x="40" y="1481" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">A and B are one list from two sides: every gate RESET in A is re-SET in B via its next_* = GC+const. RESET = which flops clear on issue; SET = the deadline each re-arms with.</text>
+</svg>

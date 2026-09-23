@@ -129,3 +129,84 @@ structural facts, no write-port arbitration needed:
 ## Sizing (13-bit timestamps, N_RANKS=2)
 BANK 64×(state~26 + 3×13=39) ; BGS 16×(2×13=26) ; BGD 2×13 ; RANK 2×~85 (faw fat) ; GLOBAL ~40b.
 Timing-const table (tRC/tRCD/… ≈20 consts) shared ONCE, feeds every `*_UPD` adder — NOT per-bank.
+
+## Timing-const reg file (FLAT, per scope) — DECIDED
+
+**Form = flat shared bank, NOT per-command rows.** Store each *distinct* constant once; the
+per-command selection is a `case(issued_cmd)` that synth folds to minimal muxes. Per-command
+rows were rejected — RD/WR/PRE fill one field but pad to 3 columns → ~50% empty flops (BANK 96b
+row-form vs 48b flat). Flat spends a tiny mux instead of padded storage; wins on both storage and
+mux (row-form needs a 4:1 per column; flat needs one 2:1 + one 3:1).
+
+**No read address.** Each bank is a flop array with *every output permanently wired out* — the
+consts are standing wires, not a ported memory. So any subset (all 3 for ACT) is available in ONE
+cycle, and any number of readers (both writeback control units) tap the same wires — pure fan-out,
+no port contention. An addressed SRAM/ROM would serialize multi-fetch; flat flops do not. The
+`cfg_we` write path (freq-FSM reload) is what keeps them as real flops — never constant-folded.
+
+### BANK_CONST (6 × 8b = 48b)
+| idx | const | val (CK) |
+|---|---|---|
+| 0 | tRC | 117 |
+| 1 | tRCD | 40 |
+| 2 | tRAS | 77 |
+| 3 | tRTP | 18 |
+| 4 | tRP | 40 |
+| 5 | WR_TAIL = CWL+BL/2+tWR | 118 |
+
+feed: `next_act` = 2:1 {tRC(ACT), tRP(PRE)} · `next_cas` = fixed tRCD(ACT) · `next_pre` = 3:1
+{tRAS(ACT), tRTP(RD), WR_TAIL(WR)}.
+
+### BG_CONST (3 × 8b = 24b)
+| idx | const | val |
+|---|---|---|
+| 0 | tRRD_L | 12 |
+| 1 | tCCD_L | 12 |
+| 2 | tCCD_L_WR | 48 |
+
+feed: `next_act_bg` = fixed tRRD_L(ACT) · `next_cas_bg` = 2:1 {tCCD_L(RD), tCCD_L_WR(WR)}.
+
+### RANK_CONST (7 × 8b = 56b)
+| idx | const | val |
+|---|---|---|
+| 0 | tRRD_S | 8 |
+| 1 | tFAW | 32 |
+| 2 | tRTW | 12 |
+| 3 | WTR_TAIL_L = CWL+BL/2+tWTR_L | 70 |
+| 4 | WTR_TAIL_S = CWL+BL/2+tWTR_S | 52 |
+| 5 | tPPD | 2 |
+| 6 | tRTRS | 2 |
+
+feed: `next_act_dbg` = fixed tRRD_S(ACT) · `faw` = fixed tFAW(ACT) · `next_wr` = fixed tRTW(RD) ·
+`next_rd` = 2:1 {WTR_TAIL_L, WTR_TAIL_S} by same/diff-BG (or conservative L, fixed — parked) ·
+`next_pre` = fixed tPPD(PRE). tRTRS = cross-rank CAS (DQ handler, parked).
+
+### CH_CONST (1 × 8b = 8b)
+| idx | const | val |
+|---|---|---|
+| 0 | BL_HALF (BL/2) | 8 |
+
+feed: `dqFree` = fixed BL_HALF(RD/WR).
+
+### MAINT_CONST (separate path, wider — up to tRFC1)
+| idx | const | val | bits |
+|---|---|---|---|
+| 0 | tRFCsb | 312 | 10 |
+| 1 | tRFC1 | 708 | 10 |
+| 2 | tRFM | ~ | 10 |
+| 3 | tZQCAL | ~1024 | 12 |
+| 4 | tZQLAT | 30 | 8 |
+| 5 | tMRD | 16 | 8 |
+| 6 | tMOD | 36 | 8 |
+
+**Demand total = 48+24+56+8 = 136b**, stored ONCE, shared across all 64 banks / 16 BGs / 2 ranks.
+
+### Selection = `case`, not hand-drawn muxes
+Write one `case(issued_cmd)` per operand; `unique case` lets synth drop unused legs and derive the
+minimal mux (fixed / 2:1 / 3:1). The source reads like the per-command spec; the netlist is the
+flat bank + minimal muxes. Composites (WR_TAIL, WTR_TAIL) are stored precomputed — the freq-FSM
+recomputes them (fn of new CWL/tCK) and rewrites on DVFS, so no runtime add.
+
+### Write interface
+`cfg_we` · `cfg_scope[2:0]` (BANK/BG/RANK/CH/MAINT) · `cfg_idx[3:0]` · `cfg_data[11:0]`.
+Read: none (named static wires). Reload: freq-FSM walks all entries on DVFS.
