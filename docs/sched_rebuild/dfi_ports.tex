@@ -59,6 +59,21 @@ whole post-phaser adapter is ONE clock domain (\texttt{mc\_clk}); the reference 
 you which phase a bus beat lands on. So your instinct is right that the enables are ``DDR-clock''
 by reference, but physically the MC drives them on \texttt{dfi\_clk}, per phase.
 
+\textbf{The single clock is the SLOW clock (\texttt{dfi\_clk = CK/GEAR}); the N$\times$ is SPATIAL,
+not a faster clock.} At 1:4 \texttt{dfi\_clk} runs at CK/4 and \emph{each edge drives 4 CA phases in
+parallel} (\texttt{dfi\_address\_p0..p3}, \texttt{dfi\_cs\_p0..p3}); the PHY serializes those 4 onto
+the DRAM CA at full CK. So the MC \emph{never} runs at CK --- it runs at CK/GEAR and emits a whole
+bundle's worth of CA/enables per cycle:
+\begin{itemize}\itemsep0pt
+\item 1:1 $\rightarrow$ 1 phase/edge (\texttt{dfi\_clk}=CK)
+\item 1:2 $\rightarrow$ 2 phases/edge (\texttt{dfi\_clk}=CK/2)
+\item 1:4 $\rightarrow$ 4 phases/edge (\texttt{dfi\_clk}=CK/4)
+\end{itemize}
+This is exactly the phaser's N-winner bundle (STAGE 4). A DDR5 command is 2-UI, so it occupies 2 of
+the N phase slots; at 1:4 that means up to 2 two-cycle commands per edge (\texttt{[C C A A]}) or a
+mix with 1-cycle PRE (fig\_55). \texttt{DFI\_CMD\_ENCODE} builds the N phase-slots; the PHY does the
+CK-rate serialization.
+
 \section{\textcolor{cmd}{Command interface} (Command-clk ref, all \texttt{\_pN} per phase)}
 \begin{ports}
 dfi\_address(\_pN) & out & 14 & cmd & CA bus. DDR5 command is CA-encoded here (2-UI cmds span 2 beats); MC preserves bit order.\\
