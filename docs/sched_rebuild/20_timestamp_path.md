@@ -101,12 +101,9 @@ Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
   Exact by construction (reload adds the real tREFI = constant step; refresh needs LINEAR k·tREFI,
   which a left-shift/×2 can NOT give — that's geometric 2^k·tREFI and misses refreshes). Temp:
   `refi_cnt += tREFI >> rr_shift` (1x/2x/4x). debt=3b (force at 7 keeps it under the 8-cap).
-- **Chosen over the GC-slice alternative.** GC upper-slice compare (`GC[16:7] >= ref_ts[16:7]`,
-  add-exact/compare-coarse) also works and is wrap-safe (tREFI ≪ half-window), but needs a ~13b
-  ref_ts reg + adder + comparator = MORE gates than the 14b counter + zero-detect, for the SAME
-  accuracy. GC-slice only wins if you drop ref_ts and accept the single-bit-toggle (GC[13], 12%
-  early). Since we want accuracy, the down-counter is cheaper and has no LSB/wrap/slice edge cases.
   tREFI stays out of the per-command scoreboard (13b) — it's the ME's own 14b counter (STAGE 6).
+  (GC-slice compare was explored and dropped: needs a ref_ts reg + adder + comparator for the same
+  accuracy, more gates than the counter, with LSB/wrap edge cases the counter doesn't have.)
 - **Drain fits before cap:** force at debt=7 (one guard). One REFsb = drain + tRFCsb. Worst drain =
   **WWWW ≈ 406 CK** (8 diff-BG target banks pack at dqFree=8; write tail CWL+BL/2+tWR=118 dominates;
   scheduler direction-batches so mixed residents cost ONE flip ~450, never rwrw flip-stack). One
