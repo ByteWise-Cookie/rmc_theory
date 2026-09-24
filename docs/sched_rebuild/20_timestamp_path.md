@@ -101,6 +101,16 @@ Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
   bits feed the comparator (refresh timing to 128-CK resolution is plenty). No wide comparator, no
   extra counter, no drift. debt=3b (force at 7 keeps it under the 8-cap so 3 bits suffice).
   Temp: `ref_ts += tREFI >> rr_shift` (1x/2x/4x, all exact integers).
+- **Parametric slice math (elaboration from tREFI):** `LO = clog2(tREFI) − 6` (res 2^LO ≈ 1–1.5%),
+  `HI = clog2(tREFI) + 2` (wrap: 2^HI ≥ 4·tREFI > max compare distance = tREFI). Width `HI−LO+1 ≈
+  10b` constant across DDR1–5 (both bounds track clog2(tREFI)). DDR5-4800: LO=7, HI=16.
+- **Error is bounded, NOT cumulative:** add is exact (ref_ts += full tREFI), compare is truncated →
+  each edge fires ≤ 2^LO CK (=128 @ DDR5) early of its EXACT deadline; the remainder varies per
+  interval (9360 mod 128 = 16) so nothing piles up. ≤128 CK once, never ×N.
+- **Drain fits before cap:** force at debt=7 (one guard). One REFsb = drain + tRFCsb. Worst drain =
+  **WWWW ≈ 406 CK** (8 diff-BG target banks pack at dqFree=8; write tail CWL+BL/2+tWR=118 dominates;
+  scheduler direction-batches so mixed residents cost ONE flip ~450, never rwrw flip-stack). One
+  REFsb ≈ 406+312 = **~718 CK ≪ tREFI window** (9360, or 4680 @ 2x) → 6× margin, debt never hits 8.
 - **tRFC gate release** (tRFCsb=312 / tRFC1=708) ≤ 4096 → rides the 13b compare like a timestamp.
 - **phase_off:** adders take `GC_ph = GC + phase_off` (phase_off ∈ 0..gear−1) for sub-mc_clk CK
   resolution at gear>1; the compare is on `GC_ph[12:0]`.
