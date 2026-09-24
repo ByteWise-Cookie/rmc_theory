@@ -15,7 +15,8 @@
   <text x="952" y="180" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">slice  = GC[16:7]  W=10b  (MSB..LSB)</text>
   <text x="952" y="198" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">debt = 3b (0..7)   force = &amp;debt (==7)</text>
   <text x="952" y="216" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">temp 2x: tREFI&gt;&gt;1 = 4680 ; 4x: 2340</text>
-  <text x="40" y="90" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">A.  industry down-counter  (textbook, zero bit-math)</text>
+  <text x="40" y="90" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">A.  down-counter  (CHOSEN - textbook, zero bit-math)</text>
+  <text x="600" y="90" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86" font-weight="bold">&lt;= LOCKED</text>
   <rect x="60" y="120" width="200" height="60" fill="none" stroke="#000000" stroke-width="1.6"/>
   <text x="260" y="112" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">refi_cnt (14b)</text>
   <text x="260" y="96" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">load 9360</text>
@@ -28,7 +29,7 @@
   <text x="230" y="250" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">tick</text>
   <path d="M160 280 V330 H60 V150 H60" fill="none" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
   <text x="70" y="325" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">reload 9360</text>
-  <text x="60" y="380" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">exact by construction. no compare, no drift. costs a 14b free counter.</text>
+  <text x="60" y="380" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">exact by construction. no compare, no drift, no LSB/wrap edge. 14b + 3b debt = 17b. reload += tREFI (constant step, NOT a &lt;&lt;1 - shift = geometric = misses refresh).</text>
   <text x="40" y="450" font-size="13" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">B.  GC-slice compare  (reuse the 24b GC, add-exact / compare-coarse)</text>
   <rect x="60" y="490" width="200" height="56" fill="none" stroke="#000000" stroke-width="1.6"/>
   <text x="260" y="482" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">global_counter_24b</text>

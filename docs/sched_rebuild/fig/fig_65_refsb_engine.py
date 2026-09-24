@@ -17,13 +17,13 @@ def state(cx, cy, name, fill=PAPER, w=120, h=44):
 f.text(40, 32, "REFsb engine  (bank k across all 8 BGs = 8 banks)", size=15,
        mono=False, bold=True)
 
-# ---------- left: GC-slice interval + debt ----------
-f.block(40, 82, 250, 74, "GC upper-slice compare", "hit = GC[20:7] >= ref_ts[20:7]")
-f.text(48, 168, "ref_ts += tREFI (full add, no drift)", size=8, mono=True, fill=MUTED)
-f.text(48, 182, "temp: >> rr_shift (1x/2x/4x)", size=8, mono=True, fill=MUTED)
+# ---------- left: 14b down-counter interval + 3b debt ----------
+f.block(40, 82, 250, 74, "refi_cnt (14b) = tREFI", "-= gear; tick at 0; += tREFI")
+f.text(48, 168, "temp: += tREFI >> rr_shift (1x/2x/4x)", size=8, mono=True, fill=MUTED)
+f.text(48, 182, "{debt[2:0], refi_cnt[13:0]} = 17b", size=8, mono=True, fill=MUTED)
 f.counter(120, 250, 34, "debt", "3b, sat 7")
 f.line(160, 156, 130, 216, arrow=True)
-f.text(150, 200, "hit -> debt++", size=8, mono=True, fill=MUTED)
+f.text(150, 200, "tick -> debt++", size=8, mono=True, fill=MUTED)
 f.text(200, 235, "&debt (==7) -> force", size=9, mono=True, fill=ME)
 f.text(200, 253, "debt>0 & idle -> opp", size=9, mono=True, fill=MUTED)
 
@@ -95,8 +95,8 @@ f.text(1096, 692, "ref_rdy FLAG -> scheduler (override inject)", size=9, mono=Tr
 f.text(40, 760, "REFsb(ba=k) targets bank k in ALL 8 BGs = 8 banks (diff-BG = drain-optimal, "
         "tCCD_S). refsb_ready = AND of 8 (not OR - all must be precharged).", size=9,
         mono=False, fill=MUTED)
-f.text(40, 780, "Interval = GC upper-slice compare (reuse 24b GC): hit=GC[20:7]>=ref_ts[20:7], "
-        "ref_ts+=tREFI full-add (no drift), debt=3b, force=&debt. No 2nd counter, no wide compare.",
+f.text(40, 780, "Interval = 14b down-counter (LOCKED): refi_cnt=tREFI, -=gear, tick at 0, "
+        "+=tREFI. debt=3b, force=&debt (17b total). No compare/slice/LSB edge cases.",
         size=9, mono=False, fill=MUTED)
 f.text(40, 800, "Trigger: opportunistic (8 idle & debt>0) or forced (debt==7). Drain ~406 CK << "
         "tREFI 9360 (4680 at 2x). ME emits ref_rdy; scheduler ranks with demand.",

@@ -87,26 +87,26 @@ Deadlines/consts are all CK, so no /gear scaling and no shift in the compare.
 **One 24b counter, two compare widths (shared with refresh):**
 - **timestamp compare (can_*)** = low **13b** `GC[12:0]`. Max interval tRFC1=708 ≪ 2^12=4096 →
   wrap-safe. next_x stored 13b; `can_x = (GC[12:0] − next_x)[12]==0`.
-- **refresh interval = GC upper-slice compare (DECIDED).** Don't full-compare and don't add a
-  second free-running counter — reuse the 24b GC on its UPPER bits:
+- **refresh interval = 14b down-counter + 3b debt (DECIDED, LOCKED).** No GC compare, no ref_ts,
+  no slice/LSB/wrap edge cases:
   ```
-  ref_ts (24b deadline reg, full width for the add)
-  hit = ( GC[20:7] >= ref_ts[20:7] )        // narrow ~14b slice, subtract-MSB, 128-CK res
-  on hit:  debt <= debt + 1 (sat 7)          // 3-bit
-           ref_ts <= ref_ts + tREFI          // FULL-precision add (9360 / 4680 / 2340), NO drift
-  ref_pending = &debt                        // 3-input AND (debt==7 = force)
+  refi_cnt (14b) = tREFI                 // 2^14=16384 >= 9360
+  refi_cnt -= gear   per mc_clk
+  tick = (refi_cnt <= 0)                 // borrow/zero-detect, no compare
+  on tick:  refi_cnt += tREFI ; debt++ (sat 7)
+  on refresh done: debt--
+  ref_pending = &debt                    // 3-input AND of the top 3 bits = debt==7 (force)
+  // {debt[2:0], refi_cnt[13:0]} = 17b total
   ```
-  Key: **add at full precision (exact tREFI), compare only the upper slice.** Rounding tREFI into
-  coarse units (73/36) drifts — instead keep ref_ts full width, the low bits carry, only the top
-  bits feed the comparator (refresh timing to 128-CK resolution is plenty). No wide comparator, no
-  extra counter, no drift. debt=3b (force at 7 keeps it under the 8-cap so 3 bits suffice).
-  Temp: `ref_ts += tREFI >> rr_shift` (1x/2x/4x, all exact integers).
-- **Parametric slice math (elaboration from tREFI):** `LO = clog2(tREFI) − 6` (res 2^LO ≈ 1–1.5%),
-  `HI = clog2(tREFI) + 2` (wrap: 2^HI ≥ 4·tREFI > max compare distance = tREFI). Width `HI−LO+1 ≈
-  10b` constant across DDR1–5 (both bounds track clog2(tREFI)). DDR5-4800: LO=7, HI=16.
-- **Error is bounded, NOT cumulative:** add is exact (ref_ts += full tREFI), compare is truncated →
-  each edge fires ≤ 2^LO CK (=128 @ DDR5) early of its EXACT deadline; the remainder varies per
-  interval (9360 mod 128 = 16) so nothing piles up. ≤128 CK once, never ×N.
+  Exact by construction (reload adds the real tREFI = constant step; refresh needs LINEAR k·tREFI,
+  which a left-shift/×2 can NOT give — that's geometric 2^k·tREFI and misses refreshes). Temp:
+  `refi_cnt += tREFI >> rr_shift` (1x/2x/4x). debt=3b (force at 7 keeps it under the 8-cap).
+- **Chosen over the GC-slice alternative.** GC upper-slice compare (`GC[16:7] >= ref_ts[16:7]`,
+  add-exact/compare-coarse) also works and is wrap-safe (tREFI ≪ half-window), but needs a ~13b
+  ref_ts reg + adder + comparator = MORE gates than the 14b counter + zero-detect, for the SAME
+  accuracy. GC-slice only wins if you drop ref_ts and accept the single-bit-toggle (GC[13], 12%
+  early). Since we want accuracy, the down-counter is cheaper and has no LSB/wrap/slice edge cases.
+  tREFI stays out of the per-command scoreboard (13b) — it's the ME's own 14b counter (STAGE 6).
 - **Drain fits before cap:** force at debt=7 (one guard). One REFsb = drain + tRFCsb. Worst drain =
   **WWWW ≈ 406 CK** (8 diff-BG target banks pack at dqFree=8; write tail CWL+BL/2+tWR=118 dominates;
   scheduler direction-batches so mixed residents cost ONE flip ~450, never rwrw flip-stack). One

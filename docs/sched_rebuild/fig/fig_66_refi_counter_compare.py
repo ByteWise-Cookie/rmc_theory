@@ -30,8 +30,9 @@ for i, s in enumerate(pp):
     f.text(952, 108 + i * 18, s, size=9, mono=True)
 
 # =============== Panel A : down-counter ===============
-f.text(40, 90, "A.  industry down-counter  (textbook, zero bit-math)", size=13,
+f.text(40, 90, "A.  down-counter  (CHOSEN - textbook, zero bit-math)", size=13,
        mono=False, bold=True)
+f.text(600, 90, "<= LOCKED", size=12, mono=True, bold=True, fill=CMP)
 f.block(60, 120, 200, 60, "refi_cnt (14b)", "load 9360")
 f.text(70, 200, "2^14=16384 >= 9360", size=8, mono=True, fill=MUTED)
 f.line(160, 180, 160, 230, arrow=True)
@@ -42,7 +43,8 @@ f.text(230, 250, "tick", size=9, mono=True, fill=CMP)
 # reload loop
 f.path("M160 280 V330 H60 V150 H60", arrow=True, dashed=True, stroke=MUTED)
 f.text(70, 325, "reload 9360", size=8, mono=True, fill=MUTED)
-f.text(60, 380, "exact by construction. no compare, no drift. costs a 14b free counter.",
+f.text(60, 380, "exact by construction. no compare, no drift, no LSB/wrap edge. 14b + 3b debt "
+       "= 17b. reload += tREFI (constant step, NOT a <<1 - shift = geometric = misses refresh).",
        size=9, mono=False, fill=MUTED)
 
 # =============== Panel B : GC-slice ===============
