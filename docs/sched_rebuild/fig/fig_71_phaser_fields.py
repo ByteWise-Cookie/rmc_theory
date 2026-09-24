@@ -21,6 +21,7 @@ rows = [
     ("addr", "18", "ACT/CAS", "GENERAL addr = row(ACT) | col(RD/WR); encoder splits UI0/UI1", CMD),
     ("ap", "1", "CAS/PRE", "auto-precharge", CMD),
     ("bl", "1", "CAS", "BL16/32 / on-the-fly", CMD),
+    ("two_ui", "1", "all", "repeat flag: 1=2-UI (hold 2 cyc @1:1 / 2 phase slots @gear>1); 0=1-UI/1 cyc", CMD),
     ("rob_index", "8", "CAS", "completion tag", DATA),
     ("sram_addr", "9", "CAS", "dbuf_addr(RD) | wd_slot(WR)", DATA),
 ]
@@ -42,8 +43,11 @@ for nm, b, fr, mn, col in rows:
     f.text(X[3] + 8, y + 18, mn, size=9, mono=False)
     y += 26
 # subtotal bar
-f.text(X[0] + 8, y + 20, "CA subtotal ~32b -> DFI_CMD_ENCODE   .   data ~17b -> WL/RD   .   "
-       "record total ~49b", size=10, mono=False, bold=True, fill=INK)
+f.text(X[0] + 8, y + 20, "CA subtotal ~33b -> DFI_CMD_ENCODE   .   data ~17b -> WL/RD   .   "
+       "record total ~50b", size=10, mono=False, bold=True, fill=INK)
+f.text(X[0] + 8, y + 40, "two_ui: scheduler pre-decodes UI count -> phaser just checks the flag. "
+       "@1:1 repeat=1 holds the record a 2nd cycle (UI0 then UI1 on p0).", size=9,
+       mono=False, fill=GREEN)
 
 # ---- split arrows ----
 sy = y + 50

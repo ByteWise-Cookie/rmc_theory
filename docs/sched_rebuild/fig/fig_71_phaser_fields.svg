@@ -87,55 +87,64 @@
   <rect x="400" y="316" width="700" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="408" y="334" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">BL16/32 / on-the-fly</text>
   <rect x="50" y="342" width="170" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="58" y="360" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86" font-weight="bold">rob_index</text>
+  <text x="58" y="360" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0" font-weight="bold">two_ui</text>
   <rect x="220" y="342" width="80" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="260.0" y="360" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">8</text>
+  <text x="260.0" y="360" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
   <rect x="300" y="342" width="100" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="308" y="360" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">CAS</text>
+  <text x="308" y="360" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">all</text>
   <rect x="400" y="342" width="700" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="408" y="360" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">completion tag</text>
+  <text x="408" y="360" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">repeat flag: 1=2-UI (hold 2 cyc @1:1 / 2 phase slots @gear&gt;1); 0=1-UI/1 cyc</text>
   <rect x="50" y="368" width="170" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="58" y="386" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86" font-weight="bold">sram_addr</text>
+  <text x="58" y="386" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86" font-weight="bold">rob_index</text>
   <rect x="220" y="368" width="80" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="260.0" y="386" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">9</text>
+  <text x="260.0" y="386" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">8</text>
   <rect x="300" y="368" width="100" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="308" y="386" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">CAS</text>
   <rect x="400" y="368" width="700" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="408" y="386" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">dbuf_addr(RD) | wd_slot(WR)</text>
-  <text x="58" y="414" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">CA subtotal ~32b -&gt; DFI_CMD_ENCODE   .   data ~17b -&gt; WL/RD   .   record total ~49b</text>
-  <rect x="50" y="444" width="300" height="60" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="200" y="468" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA fields (~32b)</text>
-  <text x="200" y="488" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">cmd/rank/bg/bank/addr/ap/bl</text>
-  <line x1="350" y1="474" x2="470" y2="474" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="476" y="470" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a4fb0">-&gt; DFI_CMD_ENCODE (per-phase CA beats)</text>
-  <rect x="50" y="524" width="300" height="60" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
-  <text x="200" y="548" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">data meta (~17b)</text>
-  <text x="200" y="568" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">rob_index, sram_addr</text>
-  <line x1="350" y1="554" x2="470" y2="554" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="476" y="550" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#2a8f86">-&gt; WL_LAUNCH / RD_CAP (at CAS commit)</text>
-  <text x="50" y="624" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">BUNDLE = up to K=3 command records + phase placement</text>
-  <rect x="60" y="644" width="130" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="125" y="664" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">record[0]</text>
-  <text x="125" y="681" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">~49b</text>
-  <rect x="210" y="644" width="130" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="275" y="664" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">record[1]</text>
-  <text x="275" y="681" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">~49b</text>
-  <rect x="360" y="644" width="130" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
-  <text x="425" y="664" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">record[2]</text>
-  <text x="425" y="681" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">~49b</text>
-  <text x="560" y="638" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">phase placement (per slot p0..p3):</text>
-  <rect x="560" y="648" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="615" y="668" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p0</text>
-  <text x="615" y="685" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
-  <rect x="680" y="648" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="735" y="668" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p1</text>
-  <text x="735" y="685" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
-  <rect x="800" y="648" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="855" y="668" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p2</text>
-  <text x="855" y="685" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
-  <rect x="920" y="648" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="975" y="668" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p3</text>
-  <text x="975" y="685" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
-  <text x="50" y="724" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Each phase slot points to a record (cmd_sel) + which UI (ui_idx). A 2-UI cmd = two slots pointing to the same record, ui=0 then ui=1. Idle slot -&gt; DES.</text>
-  <text x="40" y="774" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Phaser emits K&lt;=3 records (~49b: general cmd + general addr(row|col) + rw + rank/bg/bank/ap/bl + rob/sram) + per-phase placement {cmd_sel,ui}. CA fields -&gt; DFI_CMD_ENCODE; rob/sram -&gt; WL/RD at CAS commit; addr split UI0/UI1 by the encoder.</text>
+  <text x="408" y="386" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">completion tag</text>
+  <rect x="50" y="394" width="170" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="58" y="412" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86" font-weight="bold">sram_addr</text>
+  <rect x="220" y="394" width="80" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="260.0" y="412" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">9</text>
+  <rect x="300" y="394" width="100" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="308" y="412" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">CAS</text>
+  <rect x="400" y="394" width="700" height="26" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="408" y="412" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">dbuf_addr(RD) | wd_slot(WR)</text>
+  <text x="58" y="440" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">CA subtotal ~33b -&gt; DFI_CMD_ENCODE   .   data ~17b -&gt; WL/RD   .   record total ~50b</text>
+  <text x="58" y="460" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#3d8c40">two_ui: scheduler pre-decodes UI count -&gt; phaser just checks the flag. @1:1 repeat=1 holds the record a 2nd cycle (UI0 then UI1 on p0).</text>
+  <rect x="50" y="470" width="300" height="60" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="200" y="494" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA fields (~32b)</text>
+  <text x="200" y="514" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">cmd/rank/bg/bank/addr/ap/bl</text>
+  <line x1="350" y1="500" x2="470" y2="500" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="476" y="496" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a4fb0">-&gt; DFI_CMD_ENCODE (per-phase CA beats)</text>
+  <rect x="50" y="550" width="300" height="60" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="200" y="574" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">data meta (~17b)</text>
+  <text x="200" y="594" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">rob_index, sram_addr</text>
+  <line x1="350" y1="580" x2="470" y2="580" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="476" y="576" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#2a8f86">-&gt; WL_LAUNCH / RD_CAP (at CAS commit)</text>
+  <text x="50" y="650" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">BUNDLE = up to K=3 command records + phase placement</text>
+  <rect x="60" y="670" width="130" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="125" y="690" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">record[0]</text>
+  <text x="125" y="707" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">~49b</text>
+  <rect x="210" y="670" width="130" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="275" y="690" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">record[1]</text>
+  <text x="275" y="707" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">~49b</text>
+  <rect x="360" y="670" width="130" height="46" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="425" y="690" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">record[2]</text>
+  <text x="425" y="707" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">~49b</text>
+  <text x="560" y="664" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">phase placement (per slot p0..p3):</text>
+  <rect x="560" y="674" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="615" y="694" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p0</text>
+  <text x="615" y="711" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
+  <rect x="680" y="674" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="735" y="694" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p1</text>
+  <text x="735" y="711" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
+  <rect x="800" y="674" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="855" y="694" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p2</text>
+  <text x="855" y="711" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
+  <rect x="920" y="674" width="110" height="46" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="975" y="694" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p3</text>
+  <text x="975" y="711" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{cmd_sel[2],ui[1]}</text>
+  <text x="50" y="750" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Each phase slot points to a record (cmd_sel) + which UI (ui_idx). A 2-UI cmd = two slots pointing to the same record, ui=0 then ui=1. Idle slot -&gt; DES.</text>
+  <text x="40" y="800" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Phaser emits K&lt;=3 records (~49b: general cmd + general addr(row|col) + rw + rank/bg/bank/ap/bl + rob/sram) + per-phase placement {cmd_sel,ui}. CA fields -&gt; DFI_CMD_ENCODE; rob/sram -&gt; WL/RD at CAS commit; addr split UI0/UI1 by the encoder.</text>
 </svg>
