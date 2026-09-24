@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1580" height="1020" viewBox="0 0 1580 1020" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1580" height="1020" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Post-phaser DFI adapter  (DDR5, DFI 5.2)</text>
+  <rect x="300" y="95" width="900" height="855" fill="none" stroke="#aaaaaa" stroke-width="1.2"/>
+  <text x="310" y="112" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#3d8c40">dfi_clk == mc_clk  (= CK/GEAR)  .  _pN phases = spatial (N buses/edge), PHY serializes to CK</text>
+  <rect x="60" y="300" width="180" height="300" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="150.0" y="322" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHASER</text>
+  <text x="150" y="340" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">placed bundle</text>
+  <text x="150" y="356" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">phase[0..N-1]</text>
+  <text x="150" y="430" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CAS-W commit</text>
+  <text x="150" y="446" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{op,rob,wd_slot}</text>
+  <text x="150" y="520" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">RD commit</text>
+  <text x="150" y="536" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{op,rob,dbuf}</text>
+  <rect x="60" y="120" width="300" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="210.0" y="142" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MAINT / FREQ-CHANGE FSM</text>
+  <text x="210.0" y="160" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">control-clk sideband</text>
+  <rect x="320" y="150" width="210" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="425.0" y="172" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DFI_CMD_ENCODE</text>
+  <text x="425.0" y="190" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">bundle -&gt; CA beats + CS</text>
+  <rect x="320" y="270" width="210" height="70" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="425.0" y="292" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">INIT_FSM (CA)</text>
+  <text x="425.0" y="310" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">drives CA during init</text>
+  <line x1="240" y1="340" x2="318" y2="200" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="250" y="250" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">bundle</text>
+  <path d="M600 160 L648 175 L648 335 L600 350 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="624" y="258" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DFI</text>
+  <text x="624" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MUX</text>
+  <line x1="530" y1="190" x2="600" y2="200" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="530" y1="300" x2="600" y2="300" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="560" y="250" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">sel = dfi_init_complete</text>
+  <line x1="624" y1="335" x2="624" y2="360" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="624" y="375" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">init_complete</text>
+  <rect x="320" y="420" width="210" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="425.0" y="442" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WL_LAUNCH</text>
+  <text x="425.0" y="460" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">arm tphy_wrlat @ CAS-W</text>
+  <rect x="600" y="420" width="160" height="80" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="680.0" y="442" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR_SPLIT</text>
+  <text x="680.0" y="460" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">512b -&gt; gear beats</text>
+  <rect x="60" y="660" width="180" height="60" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="150.0" y="682" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WD_SRAM</text>
+  <line x1="240" y1="440" x2="318" y2="450" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="240" y1="660" x2="318" y2="480" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="250" y="600" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">wd_slot</text>
+  <line x1="530" y1="460" x2="600" y2="460" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="320" y="560" width="210" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="425.0" y="582" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD_CAP</text>
+  <text x="425.0" y="600" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">arm tphy_rdlat @ RD</text>
+  <rect x="600" y="560" width="160" height="80" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="680.0" y="582" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD_ACCUM</text>
+  <text x="680.0" y="600" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">beats -&gt; 512b line</text>
+  <rect x="860" y="660" width="180" height="60" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="950.0" y="682" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD_SRAM</text>
+  <line x1="240" y1="540" x2="318" y2="590" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="760" y1="620" x2="858" y2="665" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="600" y="545" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_en</text>
+  <rect x="320" y="690" width="210" height="66" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="425.0" y="712" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ALERT / ERR mon</text>
+  <text x="425.0" y="730" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">alert_n / error</text>
+  <rect x="1050" y="200" width="130" height="620" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1115.0" y="222" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHY</text>
+  <rect x="1280" y="430" width="120" height="160" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1340.0" y="452" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DRAM</text>
+  <line x1="1180" y1="500" x2="1278" y2="500" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1215" y="490" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">CK</text>
+  <line x1="648" y1="255" x2="1050" y2="255" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="770" y="248" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">dfi_address_pN, dfi_cs_pN, cke/odt/reset_n</text>
+  <line x1="760" y1="460" x2="1050" y2="460" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="770" y="453" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_wrdata_en/_pN, wrdata_pN, mask_pN</text>
+  <line x1="530" y1="600" x2="1050" y2="600" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="770" y="593" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_en_pN</text>
+  <line x1="1050" y1="640" x2="762" y2="640" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="770" y="633" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_wN, dfi_rddata_valid_wN  (in)</text>
+  <line x1="1050" y1="720" x2="532" y2="720" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="770" y="713" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">dfi_alert_n / dfi_error  (in)</text>
+  <line x1="360" y1="150" x2="360" y2="140" stroke="#000000" stroke-width="1.0"/>
+  <path d="M210 180 V880 H1050" fill="none" stroke="#b0602a" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="500" y="872" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#b0602a">dfi_init_start/complete, cmd/data_freq_ratio, freq_fsp, ctrlupd_*, phyupd_*  (control-clk sideband, from MAINT/FREQ FSM)</text>
+  <text x="600" y="528" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">RD_ACCUM/WL_LAUNCH -&gt; COMPLETION -&gt; resp AFIFO (tag-only)</text>
+  <text x="40" y="990" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">PHASER bundle -&gt; DFI_CMD_ENCODE (CA beats + CS per phase) -&gt; DFI_MUX (init override, sel=init_complete) -&gt; PHY. Write: CAS-W commit arms WL_LAUNCH (tphy_wrlat), WR_SPLIT streams WD_SRAM as gear beats + dfi_wrdata_en. Read: RD commit arms RD_CAP (tphy_rdlat, dfi_rddata_en), RD_ACCUM gathers dfi_rddata on _valid into RD_SRAM. All in dfi_clk==mc_clk.</text>
+</svg>
