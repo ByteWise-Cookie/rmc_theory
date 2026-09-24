@@ -4,7 +4,7 @@ from rtlfig import (Fig, MUTED, FILL_NEW, FILL_LOGIC, FILL_CELL, FILL_ACTIVE,
 # fig_71 — phaser output fields. Per-command record (CA fields + data meta) + phase
 # placement. CA -> DFI_CMD_ENCODE, data meta -> WL/RD lines.
 
-CMD = "#7a4fb0"; DATA = "#2a8f86"; GREEN = "#3d8c40"
+CMD = "#7a4fb0"; DATA = "#2a8f86"; GREEN = "#3d8c40"; ME = "#b0602a"
 f = Fig(1360, 900)
 
 f.text(40, 32, "Phaser output fields  (per-command record + phase placement)", size=15,
@@ -21,7 +21,6 @@ rows = [
     ("addr", "18", "ACT/CAS", "GENERAL addr = row(ACT) | col(RD/WR); encoder splits UI0/UI1", CMD),
     ("ap", "1", "CAS/PRE", "auto-precharge", CMD),
     ("bl", "1", "CAS", "BL16/32 / on-the-fly", CMD),
-    ("two_ui", "1", "all", "repeat flag: 1=2-UI (hold 2 cyc @1:1 / 2 phase slots @gear>1); 0=1-UI/1 cyc", CMD),
     ("rob_index", "8", "CAS", "completion tag", DATA),
     ("sram_addr", "9", "CAS", "dbuf_addr(RD) | wd_slot(WR)", DATA),
 ]
@@ -43,14 +42,18 @@ for nm, b, fr, mn, col in rows:
     f.text(X[3] + 8, y + 18, mn, size=9, mono=False)
     y += 26
 # subtotal bar
-f.text(X[0] + 8, y + 20, "CA subtotal ~33b -> DFI_CMD_ENCODE   .   data ~17b -> WL/RD   .   "
-       "record total ~50b", size=10, mono=False, bold=True, fill=INK)
-f.text(X[0] + 8, y + 40, "two_ui: scheduler pre-decodes UI count -> phaser just checks the flag. "
-       "@1:1 repeat=1 holds the record a 2nd cycle (UI0 then UI1 on p0).", size=9,
-       mono=False, fill=GREEN)
+f.text(X[0] + 8, y + 20, "CA subtotal ~32b -> DFI_CMD_ENCODE   .   data ~17b -> WL/RD   .   "
+       "record total ~49b", size=10, mono=False, bold=True, fill=INK)
+# separate control bit (NOT in the record)
+f.rect(X[0], y + 34, 1400, 40, fill=FILL_LOGIC, width=W_CELL)
+f.text(X[0] + 10, y + 52, "SEPARATE control bit (NOT a record field):  repeat/hold  "
+       "= scheduler -> phaser side wire.", size=10, mono=False, bold=True, fill=ME)
+f.text(X[0] + 10, y + 68, "Used ONLY @1:1 (hold the cmd 2 cycles: UI0 then UI1 on p0). At "
+       "gear>1 the two UIs fit adjacent phases -> flag unused/wasted.", size=9,
+       mono=False, fill=MUTED)
 
 # ---- split arrows ----
-sy = y + 50
+sy = y + 95
 f.rect(50, sy, 300, 60, fill=FILL_NEW, width=W_CELL)
 f.text(200, sy + 24, "CA fields (~32b)", size=11, anchor="middle", bold=True)
 f.text(200, sy + 44, "cmd/rank/bg/bank/addr/ap/bl", size=8, anchor="middle", fill=MUTED)
