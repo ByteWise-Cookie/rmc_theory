@@ -7,27 +7,27 @@ from rtlfig import (Fig, MUTED, FILL_NEW, FILL_LOGIC, FILL_CELL, FILL_ACTIVE,
 USE = "#e3f2f1"; DC = "#f4f4f4"
 f = Fig(1580, 900)
 
-COLS = ["cmd_type", "rw", "rank", "bg", "bank", "addr", "ap", "bl", "2ui", "rob", "sram"]
-CW = [140, 46, 52, 46, 70, 110, 40, 40, 44, 52, 90]
+COLS = ["cmd_type", "rw", "rank", "bg", "bank", "addr", "ap", "bl", "rob", "sram"]
+CW = [140, 46, 52, 46, 70, 110, 40, 40, 52, 90]
 X0 = 40
 
-# rows: (cmd, [per-col value or '-'])
+# rows: (cmd, [per-col value or '-'])   -- 2ui is NOT a field (separate flag)
 ROWS = [
-    ("ACT",   ["ACT", "-", "Y", "Y", "Y", "row", "-", "-", "1", "-", "-"]),
-    ("RD",    ["RD", "R", "Y", "Y", "Y", "col", "Y", "Y", "1", "Y", "dbuf"]),
-    ("WR",    ["WR", "W", "Y", "Y", "Y", "col", "Y", "Y", "1", "Y", "wd_slot"]),
-    ("PRE",   ["PRE", "-", "Y", "Y", "Y", "-", "-", "-", "0", "-", "-"]),
-    ("PREA",  ["PREA", "-", "Y", "-", "-", "-", "-", "-", "0", "-", "-"]),
-    ("PREsb", ["PREsb", "-", "Y", "-", "k", "-", "-", "-", "0", "-", "-"]),
-    ("REF",   ["REF", "-", "Y", "-", "-", "-", "-", "-", "0", "-", "-"]),
-    ("REFsb", ["REFsb", "-", "Y", "-", "k", "-", "-", "-", "0", "-", "-"]),
-    ("RFM",   ["RFM", "-", "Y", "-", "k/-", "-", "-", "-", "0", "-", "-"]),
-    ("MRW",   ["MRW", "-", "Y", "-", "-", "MRA+d", "-", "-", "1", "-", "-"]),
-    ("MRR",   ["MRR", "R", "Y", "-", "-", "MRA", "-", "-", "1", "Y", "sideband"]),
-    ("ZQ/MPC", ["MPC", "-", "Y", "-", "-", "op", "-", "-", "1", "-", "-"]),
-    ("SRE",   ["SRE", "-", "Y", "-", "-", "-", "-", "-", "0", "-", "-"]),
-    ("SRX",   ["SRX", "-", "Y", "-", "-", "-", "-", "-", "0", "-", "-"]),
-    ("DES",   ["DES", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]),
+    ("ACT",   ["ACT", "-", "Y", "Y", "Y", "row", "-", "-", "-", "-"]),
+    ("RD",    ["RD", "R", "Y", "Y", "Y", "col", "Y", "Y", "Y", "dbuf"]),
+    ("WR",    ["WR", "W", "Y", "Y", "Y", "col", "Y", "Y", "Y", "wd_slot"]),
+    ("PRE",   ["PRE", "-", "Y", "Y", "Y", "-", "-", "-", "-", "-"]),
+    ("PREA",  ["PREA", "-", "Y", "-", "-", "-", "-", "-", "-", "-"]),
+    ("PREsb", ["PREsb", "-", "Y", "-", "k", "-", "-", "-", "-", "-"]),
+    ("REF",   ["REF", "-", "Y", "-", "-", "-", "-", "-", "-", "-"]),
+    ("REFsb", ["REFsb", "-", "Y", "-", "k", "-", "-", "-", "-", "-"]),
+    ("RFM",   ["RFM", "-", "Y", "-", "k/-", "-", "-", "-", "-", "-"]),
+    ("MRW",   ["MRW", "-", "Y", "-", "-", "MRA+d", "-", "-", "-", "-"]),
+    ("MRR",   ["MRR", "R", "Y", "-", "-", "MRA", "-", "-", "Y", "sideband"]),
+    ("ZQ/MPC", ["MPC", "-", "Y", "-", "-", "op", "-", "-", "-", "-"]),
+    ("SRE",   ["SRE", "-", "Y", "-", "-", "-", "-", "-", "-", "-"]),
+    ("SRX",   ["SRX", "-", "Y", "-", "-", "-", "-", "-", "-", "-"]),
+    ("DES",   ["DES", "-", "-", "-", "-", "-", "-", "-", "-", "-"]),
 ]
 
 f.text(40, 30, "DDR5 command x phaser-field matrix  (used vs don't-care)", size=15,
@@ -75,7 +75,8 @@ ny = ay + 90
 f.text(40, ny, "DFI encode path:", size=11, mono=False, bold=True)
 notes = [
     "ALL rows go through DFI_CMD_ENCODE -> CA[13:0] beats + dfi_cs  (one CA bus, one issue point).",
-    "2ui=1 (ACT/RD/WR/MRW/MRR/MPC) -> 2 phase slots; 2ui=0 (PRE*/REF*/RFM/SRE/SRX/DES) -> 1 slot.",
+    "2ui is NOT a record field: SEPARATE single flag scheduler -> DFI driver (outside port). 1=2-UI",
+    "  (ACT/RD/WR/MRW/MRR/MPC) -> 2 phase slots; 0=1-UI (PRE*/REF*/RFM/SRE/SRX/DES). Held @1:1.",
     "RD/WR arm the data path: WR->WL_LAUNCH (sram=wd_slot), RD->RD_CAP (sram=dbuf).",
     "MRR reads MR on DQ -> arms RD_CAP too (sram=sideband, rob=return tag) - why it can't be offloaded.",
     "PDE/PDX (power-down) are NOT phaser records - pure dfi_cke transitions (POWER_MGMT).",

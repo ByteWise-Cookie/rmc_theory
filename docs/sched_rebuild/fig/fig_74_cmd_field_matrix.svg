@@ -23,12 +23,10 @@
   <text x="524.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ap</text>
   <rect x="544" y="70" width="40" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">bl</text>
-  <rect x="584" y="70" width="44" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">2ui</text>
-  <rect x="628" y="70" width="52" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">rob</text>
-  <rect x="680" y="70" width="90" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">sram</text>
+  <rect x="584" y="70" width="52" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">rob</text>
+  <rect x="636" y="70" width="90" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="89" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">sram</text>
   <rect x="40" y="98" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ACT</text>
   <rect x="180" y="98" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -45,12 +43,10 @@
   <text x="524.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="98" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="98" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
-  <rect x="628" y="98" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="98" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="98" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="98" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="124" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD</text>
   <rect x="180" y="124" width="46" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
@@ -67,12 +63,10 @@
   <text x="524.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
   <rect x="544" y="124" width="40" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
-  <rect x="584" y="124" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
-  <rect x="628" y="124" width="52" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
-  <rect x="680" y="124" width="90" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">dbuf</text>
+  <rect x="584" y="124" width="52" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
+  <rect x="636" y="124" width="90" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">dbuf</text>
   <rect x="40" y="150" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR</text>
   <rect x="180" y="150" width="46" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
@@ -89,12 +83,10 @@
   <text x="524.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
   <rect x="544" y="150" width="40" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
-  <rect x="584" y="150" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
-  <rect x="628" y="150" width="52" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
-  <rect x="680" y="150" width="90" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">wd_slot</text>
+  <rect x="584" y="150" width="52" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
+  <rect x="636" y="150" width="90" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="168" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">wd_slot</text>
   <rect x="40" y="176" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRE</text>
   <rect x="180" y="176" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -111,12 +103,10 @@
   <text x="524.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="176" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="176" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="176" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="176" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="176" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="176" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="194" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="202" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PREA</text>
   <rect x="180" y="202" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -133,12 +123,10 @@
   <text x="524.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="202" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="202" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="202" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="202" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="202" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="202" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="228" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PREsb</text>
   <rect x="180" y="228" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -155,12 +143,10 @@
   <text x="524.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="228" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="228" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="228" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="228" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="228" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="228" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="246" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="254" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REF</text>
   <rect x="180" y="254" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -177,12 +163,10 @@
   <text x="524.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="254" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="254" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="254" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="254" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="254" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="254" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="280" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFsb</text>
   <rect x="180" y="280" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -199,12 +183,10 @@
   <text x="524.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="280" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="280" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="280" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="280" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="280" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="280" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="298" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="306" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFM</text>
   <rect x="180" y="306" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -221,12 +203,10 @@
   <text x="524.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="306" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="306" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="306" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="306" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="306" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="306" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="324" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="332" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRW</text>
   <rect x="180" y="332" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -243,12 +223,10 @@
   <text x="524.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="332" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="332" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
-  <rect x="628" y="332" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="332" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="332" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="332" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="350" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="358" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MRR</text>
   <rect x="180" y="358" width="46" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
@@ -265,12 +243,10 @@
   <text x="524.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="358" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="358" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
-  <rect x="628" y="358" width="52" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
-  <rect x="680" y="358" width="90" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">sideband</text>
+  <rect x="584" y="358" width="52" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">Y</text>
+  <rect x="636" y="358" width="90" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="376" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">sideband</text>
   <rect x="40" y="384" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">MPC</text>
   <rect x="180" y="384" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -287,12 +263,10 @@
   <text x="524.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="384" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="384" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
-  <rect x="628" y="384" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="384" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="384" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="384" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="410" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">SRE</text>
   <rect x="180" y="410" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -309,12 +283,10 @@
   <text x="524.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="410" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="410" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="410" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="410" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="410" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="410" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="436" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">SRX</text>
   <rect x="180" y="436" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -331,12 +303,10 @@
   <text x="524.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="436" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="436" width="44" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
-  <rect x="628" y="436" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="436" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="436" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="436" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="454" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="40" y="462" width="140" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
   <text x="110.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DES</text>
   <rect x="180" y="462" width="46" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
@@ -353,12 +323,10 @@
   <text x="524.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <rect x="544" y="462" width="40" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="564.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="584" y="462" width="44" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="606.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="628" y="462" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="654.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
-  <rect x="680" y="462" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
-  <text x="725.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="584" y="462" width="52" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="610.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
+  <rect x="636" y="462" width="90" height="26" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="681.0" y="480" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">-</text>
   <text x="40" y="518" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">addr field is the GENERAL address, decoded per cmd by DFI_CMD_ENCODE:</text>
   <rect x="40" y="532" width="350" height="50" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
   <text x="52" y="552" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">ACT</text>
@@ -374,9 +342,10 @@
   <text x="1162" y="570" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">{rank,(bank k)} - no addr</text>
   <text x="40" y="608" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">DFI encode path:</text>
   <text x="52" y="630" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- ALL rows go through DFI_CMD_ENCODE -&gt; CA[13:0] beats + dfi_cs  (one CA bus, one issue point).</text>
-  <text x="52" y="649" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- 2ui=1 (ACT/RD/WR/MRW/MRR/MPC) -&gt; 2 phase slots; 2ui=0 (PRE*/REF*/RFM/SRE/SRX/DES) -&gt; 1 slot.</text>
-  <text x="52" y="668" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- RD/WR arm the data path: WR-&gt;WL_LAUNCH (sram=wd_slot), RD-&gt;RD_CAP (sram=dbuf).</text>
-  <text x="52" y="687" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- MRR reads MR on DQ -&gt; arms RD_CAP too (sram=sideband, rob=return tag) - why it can't be offloaded.</text>
-  <text x="52" y="706" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- PDE/PDX (power-down) are NOT phaser records - pure dfi_cke transitions (POWER_MGMT).</text>
-  <text x="52" y="725" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- bg/bank are DDR5-encoded INTO addr/CA (no dfi_bg/dfi_bank pins); PREsb/REFsb use bank index k across all BGs.</text>
+  <text x="52" y="649" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- 2ui is NOT a record field: SEPARATE single flag scheduler -&gt; DFI driver (outside port). 1=2-UI</text>
+  <text x="52" y="668" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">-   (ACT/RD/WR/MRW/MRR/MPC) -&gt; 2 phase slots; 0=1-UI (PRE*/REF*/RFM/SRE/SRX/DES). Held @1:1.</text>
+  <text x="52" y="687" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- RD/WR arm the data path: WR-&gt;WL_LAUNCH (sram=wd_slot), RD-&gt;RD_CAP (sram=dbuf).</text>
+  <text x="52" y="706" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- MRR reads MR on DQ -&gt; arms RD_CAP too (sram=sideband, rob=return tag) - why it can't be offloaded.</text>
+  <text x="52" y="725" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- PDE/PDX (power-down) are NOT phaser records - pure dfi_cke transitions (POWER_MGMT).</text>
+  <text x="52" y="744" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- bg/bank are DDR5-encoded INTO addr/CA (no dfi_bg/dfi_bank pins); PREsb/REFsb use bank index k across all BGs.</text>
 </svg>
