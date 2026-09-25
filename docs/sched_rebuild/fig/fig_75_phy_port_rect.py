@@ -5,8 +5,8 @@ from rtlfig import (Fig, MUTED, FILL_NEW, FILL_LOGIC, FILL_CELL, FILL_ACTIVE,
 # the right group ports by interface type. _p0 shown (rest _pN copies). Parametric.
 
 OUT = "#2a8f86"; IN = "#b0602a"
-RX, RW = 360, 400          # rect x, width
-ROWH = 21
+RX, RW = 360, 250          # rect x, width (slim)
+ROWH = 20
 Y0 = 96
 
 # (dir, name, width)  grouped; group boundaries by the GROUPS list
@@ -85,11 +85,11 @@ for i, (d, nm, wd) in enumerate(PORTS):
     y = Y0 + i * ROWH + 14
     col = OUT if d == "o" else IN
     if d == "o":
-        f.line(RX + 10, y - 4, RX + 28, y - 4, arrow=True, stroke=col)
+        f.line(RX + 5, y - 4, RX + 17, y - 4, arrow=True, stroke=col)
     else:
-        f.line(RX + 28, y - 4, RX + 10, y - 4, arrow=True, stroke=col)
-    f.text(RX + 36, y, nm, size=9, mono=True)
-    f.text(RX + RW - 10, y, wd, size=8, mono=True, anchor="end", fill=MUTED)
+        f.line(RX + 17, y - 4, RX + 5, y - 4, arrow=True, stroke=col)
+    f.text(RX + 22, y, nm, size=8, mono=True)
+    f.text(RX + RW - 6, y, wd, size=7, mono=True, anchor="end", fill=MUTED)
     if i:
         f.line(RX, Y0 + i * ROWH, RX + RW, Y0 + i * ROWH, stroke=FAINT)
 
