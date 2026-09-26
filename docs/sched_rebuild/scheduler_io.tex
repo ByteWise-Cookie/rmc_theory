@@ -20,91 +20,87 @@
 \titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
 \titlespacing*{\subsection}{0pt}{6pt}{2pt}
 
-\newcolumntype{S}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{4.7cm}}
-\newcolumntype{W}{>{\ttfamily\scriptsize\centering\arraybackslash}p{2.0cm}}
-\newcolumntype{P}{>{\footnotesize\centering\arraybackslash}p{2.4cm}}
-\newcolumntype{M}{>{\footnotesize\raggedright\arraybackslash}p{8.5cm}}
+\newcolumntype{S}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{4.9cm}}
+\newcolumntype{W}{>{\ttfamily\scriptsize\centering\arraybackslash}p{2.1cm}}
+\newcolumntype{P}{>{\footnotesize\centering\arraybackslash}p{2.2cm}}
+\newcolumntype{M}{>{\footnotesize\raggedright\arraybackslash}p{8.6cm}}
 
 \newenvironment{io}{%
   \footnotesize\begin{longtable}{S W P M}
-  \rowcolor{hb}\textbf{signal} & \textbf{width} & \textbf{from/to} & \textbf{meaning}\\ \midrule\endhead}
+  \rowcolor{hb}\textbf{signal} & \textbf{width} & \textbf{dir} & \textbf{meaning}\\ \midrule\endhead}
   {\bottomrule\end{longtable}}
 
 \begin{document}
 \begin{center}
-{\LARGE\textbf{Scheduler --- Black-box I/O}  \normalsize (matches arb drawing)}\\[2pt]
-{\small One channel, DDR5. Per rank per cycle the arb emits \textbf{1 ACT + 1 CAS + 2 PRE} winners,
-each \{vld,bg,bank\}, gated by the rank-scope can. Row path -> ACT, col path -> CAS. Parametric
-N\_BANKS(=N\_BG$\times$4), N\_BG, N\_RANKS.}
+{\LARGE\textbf{Scheduler --- Black-box I/O}}\\[2pt]
+{\small One channel, DDR5. The scheduler = the final select/pack bar. The per-rank ARBITERS
+(rank\_act\_abr, rank\_cas\_abr, pick-2-pre) sit UPSTREAM and hand it the winners; the scheduler
+packs the bundle and drives the phaser. \textcolor{ingr}{in} = into scheduler, \textcolor{outg}{out}
+= from scheduler.}
 \end{center}
 
-\section{INPUTS}
-\subsection{Per-bank path candidates  (PRE\_BANK\_ROW\_PATHS / COL\_PATHS $\times$32)}
+\section{INPUTS  (into the scheduler)}
+\subsection{Per-rank arb winners  (from rank\_act\_abr / rank\_cas\_abr / pick-2-pre)}
 \begin{io}
-can\_act[b] / can\_cas[b] / can\_pre[b] & 1 ea $\times$N\_BANKS & \textcolor{ingr}{in} & per-bank legality (into row/col/pre paths)\\
-need\_act / need\_cas / need\_pre[b] & 1 ea $\times$N\_BANKS & \textcolor{ingr}{in} & resident packet demand\\
-p\_bit[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & PRE-eligible vector (need\_pre \& can\_pre) -> pick-2-pre\\
-is\_hit[b] / age[b] & 1/few $\times$N\_BANKS & \textcolor{ingr}{in} & CAS\_W row-lock / ACT\_W age (weights)\\
-open\_row[b] / col,rd\_wr\_ptr,rob & bus $\times$N\_BANKS & \textcolor{ingr}{in} & row (ACT path) / \{col, sram ptr, rob\} (CAS path) from BANK\_REQ\\
+act\_win[r] = \{rdy, bg, bank\} & few $\times$N\_RANKS & \textcolor{ingr}{in} & the 1 ACT winner / rank (already \& can\_act\_rank\_s upstream)\\
+act\_row[r] & row $\times$N\_RANKS & \textcolor{ingr}{in} & row for that ACT (row\_sel)\\
+cas\_win[r] = \{rdy, bg, bank\} & few $\times$N\_RANKS & \textcolor{ingr}{in} & the 1 CAS winner / rank (\& can\_cas\_rank\_s upstream)\\
+cas\_col[r] = \{idx, wr/rd\_ptr, column\} & bus $\times$N\_RANKS & \textcolor{ingr}{in} & col + sram ptr + rob for that CAS (col\_sel)\\
+pre\_win[r][0..1] = \{rdy, bg, bank\} & few$\times$2$\times$N\_RANKS & \textcolor{ingr}{in} & the 2 PRE winners / rank (pick-2-pre off p\_bit)\\
 \end{io}
-\subsection{Rank-scope gates  (AND'd with the class winner)}
+\subsection{Global / cross-rank legality  (for the L3 CAS pick + packing)}
 \begin{io}
-can\_act\_rank\_s[r] & 1 $\times$N\_RANKS & \textcolor{ingr}{in} & rank ACT gate: tRRD\_S (cross-BG) + tFAW window\\
-can\_cas\_rank\_s[r] & 1 $\times$N\_RANKS & \textcolor{ingr}{in} & rank CAS gate: turnaround (tWTR/tRTW) + dqFree\\
-can\_act\_bgs / can\_cas\_bgs[g] & 1 ea $\times$N\_BG & \textcolor{ingr}{in} & same-BG spacing (tRRD\_L / tCCD\_L(\_WR))\\
+can\_cas\_dq & 1 & \textcolor{ingr}{in} & DQ bus free (dqFree=BL/2); only \emph{one} CAS may win the bundle\\
+can\_wr / can\_rd & 1 ea & \textcolor{ingr}{in} & R<->W turnaround gap (tWTR/tRTW) on a direction flip\\
+last\_cas\_dir/rank/bg & few & \textcolor{ingr}{in} & bus state -> cross-rank tRTRS, diff-BG packing, dir bias\\
+batch\_dir[r] & 1 $\times$N\_RANKS & \textcolor{ingr}{in} & WLR R/W batch direction (rank bias at L3)\\
+gear & 2 & \textcolor{ingr}{in} & 1/2/4 -> number of phase slots to fill\\
 \end{io}
 \subsection{Maintenance flags  (ME -> scheduler, ranked with demand)}
 \begin{io}
 refsb\_rdy / ref\_force & 1 ea & \textcolor{ingr}{in} & refresh owed (|debt) / forced (\&debt==7)\\
 rfm\_rdy / rfm\_force & 1 ea & \textcolor{ingr}{in} & rowhammer owed (RAA>=IMT) / hard (>=MMT)\\
-zq\_rdy & 1 & \textcolor{ingr}{in} & ZQ calibration due (tZQ)\\
-mrr\_rdy & 1 & \textcolor{ingr}{in} & MR-read pending (temp poll / read MR) -- uses DQ (dqFree)\\
+zq\_rdy & 1 & \textcolor{ingr}{in} & ZQ calibration due\\
+mrr\_rdy & 1 & \textcolor{ingr}{in} & MR-read pending (temp poll / read MR) -- uses DQ\\
 mrw\_rdy & 1 & \textcolor{ingr}{in} & MR-write pending (config / freq-change)\\
-cas\_complete[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & bank drained + precharged (state==IDLE)\\
+cas\_complete[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & bank drained + precharged (state==IDLE) -- issue gate\\
 maint\_cmd\_type & 5 & \textcolor{ingr}{in} & MAINT\_PRIO winner opcode (REF/RFM/ZQ/MRW/MRR)\\
 init\_done & 1 & \textcolor{ingr}{in} & boot done (else DFI mux on init, scheduler gated)\\
-\end{io}
-\subsection{Control / bus state}
-\begin{io}
-gear & 2 & \textcolor{ingr}{in} & mc:CK ratio -> bundle width (dfi\_cmd $\times$ gear)\\
-batch\_dir[r] & 1 $\times$N\_RANKS & \textcolor{ingr}{in} & WLR R/W batch direction (dir bias)\\
-op\_code (cmd) & few & \textcolor{ingr}{in} & feedback\_ctl -> const-router select (writeback)\\
-last\_cas\_dir/rank/bg & few & \textcolor{ingr}{in} & bus state (turnaround + diff-BG packing)\\
 dfi\_alert\_n / dfi\_error & 1 ea & \textcolor{ingr}{in} & PHY alert / error\\
 \end{io}
 
-\section{OUTPUTS}
-\subsection{Per-rank class winners  (the arb result)}
+\section{OUTPUTS  (from the scheduler)}
+\subsection{Bundle -> cmd\_phaser}
 \begin{io}
-act\_win[r] = \{vld, bg, bank\} & few $\times$N\_RANKS & \textcolor{outg}{out} & \textbf{1 ACT winner / rank} (rank\_act\_abr \& can\_act\_rank\_s)\\
-act\_row[r] & row $\times$N\_RANKS & \textcolor{outg}{out} & row for the ACT winner (row\_sel of the winning bank)\\
-cas\_win[r] = \{vld, bg, bank\} & few $\times$N\_RANKS & \textcolor{outg}{out} & \textbf{1 CAS winner / rank} (rank\_cas\_abr \& can\_cas\_rank\_s)\\
-cas\_col[r] = \{idx, wr/rd\_ptr, column\} & bus $\times$N\_RANKS & \textcolor{outg}{out} & col + sram ptr + rob for the CAS winner (col\_sel)\\
-pre\_win[r][0..1] = \{vld, bg, bank\} & few$\times$2$\times$N\_RANKS & \textcolor{outg}{out} & \textbf{2 PRE winners / rank} (pick-2-pre from p\_bit)\\
-\end{io}
-\subsection{Bundle to cmd\_phaser}
-\begin{io}
-CMD\_0..3\_PACKET (vld + record) & $\sim$49$\times$4 & \textcolor{outg}{out} & \{valid, cmd\_type, rw, rank, bg, bank, addr, ap, bl, rob\_index, sram\_addr\} per phase slot\\
+CMD\_0..3\_PACKET (vld + record) & $\sim$49$\times$4 & \textcolor{outg}{out} & \{valid, cmd\_type, rw, rank, bg, bank, addr, ap, bl, rob\_index, sram\_addr\} per phase slot (1/2/4 used by gear)\\
 two\_ui / repeat & 1 & \textcolor{outg}{out} & side wire -> DFI driver (1-UI vs 2-UI; @1:1 hold)\\
 \end{io}
-\subsection{Commit / feedback}
+\subsection{Grants / commit  (back to cells + scoreboard)}
 \begin{io}
-grant\_act\_oh / grant\_cas\_oh & 1 ea $\times$N\_BANKS & \textcolor{outg}{out} & winner one-hot -> cells; \textbf{pop-on-CAS} retires the packet\\
-grant\_pre\_oh[0..1] & 1$\times$2 $\times$N\_BANKS & \textcolor{outg}{out} & the 2 PRE winners one-hot\\
-fsm\_commit (issue-edge) & pulse$\times$class & \textcolor{outg}{out} & sole commit: BANK\_FSM state + fires timestamp writeback\\
-cmd\_issued\{r,bg,bank,cmd\} & bus & \textcolor{outg}{out} & drives next\_* writeback (WE + const-router)\\
+grant\_act\_oh / grant\_cas\_oh & 1 ea $\times$N\_BANKS & \textcolor{outg}{out} & the chosen ACT/CAS winner one-hot; \textbf{pop-on-CAS} retires packet\\
+grant\_pre\_oh[0..1] & 1$\times$2 $\times$N\_BANKS & \textcolor{outg}{out} & the chosen PRE winners one-hot\\
+fsm\_commit (issue-edge) & pulse$\times$class & \textcolor{outg}{out} & sole commit: updates BANK\_FSM + fires the timestamp writeback\\
+cmd\_issued\{r,bg,bank,cmd\} & bus & \textcolor{outg}{out} & drives next\_* writeback (WE + const-router select)\\
 \end{io}
 \subsection{Maintenance handshake  (to ME)}
 \begin{io}
 maint\_ack & 1 & \textcolor{outg}{out} & the maint cmd (cmd\_type) issued -> ME clears debt/RAA, advances ba\\
 \end{io}
 
+\vspace{4pt}
+\section*{Upstream (feeds the winners --- NOT scheduler I/O)}
+{\footnotesize The per-rank arbiters are a SEPARATE stage before the scheduler. Their I/O:
+\textbf{in} = PRE\_BANK\_ROW/COL\_PATHS$\times$32 (per-bank need/can\_act/cas/pre, is\_hit, age,
+open\_row, col/ptr/rob), \texttt{p\_bit} (PRE-elig vector), rank-scope gates
+\texttt{can\_act\_rank\_s}/\texttt{can\_cas\_rank\_s}, BG gates. \textbf{out} = act\_win/cas\_win/
+pre\_win (the scheduler's inputs above). So \texttt{can\_*}, \texttt{p\_bit}, weights (CAS\_W/ACT\_W/
+PRE\_W) are consumed HERE, not in the scheduler bar.}
+
 \vspace{3pt}
-{\footnotesize \textbf{Structure (per drawing):} each rank has \texttt{rank\_act\_abr} (-> 1 ACT winner)
-and \texttt{rank\_cas\_abr} (-> 1 CAS winner), each ANDed with its rank-scope can (\texttt{can\_act\_rank\_s}
-/ \texttt{can\_cas\_rank\_s}); PRE\_PATHS \texttt{pick-2-pre} off the \texttt{p\_bit} vector (-> 2 PRE
-winners, tPPD allows 2). ACT pulls its row via \texttt{row\_sel}; CAS pulls col+ptr via \texttt{col\_sel}.
-Winners + maint (ranked by MAINT\_PRIO) pack into CMD\_0..3 for the phaser (1:1/1:2/1:4 = 1/2/4 slots).
-The arb NEVER rejects --- legality is folded into the \texttt{can\_*} inputs; it only selects + weights.}
+{\footnotesize \textbf{Scheduler bar's job:} take the per-rank winners + maint flags, apply the
+cross-rank / global constraints (one CAS via dqFree, turnaround, tRTRS, dir bias), rank maint WITH
+demand (MAINT\_PRIO), and PACK the CMD\_0..3 bundle for the phaser --- plus feed back grant\_oh
+(pop-on-CAS) and the fsm\_commit writeback edge. It never rejects: legality was folded into the
+winners' \texttt{rdy} bits upstream.}
 
 \end{document}
