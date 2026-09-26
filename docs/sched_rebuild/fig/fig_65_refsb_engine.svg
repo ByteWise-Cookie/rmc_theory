@@ -39,9 +39,9 @@
   <path d="M560 180 L660 180" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="585" y="168" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">debt&gt;0</text>
   <path d="M780 180 L880 180" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="770" y="168" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">set REF_pending[8]</text>
+  <text x="770" y="168" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">set stall_acts[8]</text>
   <path d="M940 202 L940 338" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="955" y="270" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">refsb_ready (8-AND)</text>
+  <text x="955" y="270" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">cas_complete 8-AND</text>
   <path d="M880 360 L780 360" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="775" y="350" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">REFsb(ba)</text>
   <path d="M660 360 L560 360" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
@@ -49,8 +49,8 @@
   <path d="M500 338 L500 202" fill="none" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
   <text x="470" y="270" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">debt--, ba++</text>
   <text x="940" y="240" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">DRAIN: freeze admit (row_valid=0),</text>
-  <text x="940" y="254" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">finish hit-train (policy B), PRE -&gt; IDLE</text>
-  <text x="500" y="540" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ref_rdy[b] = (state==IDLE)   for bank k in BG0..7</text>
+  <text x="940" y="254" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">finish CAS; last=RDA/WRA (auto-PRE) -&gt; IDLE</text>
+  <text x="500" y="540" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">cas_complete[b] = (state==IDLE)  bank k in BG0..7</text>
   <rect x="470" y="560" width="26" height="30" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
   <text x="483" y="580" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
   <line x1="483" y1="590" x2="780" y2="640" stroke="#aaaaaa" stroke-width="1.0"/>
@@ -75,7 +75,7 @@
   <rect x="708" y="560" width="26" height="30" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
   <text x="721" y="580" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">7</text>
   <line x1="721" y1="590" x2="780" y2="640" stroke="#aaaaaa" stroke-width="1.0"/>
-  <text x="470" y="552" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">ref_rdy  BG0..7 (bank k)</text>
+  <text x="470" y="552" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">cas_complete  BG0..7 (bank k)</text>
   <rect x="760" y="630" width="120" height="44" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
   <text x="820.0" y="652" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">8-AND</text>
   <line x1="880" y1="652" x2="960" y2="652" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
@@ -83,13 +83,13 @@
   <text x="966" y="668" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">-&gt; DRAIN done -&gt; ISSUE</text>
   <rect x="1080" y="560" width="360" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="1260" y="584" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">writeback (8 target banks)</text>
-  <text x="1096" y="612" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">REF_pending[8] &lt;- 1   (freeze admit)</text>
+  <text x="1096" y="612" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">stall_acts[8] &lt;- 1   (freeze admit + block ACT)</text>
   <text x="1096" y="632" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">state[8] -&gt; REFING</text>
   <text x="1096" y="652" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc[8] = GC + tRFCsb (312)</text>
   <text x="1096" y="672" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">release: GC&gt;=gate_rfc -&gt; IDLE, debt--</text>
-  <text x="1096" y="692" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">ref_rdy FLAG -&gt; scheduler (override inject)</text>
-  <text x="40" y="760" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb(ba=k) targets bank k in ALL 8 BGs = 8 banks (diff-BG = drain-optimal, tCCD_S). refsb_ready = AND of 8 (not OR - all must be precharged).</text>
+  <text x="1096" y="692" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">o_ref_rdy=|debt -&gt; scheduler (override inject)</text>
+  <text x="40" y="760" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb(ba=k) targets bank k in ALL 8 BGs = 8 banks (diff-BG = drain-optimal, tCCD_S). cas_complete = AND of 8 (all precharged; last CAS auto-PREs, no explicit PRE).</text>
   <text x="40" y="780" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Interval = 14b down-counter (LOCKED): refi_cnt=tREFI, -=gear, tick at 0, +=tREFI. debt=3b, force=&amp;debt (17b total). No compare/slice/LSB edge cases.</text>
-  <text x="40" y="800" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Trigger: opportunistic (8 idle &amp; debt&gt;0) or forced (debt==7). Drain ~406 CK &lt;&lt; tREFI 9360 (4680 at 2x). ME emits ref_rdy; scheduler ranks with demand.</text>
-  <text x="40" y="872" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb: tREFI-&gt;debt (temp-scaled); pick ba (RR) -&gt; set REF_pending on the 8 target banks -&gt; freeze admit + policy-B drain -&gt; 8-AND ref_rdy = refsb_ready -&gt; REFsb issue (gate_rfc[8] = GC+tRFCsb) -&gt; release at GC&gt;=gate_rfc, debt--, ba++. ME flag override-injects at the phaser.</text>
+  <text x="40" y="800" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Trigger: opportunistic (8 idle &amp; debt&gt;0) or forced (debt==7). Drain ~406 CK &lt;&lt; tREFI 9360 (4680 at 2x). ME emits o_ref_rdy; scheduler ranks with demand.</text>
+  <text x="40" y="872" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFsb: tREFI-&gt;debt (temp-scaled); pick ba (RR) -&gt; set stall_acts on the 8 target banks -&gt; freeze admit + AP-drain (last CAS=RDA/WRA) -&gt; 8-AND cas_complete -&gt; REFsb issue (gate_rfc[8] = GC+tRFCsb) -&gt; release at GC&gt;=gate_rfc, debt--, ba++. ME flag override-injects at the phaser.</text>
 </svg>

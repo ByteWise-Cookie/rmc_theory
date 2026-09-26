@@ -52,9 +52,9 @@ def edge(p1, p2, col, lab, lx, ly, curve=None):
 
 edge(IDLE, PICK, ISSUE, "debt>0", 585, 168,
      f"M{IDLE[0]+60} {IDLE[1]} L{PICK[0]-60} {PICK[1]}")
-edge(PICK, DRAIN, ISSUE, "set REF_pending[8]", 770, 168,
+edge(PICK, DRAIN, ISSUE, "set stall_acts[8]", 770, 168,
      f"M{PICK[0]+60} {PICK[1]} L{DRAIN[0]-60} {DRAIN[1]}")
-edge(DRAIN, ISS, CMP, "refsb_ready (8-AND)", 955, 270,
+edge(DRAIN, ISS, CMP, "cas_complete 8-AND", 955, 270,
      f"M{DRAIN[0]} {DRAIN[1]+22} L{ISS[0]} {ISS[1]-22}")
 edge(ISS, REFING, ISSUE, "REFsb(ba)", 775, 350,
      f"M{ISS[0]-60} {ISS[1]} L{REFING[0]+60} {REFING[1]}")
@@ -65,18 +65,18 @@ edge(REL, IDLE, ME, "debt--, ba++", 470, 270,
 
 # ---------- drain: freeze + policy B ----------
 f.text(940, 240, "DRAIN: freeze admit (row_valid=0),", size=8, mono=True, fill=MUTED)
-f.text(940, 254, "finish hit-train (policy B), PRE -> IDLE", size=8, mono=True, fill=MUTED)
+f.text(940, 254, "finish CAS; last=RDA/WRA (auto-PRE) -> IDLE", size=8, mono=True, fill=MUTED)
 
 # ---------- ready combine (8-AND) ----------
 CY = 560
-f.text(500, 540, "ref_rdy[b] = (state==IDLE)   for bank k in BG0..7", size=9,
+f.text(500, 540, "cas_complete[b] = (state==IDLE)  bank k in BG0..7", size=9,
        mono=True, fill=INK)
 for i in range(8):
     x = 470 + i * 34
     f.rect(x, CY, 26, 30, fill=FILL_CELL, width=W_CELL)
     f.text(x + 13, CY + 20, str(i), size=9, anchor="middle")
     f.line(x + 13, CY + 30, 780, 640, arrow=False, stroke=FAINT)
-f.text(470, CY - 8, "ref_rdy  BG0..7 (bank k)", size=8, mono=False, fill=MUTED)
+f.text(470, CY - 8, "cas_complete  BG0..7 (bank k)", size=8, mono=False, fill=MUTED)
 f.logic(760, 630, 120, 44, "8-AND", "", top=True)
 f.line(880, 652, 960, 652, arrow=True)
 f.text(966, 648, "refsb_ready[k]", size=9, mono=True, fill=CMP)
@@ -85,26 +85,26 @@ f.text(966, 668, "-> DRAIN done -> ISSUE", size=8, mono=False, fill=MUTED)
 # ---------- writeback to scoreboard ----------
 f.rect(1080, 560, 360, 150, fill=PAPER, width=1.4, stroke=INK)
 f.text(1260, 584, "writeback (8 target banks)", size=11, anchor="middle", bold=True)
-f.text(1096, 612, "REF_pending[8] <- 1   (freeze admit)", size=9, mono=True)
+f.text(1096, 612, "stall_acts[8] <- 1   (freeze admit + block ACT)", size=9, mono=True)
 f.text(1096, 632, "state[8] -> REFING", size=9, mono=True)
 f.text(1096, 652, "gate_rfc[8] = GC + tRFCsb (312)", size=9, mono=True)
 f.text(1096, 672, "release: GC>=gate_rfc -> IDLE, debt--", size=9, mono=True)
-f.text(1096, 692, "ref_rdy FLAG -> scheduler (override inject)", size=9, mono=True, fill=ISSUE)
+f.text(1096, 692, "o_ref_rdy=|debt -> scheduler (override inject)", size=9, mono=True, fill=ISSUE)
 
 # ---------- notes ----------
 f.text(40, 760, "REFsb(ba=k) targets bank k in ALL 8 BGs = 8 banks (diff-BG = drain-optimal, "
-        "tCCD_S). refsb_ready = AND of 8 (not OR - all must be precharged).", size=9,
+        "tCCD_S). cas_complete = AND of 8 (all precharged; last CAS auto-PREs, no explicit PRE).", size=9,
         mono=False, fill=MUTED)
 f.text(40, 780, "Interval = 14b down-counter (LOCKED): refi_cnt=tREFI, -=gear, tick at 0, "
         "+=tREFI. debt=3b, force=&debt (17b total). No compare/slice/LSB edge cases.",
         size=9, mono=False, fill=MUTED)
 f.text(40, 800, "Trigger: opportunistic (8 idle & debt>0) or forced (debt==7). Drain ~406 CK << "
-        "tREFI 9360 (4680 at 2x). ME emits ref_rdy; scheduler ranks with demand.",
+        "tREFI 9360 (4680 at 2x). ME emits o_ref_rdy; scheduler ranks with demand.",
         size=9, mono=False, fill=MUTED)
 
 f.caption(40, 872,
-          "REFsb: tREFI->debt (temp-scaled); pick ba (RR) -> set REF_pending on the 8 target banks "
-          "-> freeze admit + policy-B drain -> 8-AND ref_rdy = refsb_ready -> REFsb issue (gate_rfc[8] "
+          "REFsb: tREFI->debt (temp-scaled); pick ba (RR) -> set stall_acts on the 8 target banks "
+          "-> freeze admit + AP-drain (last CAS=RDA/WRA) -> 8-AND cas_complete -> REFsb issue (gate_rfc[8] "
           "= GC+tRFCsb) -> release at GC>=gate_rfc, debt--, ba++. ME flag override-injects at the phaser.")
 
 f.save("fig_65_refsb_engine.svg")

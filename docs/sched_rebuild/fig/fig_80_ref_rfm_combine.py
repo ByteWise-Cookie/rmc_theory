@@ -30,9 +30,9 @@ f.line(290, 233, 328, 210, arrow=True, stroke=RFMC)
 f.text(340, 250, "cmd_type = REF | RFM", size=8, mono=True, fill=ISSUE)
 
 # ---- shared drain / target select ----
-f.block(330, 300, 230, 70, "PICK ba + DRAIN", "1 maint_pending -> freeze+drain")
+f.block(330, 300, 230, 70, "PICK ba + DRAIN", "1 stall_acts -> freeze+drain")
 f.text(342, 388, "ba: REF=8-AND ready . RFM=8-OR need", size=8, mono=True, fill=MUTED)
-f.text(342, 404, "drain = finish CAS + PRE (shared for both)", size=8, mono=True, fill=MUTED)
+f.text(342, 404, "drain = finish CAS; last=RDA/WRA auto-PRE (no explicit PRE)", size=8, mono=True, fill=MUTED)
 
 # ---- FSM ----
 IDLE = (720, 150); PICK = (720, 300); DRAIN = (960, 300)
