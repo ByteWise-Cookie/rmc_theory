@@ -1,0 +1,111 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{ingr}{RGB}{34,120,60}
+\definecolor{outg}{RGB}{122,79,176}
+\definecolor{hb}{RGB}{223,232,241}
+\renewcommand{\arraystretch}{1.15}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{10pt}{3pt}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+
+\newcolumntype{S}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{4.6cm}}
+\newcolumntype{W}{>{\ttfamily\scriptsize\centering\arraybackslash}p{2.0cm}}
+\newcolumntype{P}{>{\footnotesize\centering\arraybackslash}p{2.6cm}}
+\newcolumntype{M}{>{\footnotesize\raggedright\arraybackslash}p{8.4cm}}
+
+\newenvironment{io}{%
+  \footnotesize\begin{longtable}{S W P M}
+  \rowcolor{hb}\textbf{signal} & \textbf{width} & \textbf{from/to} & \textbf{meaning}\\ \midrule\endhead}
+  {\bottomrule\end{longtable}}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{Scheduler --- Black-box I/O}}\\[2pt]
+{\small One channel, DDR5. Every signal in/out of the scheduler (arb tree): can-bits, demand,
+maintenance flags, grants, bundle. All single-bit unless width noted. Parametric: \texttt{N\_BANKS}
+(=N\_BG$\times$4), \texttt{N\_BG}, \texttt{N\_RANKS}.}
+\end{center}
+
+\section{INPUTS}
+\subsection{Per-bank demand legality  (from cells / timestamp scoreboard)}
+\begin{io}
+can\_act[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & ACT legal: GC>=next\_act \& state ok\\
+can\_cas[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & CAS legal: GC>=next\_cas \& state==OPEN \& row\_hit\\
+can\_pre[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & PRE legal: GC>=next\_pre\\
+need\_act / need\_cas / need\_pre[b] & 1 ea $\times$N\_BANKS & \textcolor{ingr}{in} & what the resident packet wants (row miss->pre/act, hit->cas)\\
+is\_hit[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & open\_row == pkt row (feeds CAS\_W weight)\\
+row\_valid[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & OPEN \& !pre\_pending (admit window)\\
+age[b] & few $\times$N\_BANKS & \textcolor{ingr}{in} & age-of-need (feeds ACT\_W, capped)\\
+\end{io}
+\subsection{Cross-scope legality}
+\begin{io}
+can\_act\_bgs[g] / can\_cas\_bgs[g] & 1 ea $\times$N\_BG & \textcolor{ingr}{in} & same-BG spacing met (tRRD\_L / tCCD\_L(\_WR))\\
+can\_act\_bgd[r] / can\_act\_rank[r] & 1 ea $\times$N\_RANKS & \textcolor{ingr}{in} & cross-BG ACT (tRRD\_S) + 4-ACT window (tFAW)\\
+can\_wr[r] / can\_rd[r] & 1 ea $\times$N\_RANKS & \textcolor{ingr}{in} & R<->W turnaround gap met (tWTR / tRTW)\\
+can\_cas\_dq & 1 & \textcolor{ingr}{in} & DQ bus free (dqFree=BL/2); cross-rank tRTRS folded\\
+\end{io}
+\subsection{Maintenance / refresh flags  (from ME)}
+\begin{io}
+o\_ref\_rdy & 1 & \textcolor{ingr}{in} & refresh owed (|debt) -- issue if target idle\\
+ref\_force & 1 & \textcolor{ingr}{in} & forced refresh (\&debt==7)\\
+rfm\_rdy / rfm\_force & 1 ea & \textcolor{ingr}{in} & rowhammer owed (RAA>=IMT) / hard (>=MMT)\\
+zq\_rdy / mrw\_rdy / mrr\_rdy & 1 ea & \textcolor{ingr}{in} & ZQ / MRW / MRR ready\\
+cas\_complete[b] & 1 $\times$N\_BANKS & \textcolor{ingr}{in} & bank drained + precharged (state==IDLE)\\
+maint\_cmd\_type & 5 & \textcolor{ingr}{in} & MAINT\_PRIO winner (REF/RFM/ZQ/MRW/MRR)\\
+init\_done & 1 & \textcolor{ingr}{in} & boot complete (else scheduler gated, DFI mux on init)\\
+\end{io}
+\subsection{Control / bus state}
+\begin{io}
+batch\_dir[r] & 1 $\times$N\_RANKS & \textcolor{ingr}{in} & WLR read/write batch direction\\
+last\_cas\_dir / rank / bg & few & \textcolor{ingr}{in} & bus state (turnaround + diff-BG packing decisions)\\
+gear & 2 & \textcolor{ingr}{in} & mc:CK ratio (bundle width = GEAR phases)\\
+req\_valid (per lane) & 1 $\times$N\_RANKS & \textcolor{ingr}{in} & lane has an admitted packet (from lookahead)\\
+dfi\_alert\_n / dfi\_error & 1 ea & \textcolor{ingr}{in} & PHY alert / error (retry / stub)\\
+\end{io}
+
+\section{OUTPUTS}
+\subsection{Grants  (to cells)}
+\begin{io}
+grant\_cas\_oh[b] & 1 $\times$N\_BANKS & \textcolor{outg}{out} & CAS winner one-hot; \textbf{pop-on-CAS} (retire packet)\\
+grant\_act\_oh[b] & 1 $\times$N\_BANKS & \textcolor{outg}{out} & ACT winner one-hot; commits ACTING\\
+grant\_pre\_oh[b] & 1 $\times$N\_BANKS & \textcolor{outg}{out} & PRE winner(s) one-hot ($\le$2); commits PREING\\
+\end{io}
+\subsection{Phaser bundle  (to phaser / DFI encode)}
+\begin{io}
+record[k] & $\sim$49 $\times$K($\le$3) & \textcolor{outg}{out} & \{cmd\_type[5], rw, rank, bg, bank, addr[18], ap, bl, rob\_index[8], sram\_addr[9]\}\\
+placement[pN] & \{cmd\_sel[2],ui\} $\times$GEAR & \textcolor{outg}{out} & per-phase: which record + which UI (2-UI cmd = 2 slots)\\
+two\_ui / repeat & 1 & \textcolor{outg}{out} & separate side wire -> DFI driver (1-UI vs 2-UI; @1:1 hold)\\
+\end{io}
+\subsection{Commit / feedback}
+\begin{io}
+fsm\_commit (issue-edge) & pulse $\times$class & \textcolor{outg}{out} & sole commit: updates BANK\_FSM state + fires timestamp writeback\\
+cmd\_issued\{r,bg,bank,cmd\} & bus & \textcolor{outg}{out} & drives the next\_* writeback adders (WE + const-router select)\\
+pop\_cas & 1 & \textcolor{outg}{out} & retire the CAS lane's packet (BANK\_REQ free)\\
+\end{io}
+\subsection{Maintenance handshake  (to ME)}
+\begin{io}
+maint\_ack / maint\_pop & 1 & \textcolor{outg}{out} & the maint cmd (cmd\_type) was issued -> ME clears debt/RAA, advances ba\\
+stall\_acts drive & (ME-owned) & -- & NOTE: stall\_acts is set by ME (drain req), not the scheduler; scheduler only ranks ref\_rdy/force with demand\\
+\end{io}
+
+\vspace{3pt}
+{\footnotesize \textbf{How it works (one line):} the scheduler NEVER rejects --- all legality is folded
+into the \texttt{can\_*} inputs, so the arb only SELECTS. Demand lanes (cas/act/pre) rank per-bank
+weights (CAS\_W hit-lock, ACT\_W age, PRE\_W close-row) up through BGB/BG/L3 into an N-winner bundle;
+maintenance enters as flags (\texttt{o\_ref\_rdy/force, rfm\_*, zq/mrw/mrr\_rdy}) ranked WITH demand
+(MAINT\_PRIO), override-injected at the phaser. Outputs = per-class \texttt{grant\_oh} (pop-on-CAS) +
+the phaser bundle + the \texttt{fsm\_commit} pulse (sole state+timestamp writeback edge).}
+
+\end{document}
