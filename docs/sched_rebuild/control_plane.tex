@@ -1,0 +1,110 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,landscape,margin=10mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{hb}{RGB}{223,232,241}
+\renewcommand{\arraystretch}{1.12}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+
+% FSM table cols (single-char newcolumntype names)
+\newcolumntype{K}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{2.7cm}}
+\newcolumntype{Q}{>{\scriptsize\centering\arraybackslash}p{1.3cm}}
+\newcolumntype{V}{>{\ttfamily\scriptsize\raggedright\arraybackslash}p{6.6cm}}
+\newcolumntype{Z}{>{\footnotesize\raggedright\arraybackslash}p{7.0cm}}
+\newcolumntype{A}{>{\footnotesize\raggedright\arraybackslash}p{4.2cm}}
+
+\newenvironment{fsm}{%
+  \footnotesize\begin{longtable}{KQVZA}
+  \rowcolor{hb}\textbf{FSM} & \textbf{count} & \textbf{states} & \textbf{outputs (per state)} & \textbf{read by}\\ \midrule\endhead}
+  {\bottomrule\end{longtable}}
+
+% flag table cols
+\newcolumntype{E}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{3.3cm}}
+\newcolumntype{H}{>{\ttfamily\scriptsize\centering\arraybackslash}p{1.7cm}}
+\newcolumntype{J}{>{\footnotesize\raggedright\arraybackslash}p{3.6cm}}
+\newcolumntype{N}{>{\footnotesize\raggedright\arraybackslash}p{3.4cm}}
+\newcolumntype{U}{>{\footnotesize\raggedright\arraybackslash}p{9.5cm}}
+
+\newenvironment{flag}{%
+  \footnotesize\begin{longtable}{EHJNU}
+  \rowcolor{hb}\textbf{flag/status} & \textbf{width} & \textbf{from} & \textbf{to} & \textbf{meaning / asserted when}\\ \midrule\endhead}
+  {\bottomrule\end{longtable}}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{Control-Plane Reference --- FSMs \& Flag Bits}}\\[2pt]
+{\small One channel, DDR5. The scheduling pressure = the flags + FSM states (not the timing consts).
+Domains: mc=\texttt{mc\_clk}, ctrl=DFI control-clk, dev=device. Widths parametric.}
+\end{center}
+
+\section{FSMs running}
+\begin{fsm}
+BANK\_FSM & $\times$N\_BANKS & IDLE ACTING OPEN PREING REFING RFMING & state[4]; row open only in OPEN; cas\_complete=(IDLE); bank\_busy=(!=IDLE); ACTING->OPEN via tRCD, PREING/REFING/RFMING->IDLE via timers & ELIG (need/can\_cas), arb, refresh/RFM (cas\_complete), maint\\
+REFRESH\_FSM & $\times$1 & IDLE PICK DRAIN ISSUE REFING release & PICK: stall\_acts[8], ba; DRAIN: AP-drain; ISSUE: cmd=REF, gate\_rfc[8]; release: debt<=0 & scheduler (o\_ref\_rdy, ref\_force), banks (stall\_acts)\\
+RFM\_FSM & $\times$1 & IDLE PICK DRAIN ISSUE RFMING release & like REFRESH but cmd=RFM, gate\_rfm, RAA[8]-=RAAIMT; trigger RAA & scheduler (rfm\_rdy, rfm\_force), banks\\
+MAINT\_PRIO & comb & -- & picks cmd\_type among pending {ref/rfm/zq/mrw/mrr}; init separate & phaser / DFI encode (cmd\_type)\\
+INIT\_FSM & $\times$1 & RESET CKE MRW\_TRAIN ZQCL PHY\_HS DONE & dfi\_reset\_n; drives DFI during init; DONE sets init\_done (one-way) & DFI\_MUX (sel), all blocks (gate until init\_done)\\
+FREQ\_FSM & $\times$1 & IDLE QUIESCE SRE FREQ\_HS RELOCK REPROG SRX RESUME & drives ctrlupd/freq\_ratio; reloads timing/tphy\_*/MR; updates gear at RESUME & PHY, cfg regs, scheduler (gear)\\
+POWER\_FSM & $\times$1 (per rank) & ACTIVE ACT\_PD PRE\_PD SREF & dfi\_cke, dfi\_dram\_clk\_disable, dfi\_lp\_* ; enters on idle & DFI, banks (state)\\
+ZQ\_FSM & $\times$1 & IDLE ZQCAL ZQLAT & zq\_rdy, gate\_zq; DQ cal busy & scheduler (zq\_rdy)\\
+MRW\_FSM & $\times$1 & IDLE ISSUE MRD MOD & mrw\_rdy, gate\_mr (tMRD), setting live (tMOD) & scheduler (mrw\_rdy)\\
+MRR / MR\_POLL & $\times$1 & IDLE ISSUE WAIT CAP & mrr\_rdy; captures MR4 -> rr\_shift (temp); RD\_CAP sideband & scheduler, refresh (rr\_shift)\\
+WLR\_FSM & $\times$N\_RANKS & (batch\_dir + streak/age) & batch\_dir, wlr\_select; adaptive batch len & ingress admit, L3 dir-bias\\
+WR\_ROB & $\times$ROB & ADMIT FILL ISSUE RETIRE & \{vld,N,gen\_idx,done\_cnt\}; wr\_pack; retire at done\_cnt==N & write path, completion\\
+\end{fsm}
+
+\section{Flag / status bits to the scheduler}
+\subsection*{Per-bank legality (the can\_* gates + demand)}
+\begin{flag}
+can\_act / can\_cas / can\_pre & 1 ea $\times$N\_BANKS & TREG cmp + STATUS (can\_cas needs OPEN) & ELIG / CMD\_ARB & cmd electrically legal for this bank now (GC>=next\_* \& state)\\
+need\_act / need\_cas / need\_pre & 1 ea $\times$N\_BANKS & row\_comparator (cell) & ELIG & what the resident packet wants (hit->cas, miss->pre/act)\\
+is\_hit & 1 $\times$N\_BANKS & row\_comparator & CAS\_W weight & open\_row == pkt row\\
+row\_valid / pre\_pending & 1 ea $\times$N\_BANKS & BANK\_STATUS & ELIG & admit window (OPEN \& !pre\_pending); PRE-propose drops it\\
+bank\_go & 1 $\times$N\_BANKS & ELIG (need \& can) & BGB\_ARB & bank has an eligible command\\
+\end{flag}
+\subsection*{Cross-scope legality}
+\begin{flag}
+can\_act\_bgs / can\_cas\_bgs & 1 ea $\times$N\_BG & BG scope cmp & BGB/BG\_ARB & same-BG spacing met (tRRD\_L / tCCD\_L(\_WR))\\
+can\_act\_bgd / can\_act\_rank & 1 ea $\times$N\_RANKS & rank scope (tRRD\_S, faw) & RANK/L3 & cross-BG ACT + 4-ACT window ok\\
+can\_wr / can\_rd (turnaround) & 1 ea $\times$N\_RANKS & rank turnaround & L3 CAS lane & R<->W flip gap met (tWTR/tRTW)\\
+can\_cas\_dq & 1 & global dqFree ctr & L3 CAS lane & DQ bus free (BL/2); cross-rank tRTRS folded\\
+\end{flag}
+\subsection*{Maintenance / refresh (ME -> scheduler)}
+\begin{flag}
+o\_ref\_rdy & 1 & REFRESH (|debt) & scheduler & a refresh is owed (opportunistic if bank idle)\\
+ref\_force & 1 $\times$ba & REFRESH (\&debt==7) & scheduler & forced refresh (drain + go)\\
+rfm\_rdy / rfm\_force & 1 ea $\times$ba & RFM (RAA>=IMT / >=MMT) & scheduler & rowhammer owed / hard (blocks next ACT)\\
+zq\_rdy / mrw\_rdy / mrr\_rdy & 1 ea & ZQ / MRW / MRR & scheduler & that maint op ready to issue\\
+stall\_acts & 1 $\times$N\_BANKS & maint (OR of needs) & bank FSM & quiesce: freeze admit + block new ACT -> drain\\
+cas\_complete & 1 $\times$N\_BANKS & BANK\_FSM (state==IDLE) & maint (drain done) & bank drained + precharged, ready for maint\\
+gate\_rfc / gate\_rfm / gate\_zq / gate\_mr & 1 ea (banks/rank) & maint FSMs & can\_* mask & block issue during REFING/RFMING/ZQ/tMRD\\
+init\_done & 1 & INIT\_FSM & DFI\_MUX + all & boot complete; flips CA driver init->scheduler\\
+\end{flag}
+\subsection*{Grants + DFI status}
+\begin{flag}
+grant\_oh (cas/act/pre) & N\_BANKS ea & L3 arb & cells & per-class winner one-hot; pop-on-CAS; commits FSM\\
+cmd\_type & 5 & arb / MAINT\_PRIO & DFI encode & which command issues (demand or maint)\\
+dfi\_init\_complete & 1 (in) & PHY & INIT/FREQ FSM & PHY init/freq-change ack\\
+dfi\_phyupd\_req / dfi\_ctrlupd\_ack & 1 ea (in) & PHY & UPDATE ctrl & PHY-requested update / ctrl-update grant\\
+dfi\_alert\_n / dfi\_error & 1 ea (in) & PHY & ALERT/ERR mon & CA-parity/write-CRC alert; PHY error\\
+\end{flag}
+
+\vspace{2pt}
+{\footnotesize \textbf{Key seams:} (1) legality folds into \texttt{can\_*} at ELIG so the arb only
+selects (never rejects). (2) Maint uses ONE shared seam: \texttt{stall\_acts} (drain req) +
+\texttt{cas\_complete} (drained) + \texttt{cmd\_type} (which op), MAINT\_PRIO picks. (3) INIT is the
+only hard override (DFI\_MUX). (4) \texttt{grant\_oh} is per-class (cas/act/pre), pop-on-CAS. All
+control bits live in \texttt{mc\_clk}; DFI status ins (\texttt{init\_complete/phyupd/alert/error}) are
+control-clk, sampled in \texttt{mc\_clk}.}
+
+\end{document}
