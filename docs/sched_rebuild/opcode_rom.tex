@@ -39,6 +39,50 @@ fills (row/col/BG/BA/CID/AP/BL/MRA/OP). H=1, L=0, V=valid (H or L), X=don't care
 \textbf{CA1} = cycle count (L$\Rightarrow$2-UI, H$\Rightarrow$1-UI); \textbf{CA0}=L only for ACT.}
 \end{center}
 
+\section{How to read this chart}
+{\small
+\textbf{Each row = one command.} A 2-cycle command uses two rows (UI 0 = first clock beat,
+UI 1 = second); a 1-cycle command is one row. \textbf{Columns CA0\dots CA13 = the 14 physical wires
+of the DDR5 command bus} (one shared bus; there are no separate row/col/bank pins). \textbf{Each cell
+= what that wire must be} for this command on this beat.
+
+\smallskip
+\textbf{Cell values:} \texttt{H}=drive high (1), \texttt{L}=drive low (0) --- these are the fixed
+\emph{command fingerprint} the DRAM decodes. \texttt{V}=valid (either level, ignored by decode).
+\texttt{X}=don't care. A \textbf{name} = that wire carries an address/attribute bit:
+\texttt{R0..R17}=row, \texttt{C2..C10}=column, \texttt{BA0/BA1}=bank, \texttt{BG0..BG2}=bank group,
+\texttt{CID}=chip ID, \texttt{AP}=auto-precharge, \texttt{BL}=burst length, \texttt{MRA/OP}=mode-reg
+addr/data, \texttt{CW}=control word, \texttt{WRp}=write-partial.
+
+\smallskip
+\textbf{Colors:} \colorbox{opc}{green} = a fixed H/L the OPCODE\_ROM hardwires (the fingerprint).
+\colorbox{fld}{yellow} = a field the FIELD\_MUX fills from the request (bank, row, column, \dots).
+
+\smallskip
+\textbf{Worked example --- Read (RD), 2 cycles on the same 14 wires:}
+\begin{center}\scriptsize
+\begin{tabular}{l C C C C C C C C C C C C C C}
+\toprule
+\rowcolor{hb}UI & CA0 & CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8 & CA9 & CA10 & CA11 & CA12 & CA13\\ \midrule
+0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{H} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID}\\
+1 & \fd{C2} & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & V & V & \fd{CID}\\
+\bottomrule
+\end{tabular}
+\end{center}
+Cycle 1: green \texttt{CA0..CA4 = H\,L\,H\,H\,H} is the pattern that \emph{means} ``read''; at the
+same time bank on CA6/7, bank group on CA8--10, burst length on CA5. Cycle 2: put the \textbf{column}
+address on the wires, auto-precharge on CA10. Two beats, same wires reused.
+
+\smallskip
+\textbf{How the DRAM decodes any row (the tree):}
+(1) \texttt{CA1} first --- \texttt{L}=2-cycle, \texttt{H}=1-cycle.
+(2) \texttt{CA0} --- \texttt{L}=ACT, else keep going.
+(3) \texttt{CA2/CA3/CA4} pick the command (e.g.\ within 2-cycle: CA3=L$\Rightarrow$mode-reg op,
+CA3=H$\Rightarrow$CAS, then CA4 = WR(L)/RD(H)).
+(4) latch the yellow address fields, execute. Reading a row = ``green wires say \emph{which}
+command; yellow wires carry the \emph{address} for it, spread over one or two beats.''
+}
+
 \section{2-UI commands  (CA1 = L)}
 {\scriptsize
 \begin{tabular}{F U C C C C C C C C C C C C C C}
