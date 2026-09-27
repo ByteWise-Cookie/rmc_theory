@@ -1,0 +1,117 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,landscape,margin=8mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{hb}{RGB}{223,232,241}
+\definecolor{opc}{RGB}{214,239,205}   % fixed opcode bit
+\definecolor{fld}{RGB}{255,244,204}   % field position
+\renewcommand{\arraystretch}{1.18}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+
+% function name column + UI col + 14 CA-pin cols
+\newcolumntype{F}{>{\footnotesize\raggedright\arraybackslash}p{2.5cm}}
+\newcolumntype{U}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.7cm}}
+\newcolumntype{C}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.74cm}}
+
+\newcommand{\ca}{%
+ \rowcolor{hb}\textbf{cmd} & \textbf{UI} &
+ CA0 & CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8 & CA9 & CA10 & CA11 & CA12 & CA13 \\ \midrule}
+
+% shade helpers
+\newcommand{\op}[1]{\cellcolor{opc}#1}   % opcode bit (fixed)
+\newcommand{\fd}[1]{\cellcolor{fld}#1}   % field position
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{DFI OPCODE\_ROM --- Command Truth Table (JESD79-5 Table 241)}}\\[2pt]
+{\small One channel, DDR5. \textbf{cmd\_type} $\rightarrow$ the fixed CA H/L pattern per UI.
+\colorbox{opc}{green} = opcode bit the ROM drives fixed; \colorbox{fld}{yellow} = field position FIELD\_MUX
+fills (row/col/BG/BA/CID/AP/BL/MRA/OP). H=1, L=0, V=valid (H or L), X=don't care.
+\textbf{CA1} = cycle count (L$\Rightarrow$2-UI, H$\Rightarrow$1-UI); \textbf{CA0}=L only for ACT.}
+\end{center}
+
+\section{2-UI commands  (CA1 = L)}
+{\scriptsize
+\begin{tabular}{F U C C C C C C C C C C C C C C}
+\toprule
+\ca
+Activate ACT & 0 & \op{L} & \op{L} & \fd{R0} & \fd{R1} & \fd{R2} & \fd{R3} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
+             & 1 & \fd{R4} & \fd{R5} & \fd{R6} & \fd{R7} & \fd{R8} & \fd{R9} & \fd{R10} & \fd{R11} & \fd{R12} & \fd{R13} & \fd{R14} & \fd{R15} & \fd{R16} & \fd{R17} \\
+\midrule
+Write WR & 0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{L} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
+         & 1 & V & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & \fd{WRp} & V & \fd{CID} \\
+\midrule
+Read RD & 0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{H} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
+        & 1 & \fd{C2} & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & V & V & \fd{CID} \\
+\midrule
+Mode Reg Write MRW & 0 & \op{H} & \op{L} & \op{H} & \op{L} & \op{L} & \fd{MRA0} & \fd{MRA1} & \fd{MRA2} & \fd{MRA3} & \fd{MRA4} & \fd{MRA5} & \fd{MRA6} & \fd{MRA7} & V \\
+                   & 1 & \fd{OP0} & \fd{OP1} & \fd{OP2} & \fd{OP3} & \fd{OP4} & \fd{OP5} & \fd{OP6} & \fd{OP7} & V & V & \fd{CW} & V & V & V \\
+\midrule
+Mode Reg Read MRR & 0 & \op{H} & \op{L} & \op{H} & \op{L} & \op{H} & \fd{MRA0} & \fd{MRA1} & \fd{MRA2} & \fd{MRA3} & \fd{MRA4} & \fd{MRA5} & \fd{MRA6} & \fd{MRA7} & V \\
+                  & 1 & L & L & V & V & V & V & V & V & V & V & \fd{CW} & V & V & V \\
+\bottomrule
+\end{tabular}}
+
+\smallskip
+{\footnotesize WR vs RD differ \emph{only} at CA4 (0/1) $\rightarrow$ \texttt{rw} picks it. RD/RDA and
+WR/WRA share UI0; \textbf{ap} is CA10 on UI1 (a FIELD\_MUX bit, not the ROM). BL\,=\,CA5 UI0.
+MR-ops sit at CA3=L, data-ops at CA3=H.}
+
+\section{1-UI commands  (CA1 = H, CA0 = H)}
+{\scriptsize
+\begin{tabular}{F U C C C C C C C C C C C C C C}
+\toprule
+\ca
+Refresh all REFab & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & V & V & RIR & \op{H} & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} \\
+RFM all RFMab & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & V & V & V & \op{L} & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} \\
+Refresh same-bank REFsb & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & RIR & \op{H} & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} \\
+RFM same-bank RFMsb & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & V & \op{L} & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} \\
+\midrule
+Precharge all PREab & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{CID3} & V & V & V & V & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} \\
+Precharge same-bank PREsb & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{CID3} & \fd{BA0} & \fd{BA1} & V & V & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} \\
+Precharge per-bank PREpb & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
+\midrule
+Self-Refresh entry SRE & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & \op{H} & \op{L} & V & V & V \\
+SR entry freq-change SREF & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & \op{L} & \op{L} & V & V & V \\
+Power-Down entry PDE & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & V & \op{H} & \fd{ODT} & V & V \\
+MPC & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{L} & \fd{OP0} & \fd{OP1} & \fd{OP2} & \fd{OP3} & \fd{OP4} & \fd{OP5} & \fd{OP6} & \fd{OP7} & V \\
+NOP / PDX & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{H} & V & V & V & V & V & V & V & V & V \\
+Deselect DES & 0 & \multicolumn{14}{c}{\ttfamily CS\_n = H, all CA = X  (deselect --- no decode)} \\
+\bottomrule
+\end{tabular}}
+
+\smallskip
+{\footnotesize REF/RFM family: CA0--CA4 all \texttt{1\,1\,0\,0\,1}; variant is \textbf{CA9}
+(REF=H / RFM=L) and \textbf{CA10} (sb=H / ab=L), plus CA6/CA7=BA for the sb forms. PRE family:
+CA0--CA3 = \texttt{1\,1\,0\,1}; \textbf{CA4}=pb(H)/sb$\cdot$ab(L); \textbf{CA10}=sb(H)/ab(L); pb uses
+CA8--CA10 as BG. So the ROM drives CA9/CA10 for these, not just CA0--CA4.}
+
+\section{ROM outputs  (per cmd\_type, drives the encoder)}
+{\footnotesize
+\begin{tabular}{>{\ttfamily}l l}
+\toprule
+\rowcolor{hb}\textbf{output} & \textbf{meaning}\\ \midrule
+two\_ui              & 1 = 2-cycle (ACT/WR/RD/MRW/MRR); 0 = 1-cycle. Holds the phase 2 cycles @1:1.\\
+cs\_pattern          & CS\_n per UI: L on issue (DES = H). 2nd-UI CS controls non-target ODT (note 8).\\
+ca\_fix\_ui0[13:0]    & fixed H/L in opcode positions (green); field positions = don't-care.\\
+ca\_fix\_ui1[13:0]    & UI1 template for 2-UI commands.\\
+field\_sel           & which fields FIELD\_MUX overlays: row/col/BG/BA/CID/AP/BL/MRA/OP/WRp.\\
+\bottomrule
+\end{tabular}}
+
+\vspace{3pt}
+{\footnotesize \textbf{Decode summary:} CA1 = 1-vs-2 cycle; CA0=L $\Rightarrow$ ACT; within CA0=H,CA1=L
+(2-UI) CA2=H then CA3 splits MR-ops (L) from CAS (H) and CA4 splits WR (L) / RD (H); within
+CA0=H,CA1=H (1-UI) CA2/CA3/CA4 pick the VrefCA/REF/PRE/SRE/MPC/NOP group and CA9/CA10 pick the
+REF/RFM $\times$ sb/ab and PRE sb/ab variant. \textbf{ap} = UI1 CA10 for RD/WR only.}
+
+\end{document}
