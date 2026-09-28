@@ -1,5 +1,5 @@
 \documentclass[9pt]{extarticle}
-\usepackage[a4paper,landscape,margin=8mm]{geometry}
+\usepackage[a4paper,landscape,margin=6mm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{booktabs}
@@ -12,150 +12,102 @@
 \definecolor{headbg}{RGB}{38,66,105}
 \definecolor{hb}{RGB}{223,232,241}
 \definecolor{opc}{RGB}{214,239,205}   % fixed opcode bit
-\definecolor{fld}{RGB}{255,244,204}   % field position
-\renewcommand{\arraystretch}{1.18}
+\definecolor{fld}{RGB}{255,244,204}   % field / conditional
+\definecolor{stat}{RGB}{205,229,247}  % static bit (no mux)
+\renewcommand{\arraystretch}{1.15}
 \titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
 \titlespacing*{\section}{0pt}{9pt}{3pt}
 
-% function name column + UI col + 14 CA-pin cols
-\newcolumntype{F}{>{\footnotesize\raggedright\arraybackslash}p{2.5cm}}
-\newcolumntype{U}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.7cm}}
-\newcolumntype{C}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.74cm}}
+\newcolumntype{F}{>{\footnotesize\raggedright\arraybackslash}p{2.15cm}}
+\newcolumntype{U}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.5cm}}
+\newcolumntype{C}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.6cm}}
+\newcolumntype{S}{>{\ttfamily\scriptsize\centering\arraybackslash}p{0.58cm}}
 
+\newcommand{\op}[1]{\cellcolor{opc}#1}
+\newcommand{\fd}[1]{\cellcolor{fld}#1}
+\newcommand{\stt}[1]{\cellcolor{stat}#1}
+
+% full header: cmd, CLK, CA0..13, then sideband CSn0 CSn1 CKE0 CKE1 ODT0 ODT1 PAR 2N RST
 \newcommand{\ca}{%
- \rowcolor{hb}\textbf{cmd} & \textbf{UI} &
- CA0 & CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8 & CA9 & CA10 & CA11 & CA12 & CA13 \\ \midrule}
-
-% shade helpers
-\newcommand{\op}[1]{\cellcolor{opc}#1}   % opcode bit (fixed)
-\newcommand{\fd}[1]{\cellcolor{fld}#1}   % field position
+ \rowcolor{hb}\textbf{cmd} & \textbf{CLK} &
+ CA0 & CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8 & CA9 & CA10 & CA11 & CA12 & CA13 &
+ CSn0 & CSn1 & CKE0 & CKE1 & ODT0 & ODT1 & PAR & 2N & RST \\ \midrule}
 
 \begin{document}
 \begin{center}
-{\LARGE\textbf{DFI OPCODE\_ROM --- Command Truth Table (JESD79-5 Table 241)}}\\[2pt]
-{\small One channel, DDR5. \textbf{cmd\_type} $\rightarrow$ the fixed CA H/L pattern per UI.
-\colorbox{opc}{green} = opcode bit the ROM drives fixed; \colorbox{fld}{yellow} = field position FIELD\_MUX
-fills (row/col/BG/BA/CID/AP/BL/MRA/OP). H=1, L=0, V=valid (H or L), X=don't care.
-\textbf{CA1} = cycle count (L$\Rightarrow$2-UI, H$\Rightarrow$1-UI); \textbf{CA0}=L only for ACT.}
+{\LARGE\textbf{DFI command encode --- full command-bus truth table (JESD79-5 Table 241)}}\\[2pt]
+{\small One channel, DDR5, \textbf{1:1 gear}, \textbf{N\_RANKS=2}, target = rank0.
+CA0--CA13 = the shared CA opcode/address bus; CSn/CKE/ODT/PAR/2N/RST = command sideband.
+\colorbox{opc}{green}=fixed opcode bit; \colorbox{fld}{yellow}=field / conditional; \colorbox{stat}{blue}=static (one value, no per-phase mux).
+H=1, L=0 (active-low asserted), V=valid, X=don't care. \textbf{CLK}=beat (0=first CK, 1=second; CA is SDR so 1 CK = 1 command beat).}
 \end{center}
 
-\section{How to read this chart}
+\section{2-CLK commands  (CA1 = L; two CK beats)}
+{\scriptsize\setlength{\tabcolsep}{2.1pt}
+\begin{tabular}{F U C C C C C C C C C C C C C C S S S S S S S S S}
+\toprule
+\ca
+Activate ACT & 0 & \op{L} & \op{L} & \fd{R0} & \fd{R1} & \fd{R2} & \fd{R3} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+             & 1 & \fd{R4} & \fd{R5} & \fd{R6} & \fd{R7} & \fd{R8} & \fd{R9} & \fd{R10} & \fd{R11} & \fd{R12} & \fd{R13} & \fd{R14} & \fd{R15} & \fd{R16} & \fd{R17} & H & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+\midrule
+Write WR & 0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{L} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & \fd{w} & \fd{w} & \fd{P} & \stt{cfg} & \stt{H} \\
+         & 1 & V & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & \fd{WRp} & V & \fd{CID} & H & \fd{L} & H & H & \fd{w} & \fd{w} & \fd{P} & \stt{cfg} & \stt{H} \\
+\midrule
+Read RD & 0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{H} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & \fd{w} & \fd{w} & \fd{P} & \stt{cfg} & \stt{H} \\
+        & 1 & \fd{C2} & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & V & V & \fd{CID} & H & \fd{L} & H & H & \fd{w} & \fd{w} & \fd{P} & \stt{cfg} & \stt{H} \\
+\midrule
+MR Write MRW & 0 & \op{H} & \op{L} & \op{H} & \op{L} & \op{L} & \fd{MR0} & \fd{MR1} & \fd{MR2} & \fd{MR3} & \fd{MR4} & \fd{MR5} & \fd{MR6} & \fd{MR7} & V & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+             & 1 & \fd{OP0} & \fd{OP1} & \fd{OP2} & \fd{OP3} & \fd{OP4} & \fd{OP5} & \fd{OP6} & \fd{OP7} & V & V & \fd{CW} & V & V & V & H & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+\midrule
+MR Read MRR & 0 & \op{H} & \op{L} & \op{H} & \op{L} & \op{H} & \fd{MR0} & \fd{MR1} & \fd{MR2} & \fd{MR3} & \fd{MR4} & \fd{MR5} & \fd{MR6} & \fd{MR7} & V & L & H & H & H & \fd{w} & \fd{w} & \fd{P} & \stt{cfg} & \stt{H} \\
+            & 1 & L & L & V & V & V & V & V & V & V & V & \fd{CW} & V & V & V & H & \fd{L} & H & H & \fd{w} & \fd{w} & \fd{P} & \stt{cfg} & \stt{H} \\
+\bottomrule
+\end{tabular}}
+
+\smallskip
+{\footnotesize \textbf{CSn} (one-cold, active-low): ck0 selects target rank (rank0=L, rank1=H). ck1: ACT/MRW =H
+(no-ODT 2-clk, note 11); WR/RD/MRR ck1 CSn on the \emph{non-target} rank = L to assert its ODT (note 8).
+\textbf{ODT} \texttt{w} = asserted in the WL-aligned write window (ODT\_GEN), not fixed to the command beat.
+\textbf{PAR} \texttt{P} = even parity over CA0..CA13 that beat. WR vs RD differ only at CA4 (rw picks it); \textbf{ap}=CA10 ck1.}
+
+\section{1-CLK commands  (CA1 = H, CA0 = H; one CK beat)}
+{\scriptsize\setlength{\tabcolsep}{2.1pt}
+\begin{tabular}{F U C C C C C C C C C C C C C C S S S S S S S S S}
+\toprule
+\ca
+Refresh all REFab & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & V & V & RIR & \op{H} & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+RFM all RFMab & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & V & V & V & \op{L} & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+Refresh sb REFsb & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & RIR & \op{H} & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+RFM sb RFMsb & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & V & \op{L} & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+\midrule
+Precharge all PREab & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{CID3} & V & V & V & V & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+Precharge sb PREsb & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{CID3} & \fd{BA0} & \fd{BA1} & V & V & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+Precharge pb PREpb & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+\midrule
+Self-Refresh entry SRE & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & \op{H} & \op{L} & V & V & V & L & H & \fd{L} & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+SR entry freq SREF & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & \op{L} & \op{L} & V & V & V & L & H & \fd{L} & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+Power-Down entry PDE & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & V & \op{H} & \fd{ODT} & V & V & L & H & \fd{L} & H & \fd{H} & L & \fd{P} & \stt{cfg} & \stt{H} \\
+MPC & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{L} & \fd{OP0} & \fd{OP1} & \fd{OP2} & \fd{OP3} & \fd{OP4} & \fd{OP5} & \fd{OP6} & \fd{OP7} & V & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+NOP & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{H} & V & V & V & V & V & V & V & V & V & L & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+Power-Down exit PDX & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{H} & V & V & V & V & V & V & V & V & V & L & H & \fd{H} & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+Deselect DES & 0 & \multicolumn{14}{c}{\ttfamily CA = X (deselect)} & H & H & H & H & L & L & \fd{P} & \stt{cfg} & \stt{H} \\
+\bottomrule
+\end{tabular}}
+
+\smallskip
+{\footnotesize REF/RFM: CA0--CA4 = \texttt{1\,1\,0\,0\,1}; CA9=REF(H)/RFM(L), CA10=sb(H)/ab(L). PRE: CA0--CA3=\texttt{1\,1\,0\,1};
+CA4=pb(H)/sb$\cdot$ab(L), CA10=sb(H)/ab(L). \textbf{CKE0=L} for SRE/SREF/PDE (rank0 enters low-power; PDX drives it back H).
+PDE \textbf{ODT0=H} = ODT persists in power-down (note 16). NOP has CSn=L; DES = CSn all H (nobody decodes CA). Static
+\colorbox{stat}{2N/RST} = one value every phase, boot/init driven.}
+
+\section{How to read a row}
 {\small
-\textbf{Each row = one command.} A 2-cycle command uses two rows (UI 0 = first clock beat,
-UI 1 = second); a 1-cycle command is one row. \textbf{Columns CA0\dots CA13 = the 14 physical wires
-of the DDR5 command bus} (one shared bus; there are no separate row/col/bank pins). \textbf{Each cell
-= what that wire must be} for this command on this beat.
-
-\smallskip
-\textbf{Cell values:} \texttt{H}=drive high (1), \texttt{L}=drive low (0) --- these are the fixed
-\emph{command fingerprint} the DRAM decodes. \texttt{V}=valid (either level, ignored by decode).
-\texttt{X}=don't care. A \textbf{name} = that wire carries an address/attribute bit:
-\texttt{R0..R17}=row, \texttt{C2..C10}=column, \texttt{BA0/BA1}=bank, \texttt{BG0..BG2}=bank group,
-\texttt{CID}=chip ID, \texttt{AP}=auto-precharge, \texttt{BL}=burst length, \texttt{MRA/OP}=mode-reg
-addr/data, \texttt{CW}=control word, \texttt{WRp}=write-partial.
-
-\smallskip
-\textbf{Colors:} \colorbox{opc}{green} = a fixed H/L the OPCODE\_ROM hardwires (the fingerprint).
-\colorbox{fld}{yellow} = a field the FIELD\_MUX fills from the request (bank, row, column, \dots).
-
-\smallskip
-\textbf{Worked example --- Read (RD), 2 cycles on the same 14 wires:}
-\begin{center}\scriptsize
-\begin{tabular}{l C C C C C C C C C C C C C C}
-\toprule
-\rowcolor{hb}UI & CA0 & CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8 & CA9 & CA10 & CA11 & CA12 & CA13\\ \midrule
-0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{H} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID}\\
-1 & \fd{C2} & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & V & V & \fd{CID}\\
-\bottomrule
-\end{tabular}
-\end{center}
-Cycle 1: green \texttt{CA0..CA4 = H\,L\,H\,H\,H} is the pattern that \emph{means} ``read''; at the
-same time bank on CA6/7, bank group on CA8--10, burst length on CA5. Cycle 2: put the \textbf{column}
-address on the wires, auto-precharge on CA10. Two beats, same wires reused.
-
-\smallskip
-\textbf{How the DRAM decodes any row (the tree):}
-(1) \texttt{CA1} first --- \texttt{L}=2-cycle, \texttt{H}=1-cycle.
-(2) \texttt{CA0} --- \texttt{L}=ACT, else keep going.
-(3) \texttt{CA2/CA3/CA4} pick the command (e.g.\ within 2-cycle: CA3=L$\Rightarrow$mode-reg op,
-CA3=H$\Rightarrow$CAS, then CA4 = WR(L)/RD(H)).
-(4) latch the yellow address fields, execute. Reading a row = ``green wires say \emph{which}
-command; yellow wires carry the \emph{address} for it, spread over one or two beats.''
-}
-
-\section{2-UI commands  (CA1 = L)}
-{\scriptsize
-\begin{tabular}{F U C C C C C C C C C C C C C C}
-\toprule
-\ca
-Activate ACT & 0 & \op{L} & \op{L} & \fd{R0} & \fd{R1} & \fd{R2} & \fd{R3} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
-             & 1 & \fd{R4} & \fd{R5} & \fd{R6} & \fd{R7} & \fd{R8} & \fd{R9} & \fd{R10} & \fd{R11} & \fd{R12} & \fd{R13} & \fd{R14} & \fd{R15} & \fd{R16} & \fd{R17} \\
-\midrule
-Write WR & 0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{L} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
-         & 1 & V & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & \fd{WRp} & V & \fd{CID} \\
-\midrule
-Read RD & 0 & \op{H} & \op{L} & \op{H} & \op{H} & \op{H} & \fd{BL} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
-        & 1 & \fd{C2} & \fd{C3} & \fd{C4} & \fd{C5} & \fd{C6} & \fd{C7} & \fd{C8} & \fd{C9} & \fd{C10} & V & \fd{AP} & V & V & \fd{CID} \\
-\midrule
-Mode Reg Write MRW & 0 & \op{H} & \op{L} & \op{H} & \op{L} & \op{L} & \fd{MRA0} & \fd{MRA1} & \fd{MRA2} & \fd{MRA3} & \fd{MRA4} & \fd{MRA5} & \fd{MRA6} & \fd{MRA7} & V \\
-                   & 1 & \fd{OP0} & \fd{OP1} & \fd{OP2} & \fd{OP3} & \fd{OP4} & \fd{OP5} & \fd{OP6} & \fd{OP7} & V & V & \fd{CW} & V & V & V \\
-\midrule
-Mode Reg Read MRR & 0 & \op{H} & \op{L} & \op{H} & \op{L} & \op{H} & \fd{MRA0} & \fd{MRA1} & \fd{MRA2} & \fd{MRA3} & \fd{MRA4} & \fd{MRA5} & \fd{MRA6} & \fd{MRA7} & V \\
-                  & 1 & L & L & V & V & V & V & V & V & V & V & \fd{CW} & V & V & V \\
-\bottomrule
-\end{tabular}}
-
-\smallskip
-{\footnotesize WR vs RD differ \emph{only} at CA4 (0/1) $\rightarrow$ \texttt{rw} picks it. RD/RDA and
-WR/WRA share UI0; \textbf{ap} is CA10 on UI1 (a FIELD\_MUX bit, not the ROM). BL\,=\,CA5 UI0.
-MR-ops sit at CA3=L, data-ops at CA3=H.}
-
-\section{1-UI commands  (CA1 = H, CA0 = H)}
-{\scriptsize
-\begin{tabular}{F U C C C C C C C C C C C C C C}
-\toprule
-\ca
-Refresh all REFab & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & V & V & RIR & \op{H} & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} \\
-RFM all RFMab & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & V & V & V & \op{L} & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} \\
-Refresh same-bank REFsb & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & RIR & \op{H} & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} \\
-RFM same-bank RFMsb & 0 & \op{H} & \op{H} & \op{L} & \op{L} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & V & \op{L} & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} \\
-\midrule
-Precharge all PREab & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{CID3} & V & V & V & V & \op{L} & \fd{CID} & \fd{CID} & \fd{CID} \\
-Precharge same-bank PREsb & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{CID3} & \fd{BA0} & \fd{BA1} & V & V & \op{H} & \fd{CID} & \fd{CID} & \fd{CID} \\
-Precharge per-bank PREpb & 0 & \op{H} & \op{H} & \op{L} & \op{H} & \op{H} & \fd{CID3} & \fd{BA0} & \fd{BA1} & \fd{BG0} & \fd{BG1} & \fd{BG2} & \fd{CID} & \fd{CID} & \fd{CID} \\
-\midrule
-Self-Refresh entry SRE & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & \op{H} & \op{L} & V & V & V \\
-SR entry freq-change SREF & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & \op{L} & \op{L} & V & V & V \\
-Power-Down entry PDE & 0 & \op{H} & \op{H} & \op{H} & \op{L} & \op{H} & V & V & V & V & V & \op{H} & \fd{ODT} & V & V \\
-MPC & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{L} & \fd{OP0} & \fd{OP1} & \fd{OP2} & \fd{OP3} & \fd{OP4} & \fd{OP5} & \fd{OP6} & \fd{OP7} & V \\
-NOP / PDX & 0 & \op{H} & \op{H} & \op{H} & \op{H} & \op{H} & V & V & V & V & V & V & V & V & V \\
-Deselect DES & 0 & \multicolumn{14}{c}{\ttfamily CS\_n = H, all CA = X  (deselect --- no decode)} \\
-\bottomrule
-\end{tabular}}
-
-\smallskip
-{\footnotesize REF/RFM family: CA0--CA4 all \texttt{1\,1\,0\,0\,1}; variant is \textbf{CA9}
-(REF=H / RFM=L) and \textbf{CA10} (sb=H / ab=L), plus CA6/CA7=BA for the sb forms. PRE family:
-CA0--CA3 = \texttt{1\,1\,0\,1}; \textbf{CA4}=pb(H)/sb$\cdot$ab(L); \textbf{CA10}=sb(H)/ab(L); pb uses
-CA8--CA10 as BG. So the ROM drives CA9/CA10 for these, not just CA0--CA4.}
-
-\section{ROM outputs  (per cmd\_type, drives the encoder)}
-{\footnotesize
-\begin{tabular}{>{\ttfamily}l l}
-\toprule
-\rowcolor{hb}\textbf{output} & \textbf{meaning}\\ \midrule
-two\_ui              & 1 = 2-cycle (ACT/WR/RD/MRW/MRR); 0 = 1-cycle. Holds the phase 2 cycles @1:1.\\
-cs\_pattern          & CS\_n per UI: L on issue (DES = H). 2nd-UI CS controls non-target ODT (note 8).\\
-ca\_fix\_ui0[13:0]    & fixed H/L in opcode positions (green); field positions = don't-care.\\
-ca\_fix\_ui1[13:0]    & UI1 template for 2-UI commands.\\
-field\_sel           & which fields FIELD\_MUX overlays: row/col/BG/BA/CID/AP/BL/MRA/OP/WRp.\\
-\bottomrule
-\end{tabular}}
-
-\vspace{3pt}
-{\footnotesize \textbf{Decode summary:} CA1 = 1-vs-2 cycle; CA0=L $\Rightarrow$ ACT; within CA0=H,CA1=L
-(2-UI) CA2=H then CA3 splits MR-ops (L) from CAS (H) and CA4 splits WR (L) / RD (H); within
-CA0=H,CA1=H (1-UI) CA2/CA3/CA4 pick the VrefCA/REF/PRE/SRE/MPC/NOP group and CA9/CA10 pick the
-REF/RFM $\times$ sb/ab and PRE sb/ab variant. \textbf{ap} = UI1 CA10 for RD/WR only.}
+\textbf{Each command = one row (1-CLK) or two rows (2-CLK, ck0 then ck1).} Left block CA0--CA13 = the shared
+command/address wires; right block = the sideband. Green cells are the fixed \emph{fingerprint} the DRAM decodes;
+yellow are \emph{fields} the FIELD\_MUX / generators fill; blue are \emph{static} (no per-phase mux). Decode tree:
+CA1 (\texttt{L}=2-CLK, \texttt{H}=1-CLK) $\to$ CA0 (\texttt{L}=ACT) $\to$ CA2/CA3/CA4 (command) $\to$ latch the yellow
+fields. In parallel, CSn qualifies which \emph{rank} decodes (one-cold), CKE/ODT carry power \& termination state,
+PAR is the CA parity, 2N/RST are static. \textbf{1:1 gear:} a 2-CLK command's ck0/ck1 are two successive mc\_clks;
+at 1:2/1:4 they would be parallel phases (see gear notes in \texttt{dfi\_sideband.pdf}).}
 
 \end{document}
