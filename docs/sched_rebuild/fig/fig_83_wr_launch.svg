@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="840" viewBox="0 0 1500 840" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1500" height="840" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Write-launch datapath  (1 delay line + 1 burst counter)</text>
+  <rect x="50" y="150" width="150" height="66" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="200" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">write_handler</text>
+  <text x="200" y="126" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">issue: launch pulse</text>
+  <line x1="200" y1="183" x2="268" y2="183" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="206" y="176" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">launch</text>
+  <rect x="270" y="138" width="250" height="112" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="520" y="130" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">WL_DELAY_LINE</text>
+  <text x="520" y="114" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">shift reg, self-pop</text>
+  <text x="282" y="236" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">taps: en@tphy_wrlat, data@wrlat+wrdata</text>
+  <line x1="300" y1="330" x2="300" y2="250" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="276" y="346" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">tphy_wrlat</text>
+  <line x1="380" y1="330" x2="380" y2="250" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="356" y="346" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">tphy_wrdata</text>
+  <line x1="460" y1="330" x2="460" y2="250" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="436" y="346" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">wd_slot</text>
+  <line x1="520" y1="165" x2="618" y2="165" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="528" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">en_tap</text>
+  <path d="M520 222 L575 222 L575 470 L618 470" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="528" y="214" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">data_tap</text>
+  <rect x="620" y="128" width="190" height="78" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="810" y="120" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">BURST_CNT</text>
+  <text x="810" y="104" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">load BL/2&gt;&gt;gear ; -1/cyc</text>
+  <line x1="810" y1="150" x2="888" y2="150" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="816" y="143" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">wr_en=(cnt!=0)</text>
+  <path d="M790 206 L840 206 L840 462 L888 462" fill="none" stroke="#2a8f86" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="846" y="300" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">index</text>
+  <path d="M700 206 L700 250 L1050 250 L1050 300 L1118 300" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="900" y="243" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">cnt==0</text>
+  <rect x="620" y="300" width="190" height="60" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="810" y="292" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">gear_cfg_reg</text>
+  <text x="810" y="276" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">gear_mask + shift</text>
+  <path d="M715 300 L715 208" fill="none" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="660" y="285" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">shift 8/4/2</text>
+  <path d="M810 330 L953 330 L953 194" fill="none" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="858" y="322" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">mask</text>
+  <rect x="888" y="128" width="130" height="78" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="953.0" y="150" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp; gear_mask</text>
+  <text x="953.0" y="165" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">spatial width</text>
+  <line x1="1018" y1="150" x2="1118" y2="132" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1018" y1="150" x2="1118" y2="156" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1018" y1="150" x2="1118" y2="180" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1018" y1="150" x2="1118" y2="204" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1118" y="118" width="150" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="136" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wr_en_p0</text>
+  <rect x="1118" y="154" width="150" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="172" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wr_en_p1</text>
+  <rect x="1118" y="190" width="150" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="208" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wr_en_p2</text>
+  <rect x="1118" y="226" width="150" height="28" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="244" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wr_en_p3</text>
+  <rect x="1118" y="286" width="150" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="304" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">wr_done</text>
+  <rect x="620" y="430" width="190" height="66" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="810" y="422" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">WD_SRAM</text>
+  <text x="810" y="406" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">512b line @ wd_slot</text>
+  <line x1="810" y1="463" x2="888" y2="463" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="816" y="456" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">512b</text>
+  <rect x="888" y="430" width="150" height="66" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="1038" y="422" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">WR_SPLIT</text>
+  <text x="1038" y="406" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">512b -&gt; 2*DQ/phase</text>
+  <line x1="1038" y1="463" x2="1118" y2="420" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1038" y1="463" x2="1118" y2="450" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1038" y1="463" x2="1118" y2="480" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1038" y1="463" x2="1118" y2="510" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1118" y="406" width="150" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="424" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_p0</text>
+  <rect x="1118" y="442" width="150" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="460" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_p1</text>
+  <rect x="1118" y="478" width="150" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="496" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_p2</text>
+  <rect x="1118" y="514" width="150" height="28" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="4"/>
+  <text x="1126" y="532" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_p3</text>
+  <rect x="40" y="560" width="1000" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="56" y="584" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">two axes, kept separate:</text>
+  <text x="56" y="608" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">LATENCY (when)  = WL_DELAY_LINE, fixed depth, self-pop. two taps: en @ tphy_wrlat, data @ tphy_wrlat+tphy_wrdata.</text>
+  <text x="56" y="630" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">DURATION (how many) = BURST_CNT, load BL/2&gt;&gt;gear (1:1=8, 1:2=4, 1:4=2), -1/cyc. wr_en=(cnt!=0). drives en + SRAM index + done.</text>
+  <text x="56" y="652" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">SPATIAL width = gear_mask (1:1=1000, 1:2=1100, 1:4=1111). dfi_wr_en_pN = burst_active &amp; mask[N].</text>
+  <text x="56" y="678" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">read side mirrors: RD_ACCUM counts dfi_rddata_valid beats to BL/2 -&gt; 512b line -&gt; rd_done. same counter, opposite dir.</text>
+  <text x="40" y="740" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">3 compare-counters -&gt; 1 delay line (latency) + 1 burst counter (duration). Burst counter = single source of beat position: holds wr_en, indexes WD_SRAM/WR_SPLIT, fires wr_done. Gear mask = spatial phases; burst count = temporal length.</text>
+</svg>
