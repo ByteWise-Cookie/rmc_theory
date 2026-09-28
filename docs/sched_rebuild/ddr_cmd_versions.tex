@@ -1,0 +1,116 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,landscape,margin=10mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{hb}{RGB}{223,232,241}
+\definecolor{opc}{RGB}{214,239,205}
+\definecolor{fld}{RGB}{255,244,204}
+\definecolor{stat}{RGB}{205,229,247}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{3pt}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+
+\newcolumntype{F}{>{\footnotesize\raggedright\arraybackslash}p{2.7cm}}
+\newcolumntype{C}{>{\ttfamily\scriptsize\centering\arraybackslash}p{1.15cm}}
+\newcolumntype{K}{>{\ttfamily\scriptsize\centering\arraybackslash}p{1.6cm}}
+\newcolumntype{M}{>{\footnotesize\raggedright\arraybackslash}p{6.8cm}}
+\newcommand{\op}[1]{\cellcolor{opc}#1}
+\newcommand{\fd}[1]{\cellcolor{fld}#1}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{DDR command-bus truth tables --- DDR1 / DDR2 / DDR3 / DDR4}}\\[2pt]
+{\small Command ports only. \textbf{Structural difference vs DDR5:} DDR1--4 decode the command from
+\emph{dedicated} pins (\texttt{CS\_n, RAS\_n, CAS\_n, WE\_n}; DDR4 adds \texttt{ACT\_n}) with bank/row/col
+on \emph{separate} address pins --- there is no encoded 2-cycle CA bus. All commands are \textbf{1 CK}
+(SDR command). DDR5 = the encoded CA bus (see \texttt{opcode\_rom.pdf}).
+\colorbox{opc}{green}=fixed command bit; \colorbox{fld}{yellow}=address field. H=1, L=0, x=don't care.
+\emph{Verified against JESD79F (DDR1 TT-3), JESD79-2F (Table 13), JESD79-3F (p47 cmd TT),
+JESD79-4 (Table on p32).}}
+\end{center}
+
+\section{DDR1 / DDR2 / DDR3  (shared RAS/CAS/WE encoding)}
+{\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{F C C C C K C M}
+\toprule
+\rowcolor{hb}\textbf{command} & \textbf{CS\_n} & \textbf{RAS\_n} & \textbf{CAS\_n} & \textbf{WE\_n} & \textbf{BA} & \textbf{A10} & \textbf{note}\\ \midrule
+Deselect (DES) & \op{H} & x & x & x & x & x & CS high: no command latched.\\
+No-Op (NOP) & \op{L} & \op{H} & \op{H} & \op{H} & x & x & idle, holds state.\\
+Activate (ACT) & \op{L} & \op{L} & \op{H} & \op{H} & \fd{bank} & \fd{row} & opens row; row on the A pins, bank on BA.\\
+Read (RD) & \op{L} & \op{H} & \op{L} & \op{H} & \fd{bank} & \fd{AP} & column on A; A10 = auto-precharge.\\
+Write (WR) & \op{L} & \op{H} & \op{L} & \op{L} & \fd{bank} & \fd{AP} & column on A; A10 = auto-precharge.\\
+Precharge (PRE) & \op{L} & \op{L} & \op{H} & \op{L} & \fd{bank} & \fd{all/one} & A10=1 all banks, A10=0 the one BA.\\
+Auto-Refresh (REF) & \op{L} & \op{L} & \op{L} & \op{H} & x & x & CKE high both edges.\\
+Self-Refresh entry (SRE) & \op{L} & \op{L} & \op{L} & \op{H} & x & x & same code as REF but CKE H$\rightarrow$L.\\
+Mode-Reg Set (MRS) & \op{L} & \op{L} & \op{L} & \op{L} & \fd{MR sel} & \fd{opcode} & BA selects MR/EMR; A = opcode.\\
+ZQ Cal (DDR3 only) & \op{L} & \op{H} & \op{H} & \op{L} & x & \fd{long/short} & ZQCL (A10=1) / ZQCS (A10=0).\\
+Power-Down entry (PDE) & \op{L} & \op{H} & \op{H} & \op{H} & x & x & NOP/DES with CKE H$\rightarrow$L.\\
+PD / SR exit (PDX/SRX) & \multicolumn{7}{l}{\footnotesize CKE L$\rightarrow$H (command pins x); DRAM resumes after tXP / tXS.}\\
+\bottomrule
+\end{tabular}}}
+\smallskip
+{\footnotesize DDR1: 4 banks (BA0--1), no ODT, no reset\_n, no ZQ. DDR2: adds ODT, up to 8 banks (BA0--2),
+extra EMRs. DDR3: 8 banks, adds \texttt{reset\_n}, ZQ calibration, dynamic ODT, write-leveling. Command
+decode is identical across the three --- only the surrounding pins/features grow.}
+
+\section{DDR4  (adds ACT\_n; RAS/CAS/WE repurposed as A16/A15/A14)}
+{\footnotesize When \texttt{ACT\_n}=L the command is ACTIVATE and the RAS/CAS/WE pins carry the high row
+bits A16/A15/A14. When \texttt{ACT\_n}=H those same pins decode every other command (as RAS\_n/CAS\_n/WE\_n).}
+
+\smallskip
+\noindent{\footnotesize
+\begin{tabular}{F C C C C C K C}
+\toprule
+\rowcolor{hb}\textbf{command} & \textbf{CS\_n} & \textbf{ACT\_n} & \textbf{A16/RAS} & \textbf{A15/CAS} & \textbf{A14/WE} & \textbf{BG,BA} & \textbf{A10}\\ \midrule
+Deselect (DES) & \op{H} & x & x & x & x & x & x\\
+Activate (ACT) & \op{L} & \op{L} & \fd{A16} & \fd{A15} & \fd{A14} & \fd{grp,bank} & \fd{row}\\
+No-Op (NOP) & \op{L} & \op{H} & \op{H} & \op{H} & \op{H} & x & x\\
+Read (RD) & \op{L} & \op{H} & \op{H} & \op{L} & \op{H} & \fd{grp,bank} & \fd{AP}\\
+Write (WR) & \op{L} & \op{H} & \op{H} & \op{L} & \op{L} & \fd{grp,bank} & \fd{AP}\\
+Precharge (PRE) & \op{L} & \op{H} & \op{L} & \op{H} & \op{L} & \fd{grp,bank} & \fd{all/one}\\
+Auto-Refresh (REF) & \op{L} & \op{H} & \op{L} & \op{L} & \op{H} & x & x\\
+Mode-Reg Set (MRS) & \op{L} & \op{H} & \op{L} & \op{L} & \op{L} & \fd{MR sel} & \fd{opcode}\\
+ZQ Cal (ZQCL/ZQCS) & \op{L} & \op{H} & \op{H} & \op{H} & \op{L} & x & \fd{long/short}\\
+SRE / PDE & \op{L} & \op{H} & x & x & x & x & x\\
+\bottomrule
+\end{tabular}}
+\smallskip
+{\footnotesize \textbf{notes:} DES = CS high (no decode). ACT (ACT\_n=L): RAS/CAS/WE carry row bits
+A16/A15/A14; BG,BA pick the bank. RD/WR: column on the A pins, A10 = auto-precharge. PRE: A10=1 all
+banks / 0 the one BG,BA. MRS: BG,BA select MR0--MR6, A = opcode. ZQ: A10 = long/short. SRE/PDE =
+REF-code / NOP with CKE H$\rightarrow$L; PDX/SRX = CKE L$\rightarrow$H.}
+\smallskip
+{\footnotesize DDR4: up to 16 banks = 4 bank groups (BG0--1) $\times$ 4 banks (BA0--1); adds \texttt{ACT\_n},
+\texttt{PAR} (CA parity), CID (3DS stacking), DBI, CA gear-down, tCCD\_L/S. Command still 1 CK.}
+
+\section{Per-version command-port differences}
+{\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l C C K K C C C C K}
+\toprule
+\rowcolor{hb}\textbf{ver} & \textbf{banks} & \textbf{BG} & \textbf{cmd decode} & \textbf{ODT} & \textbf{reset\_n} & \textbf{ZQ} & \textbf{ACT\_n} & \textbf{CA PAR} & \textbf{DFI cmd ports}\\ \midrule
+DDR1 & 4 & -- & RAS/CAS/WE & no & no & no & no & no & pre-DFI (direct)\\
+DDR2 & 4--8 & -- & RAS/CAS/WE & yes & no & no & no & no & ras cas we, cs cke odt, addr bank\\
+DDR3 & 8 & -- & RAS/CAS/WE & dyn & yes & yes & no & opt & + reset\_n\\
+DDR4 & 16 & 4 (BG0--1) & ACT\_n + RAS/CAS/WE & yes & yes & yes & yes & yes & act\_n + address(A16--14) + bg + parity\\
+DDR5 & 32 & 8 (3b) & encoded CA0--13 (2-cyc) & CA/CS & yes & MPC & n/a & yes & address(CA) + cs + cke + odt + parity, no ras cas we\\
+\bottomrule
+\end{tabular}}}
+\smallskip
+{\footnotesize Trend: dedicated \texttt{RAS/CAS/WE} pins (DDR1--3) $\rightarrow$ ACT\_n overlay freeing 3 pins
+as address (DDR4) $\rightarrow$ fully encoded 2-cycle CA bus, no command pins at all (DDR5). Bank count
+$\times$8 across the line (4$\rightarrow$32); bank groups appear at DDR4 (tCCD\_L/S). DDR5 row = the
+\texttt{opcode\_rom.pdf} table.}
+
+\end{document}
