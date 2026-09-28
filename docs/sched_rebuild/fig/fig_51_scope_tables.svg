@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="1000" viewBox="0 0 1300 1000" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1300" height="1000" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Split scoreboard by scope - fields + can_x per stage</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Each scope stores next_* = GC+const (13b) and emits its can_x gate (GC &gt;= next_*). Arb reads can_x; NEVER rejects. Assumed DDR5-4800B CK.</text>
+  <rect x="40" y="82" width="610" height="366" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="54" y="108" font-size="14" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BANK</text>
+  <text x="638" y="106" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">x N_RANKS*32 = 64</text>
+  <text x="54" y="130" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">STORED</text>
+  <text x="64" y="146" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">state[4] valid open_row[17]</text>
+  <text x="64" y="162" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">pre_pending last_op ref_pending</text>
+  <text x="64" y="178" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_act[13]  &lt;- tRC / tRP</text>
+  <text x="64" y="194" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_cas[13]  &lt;- tRCD / tCCD_L(sb)</text>
+  <text x="64" y="210" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_pre[13]  &lt;- tRAS / tRTP / WR:CWL+BL/2+tWR</text>
+  <text x="54" y="228" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">CAN_X (comparator out)</text>
+  <text x="64" y="244" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_act = GC&gt;=next_act &amp; state ok</text>
+  <text x="64" y="260" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_cas = GC&gt;=next_cas &amp; OPEN &amp; row_hit &amp; dqFree</text>
+  <text x="64" y="276" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_pre = GC&gt;=next_pre</text>
+  <text x="54" y="292" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">FROM</text>
+  <text x="64" y="307" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tRC117 tRCD40 tRAS77 tRP40 tRTP18 tWR-&gt;118 tCCD_L(sb)</text>
+  <rect x="680" y="82" width="580" height="176" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="694" y="108" font-size="14" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BGS  (bank-group SAME)</text>
+  <text x="1248" y="106" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">x N_RANKS*8 = 16</text>
+  <text x="694" y="130" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">STORED</text>
+  <text x="704" y="146" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_act_bg[13] &lt;- tRRD_L</text>
+  <text x="704" y="162" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_cas_bg[13] &lt;- tCCD_L / tCCD_L_WR</text>
+  <text x="694" y="180" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">CAN_X (comparator out)</text>
+  <text x="704" y="196" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_act_bgs = GC&gt;=next_act_bg</text>
+  <text x="704" y="212" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_cas_bgs = GC&gt;=next_cas_bg</text>
+  <text x="694" y="228" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">FROM</text>
+  <text x="704" y="243" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tRRD_L=12  tCCD_L=12  tCCD_L_WR=48</text>
+  <rect x="680" y="274" width="580" height="174" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="694" y="300" font-size="14" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BGD  (bank-group DIFF / cross-BG)</text>
+  <text x="1248" y="298" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">per rank x2</text>
+  <text x="694" y="322" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">STORED</text>
+  <text x="704" y="338" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_act_dbg[13] &lt;- tRRD_S</text>
+  <text x="704" y="354" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">(CAS diff-BG = tCCD_S folds into dqFree)</text>
+  <text x="694" y="372" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">CAN_X (comparator out)</text>
+  <text x="704" y="388" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_act_bgd = GC&gt;=next_act_dbg</text>
+  <text x="704" y="404" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_cas_bgd = dqFree  (=tCCD_S, shared global)</text>
+  <text x="694" y="420" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">FROM</text>
+  <text x="704" y="435" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tRRD_S=8  tCCD_S=8 (=dqFree)</text>
+  <rect x="40" y="468" width="1000" height="300" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="54" y="494" font-size="14" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">RANK</text>
+  <text x="1028" y="492" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">x N_RANKS = 2</text>
+  <text x="54" y="516" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">STORED</text>
+  <text x="64" y="532" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">faw_ts[4][13] = 52   &lt;- tFAW rolling 4-ACT window</text>
+  <text x="64" y="548" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_rd[13] &lt;- WR:CWL+BL/2+tWTR(L70/S52)   (turnaround)</text>
+  <text x="64" y="564" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_wr[13] &lt;- RD:tRTW=12                  (turnaround)</text>
+  <text x="64" y="580" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas_ts[13] last_cas_dir last_cas_rank last_cas_bg</text>
+  <text x="64" y="596" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">raa_count[7] (RFM)   gate_rfc/gate_zq/gate_mr (+release ts)</text>
+  <text x="54" y="614" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">CAN_X (comparator out)</text>
+  <text x="64" y="630" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_act_rank = faw_ok &amp; GC&gt;=next_act_dbg          (tFAW+tRRD_S)</text>
+  <text x="64" y="646" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">turnaround   = GC&gt;=next_rd|next_wr on dir flip    (tWTR/tRTW)</text>
+  <text x="64" y="662" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">maint block  = !gate_rfc &amp; !gate_zq &amp; !gate_mr</text>
+  <text x="54" y="678" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777" font-weight="bold">FROM</text>
+  <text x="64" y="693" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tFAW32 tWTR(70/52) tRTW12 tRTRS2 tRFC1=708 tRFCsb=312 tZQ tMRD16 tMOD36</text>
+  <rect x="1060" y="468" width="200" height="300" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1074" y="494" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">GLOBAL / DQ</text>
+  <text x="1160" y="492" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">x1</text>
+  <text x="1074" y="522" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dqFree[13]</text>
+  <text x="1074" y="544" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"> = GC+BL/2 (8)</text>
+  <text x="1074" y="566" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">caFree[13]</text>
+  <text x="1074" y="588" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">last_cas (bus)</text>
+  <text x="1074" y="610" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="1074" y="632" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">can_cas &amp;=</text>
+  <text x="1074" y="654" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#1a5aa8">  GC&gt;=dqFree</text>
+  <text x="1074" y="676" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="1074" y="698" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">one DQ bus,</text>
+  <text x="1074" y="720" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">one CA bus</text>
+  <text x="40" y="800" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Backtracking the timestamp path from the scope tables: BANK (same-bank) -&gt; BGS (same-BG) -&gt; BGD (cross-BG) -&gt; RANK -&gt; GLOBAL. Each stamps next_* at issue (fig_50) and emits can_x; the arb ANDs the can_x of the scopes a candidate touches. Depth collapses 64 -&gt; 16 -&gt; 2 -&gt; 1; RANK is widest per-entry (faw_ts[4]=52b).</text>
+</svg>

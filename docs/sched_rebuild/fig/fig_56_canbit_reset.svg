@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="560" fill="#ffffff"/>
+  <text x="40" y="38" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">can_* RESET on issue - which SR flops clear (mirror of fig_50)</text>
+  <text x="40" y="58" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">On issue, each stamped next_* RESETS its can_* to 0 (block now); the GE comparator re-SETS it when the deadline passes. Reset hits the scope gate.</text>
+  <rect x="50" y="92" width="100" height="34" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000">issued</text>
+  <rect x="150" y="92" width="320" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="310.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BANK</text>
+  <rect x="470" y="92" width="250" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="595.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">BG</text>
+  <rect x="720" y="92" width="290" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="865.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">RANK</text>
+  <rect x="1010" y="92" width="230" height="34" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1125.0" y="114" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#000000" font-weight="bold">GLOBAL / DQ</text>
+  <rect x="50" y="126" width="100" height="64" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="162.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ACT</text>
+  <rect x="150" y="126" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act, can_cas, can_pre</text>
+  <text x="160" y="165" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (this bank)</text>
+  <rect x="470" y="126" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="480" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act_bgs</text>
+  <text x="480" y="165" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (whole BG)</text>
+  <rect x="720" y="126" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="730" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act_bgd (tRRD_S)</text>
+  <text x="730" y="165" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">faw -&gt; can_act_rank</text>
+  <rect x="1010" y="126" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="148" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="190" width="100" height="47" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="217.5" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RD</text>
+  <rect x="150" y="190" width="320" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="212" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre</text>
+  <rect x="470" y="190" width="250" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="480" y="212" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_bgs (tCCD_L)</text>
+  <rect x="720" y="190" width="290" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="730" y="212" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_wr  (turnaround)</text>
+  <rect x="1010" y="190" width="230" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="212" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq (dqFree)</text>
+  <rect x="50" y="237" width="100" height="47" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="264.5" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WR</text>
+  <rect x="150" y="237" width="320" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="259" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre</text>
+  <rect x="470" y="237" width="250" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="480" y="259" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_bgs (tCCD_L_WR)</text>
+  <rect x="720" y="237" width="290" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="730" y="259" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_rd  (turnaround)</text>
+  <rect x="1010" y="237" width="230" height="47" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="259" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas_dq (dqFree)</text>
+  <rect x="50" y="284" width="100" height="64" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="320.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRE</text>
+  <rect x="150" y="284" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="306" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act (tRP)</text>
+  <text x="160" y="323" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_cas (state: row closed)</text>
+  <rect x="470" y="284" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="480" y="306" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="720" y="284" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="730" y="306" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_pre (tPPD, diff bank)</text>
+  <rect x="1010" y="284" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="306" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="50" y="348" width="100" height="64" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="100.0" y="384.0" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REF</text>
+  <rect x="150" y="348" width="320" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="160" y="370" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act/cas/pre</text>
+  <text x="160" y="387" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  (8 targets, gate_rfc)</text>
+  <rect x="470" y="348" width="250" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="480" y="370" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">targets span BGs</text>
+  <rect x="720" y="348" width="290" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="730" y="370" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <rect x="1010" y="348" width="230" height="64" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="370" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-</text>
+  <text x="40" y="436" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">1:1 with fig_50: every next_* stamped -&gt; its can_* reset. Scope matters - resetting can_act_bgs blocks the WHOLE bank-group's ACTs; can_*_dq / turn are rank/global.</text>
+  <text x="40" y="456" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">PRE also clears can_cas of its bank via STATE (row closed -&gt; not OPEN), not a timestamp. REF's gate_rfc blocks ALL three on the 8 target banks until tRFCsb.</text>
+  <text x="40" y="476" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Same-rank ACT + RD (rcas) example: ACT resets {can_act/cas/pre[b], can_act_bgs[g], can_act_bgd}; RD resets {can_pre[b], can_cas_bgs[g], can_wr, can_cas_dq}.</text>
+</svg>

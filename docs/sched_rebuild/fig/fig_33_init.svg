@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="690" viewBox="0 0 920 690" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="920" height="690" fill="#ffffff"/>
+  <text x="40" y="40" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">INIT FSM (16 states) - DDR5 power-on sequence</text>
+  <text x="40" y="60" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">state -&gt; state, arrow label = exit condition. dashed = loop back.</text>
+  <rect x="60" y="120" width="158" height="48" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="139.0" y="149.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">IDLE</text>
+  <rect x="270" y="120" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="349.0" y="149.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ASSERT_RESET</text>
+  <rect x="480" y="120" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="559.0" y="149.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CS_PRE_DEASSERT</text>
+  <rect x="690" y="120" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="769.0" y="149.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CS_POST_DEASSERT</text>
+  <rect x="690" y="240" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="769.0" y="269.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ODT_SETTLE</text>
+  <rect x="480" y="240" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="559.0" y="269.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">NOP_BURST</text>
+  <rect x="270" y="240" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="349.0" y="269.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_XPR</text>
+  <rect x="60" y="240" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="139.0" y="269.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">MPC_DLL_DIVIDER</text>
+  <rect x="60" y="360" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="139.0" y="389.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">MPC_DLL_RESET</text>
+  <rect x="270" y="360" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="349.0" y="389.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ZQCAL_START</text>
+  <rect x="480" y="360" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="559.0" y="389.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_tZQCAL</text>
+  <rect x="690" y="360" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="769.0" y="389.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ZQCAL_LATCH</text>
+  <rect x="690" y="480" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="769.0" y="509.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_tZQLAT</text>
+  <rect x="480" y="480" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="559.0" y="509.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">MRW_BURST</text>
+  <rect x="270" y="480" width="158" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="349.0" y="509.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">TRAINING</text>
+  <rect x="60" y="480" width="158" height="48" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="139.0" y="509.0" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">DONE</text>
+  <line x1="218" y1="144.0" x2="270" y2="144.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="244.0" y="136.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">INIT_KICK</text>
+  <line x1="428" y1="144.0" x2="480" y2="144.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="454.0" y="136.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tINIT1 200us</text>
+  <line x1="638" y1="144.0" x2="690" y2="144.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="664.0" y="136.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tINIT2 10ns</text>
+  <line x1="769.0" y1="168" x2="769.0" y2="240" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="777.0" y="207.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">tINIT3 4ms</text>
+  <line x1="690" y1="264.0" x2="638" y2="264.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="664.0" y="256.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tINIT4 2us</text>
+  <line x1="480" y1="264.0" x2="428" y2="264.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="454.0" y="256.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tINIT5 3nCK</text>
+  <line x1="270" y1="264.0" x2="218" y2="264.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="244.0" y="256.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">tXPR</text>
+  <line x1="139.0" y1="288" x2="139.0" y2="360" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="147.0" y="327.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">issued</text>
+  <line x1="218" y1="384.0" x2="270" y2="384.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="244.0" y="376.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">issued</text>
+  <line x1="428" y1="384.0" x2="480" y2="384.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="454.0" y="376.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">issued</text>
+  <line x1="638" y1="384.0" x2="690" y2="384.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="664.0" y="376.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">1us</text>
+  <line x1="769.0" y1="408" x2="769.0" y2="480" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="777.0" y="447.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">issued</text>
+  <line x1="690" y1="504.0" x2="638" y2="504.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="664.0" y="496.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">30nCK</text>
+  <line x1="480" y1="504.0" x2="428" y2="504.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="454.0" y="496.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">all MRs</text>
+  <line x1="270" y1="504.0" x2="218" y2="504.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="244.0" y="496.0" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">TRAIN_EN</text>
+</svg>

@@ -1,0 +1,101 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{dcol}{RGB}{42,143,134}
+\definecolor{ccol}{RGB}{122,79,176}
+\definecolor{pcol}{RGB}{176,96,42}
+\renewcommand{\arraystretch}{1.25}
+\titleformat{\section}{\large\bfseries\color{headbg}}{}{0em}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+
+\newcommand{\ca}[1]{\textcolor{ccol}{\texttt{#1}}}
+\newcommand{\dq}[1]{\textcolor{dcol}{\texttt{#1}}}
+\newcommand{\pw}[1]{\textcolor{pcol}{\texttt{#1}}}
+
+\newcolumntype{C}{>{\ttfamily\footnotesize\bfseries\raggedright\arraybackslash}p{1.5cm}}
+\newcolumntype{U}{>{\footnotesize\centering\arraybackslash}p{0.7cm}}
+\newcolumntype{G}{>{\footnotesize\raggedright\arraybackslash}p{10.2cm}}
+\newcolumntype{X}{>{\footnotesize\raggedright\arraybackslash}p{5.0cm}}
+
+\newenvironment{drive}{%
+  \footnotesize\begin{longtable}{C U G X}\toprule
+  \textbf{cmd} & \textbf{UI} & \textbf{DFI signals driven} & \textbf{info}\\ \midrule\endhead}
+  {\bottomrule\end{longtable}}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{Per-command DFI drive list}}\\[2pt]
+{\small DDR5, one channel. For each command: which DFI signals it drives + one-line info.
+Colors: \ca{CA/command}, \dq{data-path}, \pw{power/CKE}. Every issued phase also drives
+\ca{dfi\_cs\_pN} (assert target rank one-cold, else DES) and \ca{dfi\_address\_pN} (CA beat);
+idle phases = DES. UI = command length in unit intervals.}
+\end{center}
+
+\section*{}
+\begin{drive}
+ACT & 2 & \ca{dfi\_cs}(rank, UI0), \ca{dfi\_address}(ACT op + bg + bank + row; row split UI0/UI1)
+   & Open row. No data path. Stamps tRC/tRCD/tRAS.\\
+RD & 2 & \ca{dfi\_cs}, \ca{dfi\_address}(RD op + bg + bank + col + ap); then \dq{dfi\_rddata\_en}
+   (@tphy\_rdlat); @RL: \dq{dfi\_rddata\_wN}, \dq{dfi\_rddata\_valid} (in)
+   & Column read; data returns on DQ (RL=CL). Arms RD\_CAP (sram=dbuf).\\
+WR & 2 & \ca{dfi\_cs}, \ca{dfi\_address}(WR op + bg + bank + col + ap); \pw{dfi\_odt}(RTT\_WR win);
+   then \dq{dfi\_wrdata\_en}, \dq{dfi\_wrdata}, \dq{dfi\_wrdata\_mask}, \dq{dfi\_wrdata\_cs} (@tphy\_wrlat)
+   & Column write; drives data on DQ (CWL). Arms WL\_LAUNCH (sram=wd\_slot).\\
+PRE & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(PRE op + bg + bank)
+   & Close one row. Stamps tRP.\\
+PREA & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(PREA op)
+   & Precharge all banks in rank.\\
+PREsb & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(PREsb op + bank k)
+   & Precharge bank k across all BGs (refresh drain).\\
+REF & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(REFab op)
+   & All-bank refresh; gate\_rfc all banks (tRFC1).\\
+REFsb & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(REFsb op + bank k)
+   & Same-bank refresh (8 banks); gate\_rfc (tRFCsb).\\
+RFM & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(RFM op)
+   & Refresh management; RAA-=RAAIMT.\\
+MRW & 2 & \ca{dfi\_cs}, \ca{dfi\_address}(MRW op + MRA + data)
+   & Write mode register; gate\_mr (tMRD), live +tMOD. No DQ.\\
+MRR & 2 & \ca{dfi\_cs}, \ca{dfi\_address}(MRR op + MRA); \dq{dfi\_rddata\_en}; @RL: \dq{dfi\_rddata}(in)
+   & Read mode register; MR data on DQ -> RD\_CAP (sideband, rob tag).\\
+MPC/ZQ & 2 & \ca{dfi\_cs}, \ca{dfi\_address}(MPC op); \dq{PHY DQ cal}
+   & Multi-purpose (ZQ cal etc); gate\_zq (tZQCAL), latch tZQLAT.\\
+SRE & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(SRE op) + \pw{dfi\_cke}$\downarrow$
+   & Self-refresh entry (CA cmd + CKE low). DRAM self-refreshes.\\
+SRX & 1 & \ca{dfi\_cs}, \ca{dfi\_address}(SRX op) + \pw{dfi\_cke}$\uparrow$
+   & Self-refresh exit (CKE high, then re-init timing).\\
+PDE & -- & \pw{dfi\_cke}$\downarrow$ (DES on CA)
+   & Power-down entry. NOT a CA command - pure CKE.\\
+PDX & -- & \pw{dfi\_cke}$\uparrow$
+   & Power-down exit. Pure CKE.\\
+DES & 1 & \ca{dfi\_cs}=high (deselect), \ca{dfi\_address}=don't-care
+   & No-op; fills idle phase slots.\\
+\end{drive}
+
+\section*{Always-driven / background}
+\begin{tabular}{>{\ttfamily\footnotesize}l >{\footnotesize\raggedright\arraybackslash}p{13cm}}
+\toprule
+dfi\_cs\_pN & every phase: target rank one-cold (active-low) on a command's UI0, else all-high (DES).\\
+dfi\_address\_pN & every phase: the CA beat for whatever command occupies that slot (or don't-care on DES).\\
+dfi\_reset\_n & held by INIT\_FSM during reset; high in normal operation.\\
+dfi\_cke\_pN & steady high in normal op; driven low only by SRE/PDE (POWER\_MGMT).\\
+dfi\_odt\_pN & driven around writes (RTT\_WR window, WL-offset); parked/nom otherwise.\\
+dfi\_parity\_in & CA parity, tparin\_lat after each command (if parity enabled).\\
+\bottomrule
+\end{tabular}
+
+\vspace{5pt}
+{\footnotesize \textbf{Note.} \ca{CA signals} (dfi\_cs / dfi\_address) are driven by DFI\_CMD\_ENCODE
+for every command (one CA bus). \dq{Data-path signals} are driven later by WL\_LAUNCH / RD\_CAP at
+the PHY latency (tphy\_wrlat / tphy\_rdlat) - only for RD/WR/MRR. \pw{CKE} is POWER\_MGMT.
+The \texttt{2ui} flag (separate sched$\rightarrow$DFI wire) tells the driver 1-UI vs 2-UI.}
+
+\end{document}

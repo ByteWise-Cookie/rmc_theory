@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1440" height="820" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">REFab engine (all-bank, 32 banks) + REFsb/REFab selector</text>
+  <circle cx="110" cy="150" r="36" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="110" y="150" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">debt</text>
+  <text x="110" y="164" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">shared</text>
+  <text x="60" y="205" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">from interval engine (fig_66)</text>
+  <line x1="146" y1="150" x2="300" y2="150" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="190" y="138" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">debt&gt;0</text>
+  <path d="M360 120.0 L435.0 150 L360 180.0 L285.0 150 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="360" y="155" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold"></text>
+  <text x="360" y="146" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">all 32 idle?</text>
+  <text x="360" y="162" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">(precharged)</text>
+  <line x1="435" y1="150" x2="560" y2="150" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="490" y="138" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">YES</text>
+  <line x1="360" y1="210" x2="360" y2="300" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="368" y="260" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">NO -&gt; REFsb (fig_65)</text>
+  <text x="230" y="320" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">targeted 8 + drain</text>
+  <rect x="600.0" y="128.0" width="120" height="44" fill="#efe6fb" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="660" y="155" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ISSUE</text>
+  <rect x="830.0" y="128.0" width="140" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="900" y="155" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFING</text>
+  <rect x="1080.0" y="128.0" width="120" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="1140" y="155" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">release</text>
+  <line x1="720" y1="150" x2="830" y2="150" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="760" y="138" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">REFab</text>
+  <line x1="970" y1="150" x2="1080" y2="150" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1035" y="138" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">GC&gt;=gate_rfc</text>
+  <text x="900" y="190" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">all 32 banks REFING (tRFC1=708)</text>
+  <path d="M1140 172 V240 H110 V190" fill="none" stroke="#b0602a" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="600" y="250" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">debt--</text>
+  <rect x="560" y="340" width="400" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="760" y="364" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFab writeback (whole rank)</text>
+  <text x="576" y="392" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">no drain (rank already idle -&gt; no CAS to finish)</text>
+  <text x="576" y="412" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">state[32] -&gt; REFING</text>
+  <text x="576" y="432" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">gate_rfc[32] = GC + tRFC1 (708)</text>
+  <text x="576" y="452" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">release: GC&gt;=gate_rfc -&gt; IDLE[32], debt--</text>
+  <text x="576" y="472" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">ref_rdy FLAG -&gt; scheduler (override inject)</text>
+  <rect x="60" y="540" width="620" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="370" y="564" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFsb  vs  REFab</text>
+  <text x="80" y="590" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="80" y="588" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">target</text>
+  <text x="210" y="588" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">bank k x 8 BG = 8 banks</text>
+  <text x="460" y="588" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">all 32 banks</text>
+  <text x="80" y="607" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">tRFC</text>
+  <text x="210" y="607" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tRFCsb = 312</text>
+  <text x="460" y="607" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tRFC1 = 708</text>
+  <text x="80" y="626" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">others</text>
+  <text x="210" y="626" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">24 banks keep feeding DQ</text>
+  <text x="460" y="626" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">whole rank blocked</text>
+  <text x="80" y="645" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">drain</text>
+  <text x="210" y="645" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">yes (policy B)</text>
+  <text x="460" y="645" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">none (already idle)</text>
+  <text x="80" y="664" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">use when</text>
+  <text x="210" y="664" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">under load (default)</text>
+  <text x="460" y="664" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">rank idle (free opportunity)</text>
+  <rect x="720" y="540" width="680" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1060" y="564" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DDR portability</text>
+  <text x="736" y="590" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DDR1/2/3 : all-bank REF only = REFab-equivalent. NO selector,</text>
+  <text x="736" y="608" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">           NO REFsb, NO ba/8-AND. Engine = this panel alone.</text>
+  <text x="736" y="626" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DDR4     : all-bank REF + FGR (1x/2x/4x -&gt; tRFC1/tRFC2/tRFC4).</text>
+  <text x="736" y="644" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">           Still no REFsb.</text>
+  <text x="736" y="662" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DDR5     : REFsb primary (fig_65) + REFab fallback (this). Selector</text>
+  <text x="736" y="680" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">           picks by all-rank-idle. + RFM.</text>
+  <text x="40" y="780" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">REFab = one command refreshes all 32 banks (tRFC1=708), no drain needed because it fires only when the whole rank is ALREADY idle (free - nothing running to stall). Under load, REFsb is preferred (8 banks, 24 keep feeding DQ). Shared debt/interval feeds both; the selector routes by all-rank-idle. DDR1-4 have only the all-bank flavor (this panel).</text>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="620" viewBox="0 0 1240 620" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="620" fill="#ffffff"/>
+  <text x="40" y="34" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Refresh interval - 14b down-counter + 3b debt  (LOCKED)</text>
+  <rect x="830" y="70" width="380" height="175" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="1020" y="94" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PARAMS</text>
+  <text x="844" y="118" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">tREFI = 9360 CK  (DDR5-4800, 3.9us)</text>
+  <text x="844" y="136" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">refi_cnt = 14b   (2^14=16384 &gt;= 9360)</text>
+  <text x="844" y="154" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">debt = 3b (0..7) ; force = &amp;debt (==7)</text>
+  <text x="844" y="172" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">{debt[2:0], refi_cnt[13:0]} = 17b total</text>
+  <text x="844" y="190" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">temp 2x: += tREFI&gt;&gt;1 = 4680 ; 4x: 2340</text>
+  <text x="844" y="208" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DDR4: 12480  DDR3: 6240  DDR2: 3120</text>
+  <text x="844" y="226" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DDR1: 1560  (reload const per bin)</text>
+  <rect x="60" y="110" width="220" height="60" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="280" y="102" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">refi_cnt (14b)</text>
+  <text x="280" y="86" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">load tREFI</text>
+  <line x1="170" y1="170" x2="170" y2="220" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="178" y="200" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">-= gear / mc_clk</text>
+  <path d="M170 238.0 L215.0 260 L170 282.0 L125.0 260 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="170" y="265" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&lt;= 0 ?</text>
+  <line x1="215" y1="260" x2="380" y2="260" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="250" y="248" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">tick</text>
+  <path d="M170 282 V340 H60 V140 H60" fill="none" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="70" y="335" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">reload += tREFI (constant step)</text>
+  <circle cx="470" cy="260" r="36" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="470" y="260" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">debt</text>
+  <text x="470" y="274" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">3b sat7</text>
+  <text x="360" y="232" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">tick -&gt; debt++</text>
+  <text x="360" y="300" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">refresh done -&gt; debt--</text>
+  <line x1="414" y1="290" x2="445" y2="285" stroke="#b0602a" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <rect x="590" y="238" width="120" height="44" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="650.0" y="260" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;debt</text>
+  <text x="650.0" y="275" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">==7</text>
+  <line x1="506" y1="260" x2="588" y2="260" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="710" y1="260" x2="790" y2="260" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="796" y="256" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">ref_pending (force)</text>
+  <text x="470" y="320" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">3-AND on the top 3 bits = debt==7</text>
+  <rect x="60" y="420" width="1150" height="130" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="80" y="444" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">WHY THIS (down-counter, GC-slice dropped)</text>
+  <text x="80" y="468" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1. Exact by construction - reload adds the real tREFI (constant step). Refresh is LINEAR (k.tREFI); a &lt;&lt;1 / x2 is geometric (2^k.tREFI) -&gt; misses refresh -&gt; rejected.</text>
+  <text x="80" y="486" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2. No compare, no upper-slice, no dropped-LSB, no GC-wrap edge case - just a zero/borrow detect. All those questions vanish.</text>
+  <text x="80" y="504" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">3. 14b counter + 3b debt = 17b. Cheaper than GC-slice (which needs a ~13b ref_ts reg + adder + comparator for the same accuracy).</text>
+  <text x="80" y="522" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">4. Parametric: reload const = tREFI(bin) &gt;&gt; rr_shift(temp). tREFI stays OUT of the per-command scoreboard - it is the ME's own counter.</text>
+  <text x="40" y="592" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Interval = 14b down-counter (reload tREFI, -=gear, tick at 0), feeding a 3b debt (++ on tick, -- on refresh); ref_pending = &amp;debt (force at 7). No GC compare.</text>
+</svg>

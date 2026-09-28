@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1180" viewBox="0 0 1720 1180" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1720" height="1180" fill="#ffffff"/>
+  <text x="40" y="32" font-size="16" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">DFI 5.2 ports (DDR5) - grouped boxes</text>
+  <text x="40" y="54" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">arrow: -&gt; = out (MC-&gt;PHY), &lt;- = in (PHY-&gt;MC).  _p0 = phase 0 only; _p1.._p(GEAR-1) are identical copies (omitted).  N_RANKS/DQ/GEAR parametric.</text>
+  <rect x="40" y="90" width="400" height="262" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <rect x="40" y="90" width="400" height="30" fill="#efe6fb" stroke="#000000" stroke-width="1.6"/>
+  <text x="240.0" y="110" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">COMMAND  (Command-clk)</text>
+  <line x1="52" y1="134" x2="70" y2="134" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="138" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_address_p0</text>
+  <text x="428" y="138" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">14</text>
+  <line x1="52" y1="156" x2="70" y2="156" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="160" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_cs_p0</text>
+  <text x="428" y="160" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">N_RANKS</text>
+  <line x1="52" y1="178" x2="70" y2="178" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="182" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_cke_p0</text>
+  <text x="428" y="182" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">N_RANKS</text>
+  <line x1="52" y1="200" x2="70" y2="200" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="204" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_odt_p0</text>
+  <text x="428" y="204" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">N_RANKS</text>
+  <line x1="52" y1="222" x2="70" y2="222" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="226" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_reset_n_p0</text>
+  <text x="428" y="226" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="52" y1="244" x2="70" y2="244" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="248" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_2n_mode_p0</text>
+  <text x="428" y="248" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="52" y1="266" x2="70" y2="266" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="270" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_cs_geardown_p0</text>
+  <text x="428" y="270" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="52" y1="288" x2="70" y2="288" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="292" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_dram_clk_disable_p0</text>
+  <text x="428" y="292" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">per-clk</text>
+  <line x1="52" y1="310" x2="70" y2="310" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="314" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_parity_in_p0</text>
+  <text x="428" y="314" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="70" y1="332" x2="52" y2="332" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="336" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_alert_n_p0</text>
+  <text x="428" y="336" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <rect x="480" y="90" width="400" height="174" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <rect x="480" y="90" width="400" height="30" fill="#e9f0dc" stroke="#000000" stroke-width="1.6"/>
+  <text x="680.0" y="110" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">WRITE DATA  (Data-clk)</text>
+  <line x1="492" y1="134" x2="510" y2="134" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="138" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_p0</text>
+  <text x="868" y="138" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">2*DQ</text>
+  <line x1="492" y1="156" x2="510" y2="156" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="160" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_en_p0</text>
+  <text x="868" y="160" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">slices</text>
+  <line x1="492" y1="178" x2="510" y2="178" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="182" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_mask_p0</text>
+  <text x="868" y="182" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">2*DQ/8</text>
+  <line x1="492" y1="200" x2="510" y2="200" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="204" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_cs_p0</text>
+  <text x="868" y="204" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PHY_RANK</text>
+  <line x1="492" y1="222" x2="510" y2="222" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="226" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_crc_p0</text>
+  <text x="868" y="226" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">DATA/8</text>
+  <line x1="492" y1="244" x2="510" y2="244" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="248" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_ecc_p0</text>
+  <text x="868" y="248" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">opt</text>
+  <rect x="920" y="90" width="400" height="196" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <rect x="920" y="90" width="400" height="30" fill="#e9f0dc" stroke="#000000" stroke-width="1.6"/>
+  <text x="1120.0" y="110" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">READ DATA  (Data-clk)</text>
+  <line x1="950" y1="134" x2="932" y2="134" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="138" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_w0</text>
+  <text x="1308" y="138" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">2*DQ</text>
+  <line x1="932" y1="156" x2="950" y2="156" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="160" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_en_p0</text>
+  <text x="1308" y="160" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">slices</text>
+  <line x1="950" y1="178" x2="932" y2="178" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="182" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_valid_w0</text>
+  <text x="1308" y="182" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">slices</text>
+  <line x1="932" y1="200" x2="950" y2="200" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="204" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_cs_p0</text>
+  <text x="1308" y="204" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PHY_RANK</text>
+  <line x1="950" y1="222" x2="932" y2="222" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="226" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_dnv_w0</text>
+  <text x="1308" y="226" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">slices</text>
+  <line x1="950" y1="244" x2="932" y2="244" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="248" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_dbi_w0</text>
+  <text x="1308" y="248" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">DATA/8</text>
+  <line x1="950" y1="266" x2="932" y2="266" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960" y="270" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_crc_w0</text>
+  <text x="1308" y="270" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">DATA/8</text>
+  <rect x="40" y="430" width="400" height="284" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <rect x="40" y="430" width="400" height="30" fill="#f4f4f4" stroke="#000000" stroke-width="1.6"/>
+  <text x="240.0" y="450" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">STATUS / UPDATE  (Control-clk)</text>
+  <line x1="52" y1="474" x2="70" y2="474" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="478" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_init_start</text>
+  <text x="428" y="478" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="70" y1="496" x2="52" y2="496" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="500" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_init_complete</text>
+  <text x="428" y="500" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="52" y1="518" x2="70" y2="518" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="522" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_cmd_freq_ratio</text>
+  <text x="428" y="522" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">2</text>
+  <line x1="52" y1="540" x2="70" y2="540" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="544" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_data_freq_ratio</text>
+  <text x="428" y="544" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">2</text>
+  <line x1="52" y1="562" x2="70" y2="562" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="566" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_freq_fsp</text>
+  <text x="428" y="566" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1-2</text>
+  <line x1="52" y1="584" x2="70" y2="584" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="588" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_frequency</text>
+  <text x="428" y="588" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">W</text>
+  <line x1="52" y1="606" x2="70" y2="606" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="610" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_ctrlupd_req</text>
+  <text x="428" y="610" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="70" y1="628" x2="52" y2="628" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="632" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_ctrlupd_ack</text>
+  <text x="428" y="632" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="70" y1="650" x2="52" y2="650" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="654" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_phyupd_req</text>
+  <text x="428" y="654" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="52" y1="672" x2="70" y2="672" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="676" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_phyupd_ack</text>
+  <text x="428" y="676" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="70" y1="694" x2="52" y2="694" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="80" y="698" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_phyupd_type</text>
+  <text x="428" y="698" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">2</text>
+  <rect x="480" y="430" width="400" height="218" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <rect x="480" y="430" width="400" height="30" fill="#f4f4f4" stroke="#000000" stroke-width="1.6"/>
+  <text x="680.0" y="450" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ERROR / LOW-POWER  (Control-clk)</text>
+  <line x1="510" y1="474" x2="492" y2="474" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="478" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_error</text>
+  <text x="868" y="478" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="510" y1="496" x2="492" y2="496" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="500" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_error_info</text>
+  <text x="868" y="500" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">W*4</text>
+  <line x1="492" y1="518" x2="510" y2="518" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="522" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_lp_ctrl_req</text>
+  <text x="868" y="522" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="510" y1="540" x2="492" y2="540" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="544" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_lp_ctrl_ack</text>
+  <text x="868" y="544" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="492" y1="562" x2="510" y2="562" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="566" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_lp_ctrl_wakeup</text>
+  <text x="868" y="566" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="492" y1="584" x2="510" y2="584" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="588" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_lp_data_req</text>
+  <text x="868" y="588" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="510" y1="606" x2="492" y2="606" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="610" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_lp_data_ack</text>
+  <text x="868" y="610" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <line x1="492" y1="628" x2="510" y2="628" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="520" y="632" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_lp_data_wakeup</text>
+  <text x="868" y="632" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">1</text>
+  <text x="40" y="1160" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Command/Write/Read groups are phase-replicated: only _p0 shown; the interface carries _p0.._p(GEAR-1) identical copies (widths scale x GEAR). Status/Update/Error/LP are single-phase (Control-clk, no _pN). Legacy DDR3/4 discrete cmd (dfi_act_n/ras_n/cas_n/we_n/bank/bg) omitted - DDR5 encodes on dfi_address.</text>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="840" viewBox="0 0 1520 840" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1520" height="840" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">PHY config + runtime update  (init / ctrlupd / phyupd)</text>
+  <rect x="50" y="90" width="380" height="300" fill="none" stroke="#aaaaaa" stroke-width="1.2"/>
+  <text x="60" y="108" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">MC</text>
+  <rect x="70" y="120" width="340" height="70" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="240.0" y="140" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">TIMING_REG_FILE / CONFIG</text>
+  <text x="240.0" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">tRC.. tphy_* gear MR-shadow ODT/CS-map</text>
+  <rect x="70" y="210" width="340" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="240.0" y="230" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">FREQ_CHANGE / CFG_CTRL</text>
+  <text x="240.0" y="248" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">computes + writes config</text>
+  <rect x="70" y="290" width="340" height="70" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="240.0" y="310" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">UPDATE_CTRL</text>
+  <text x="240.0" y="328" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">ctrlupd (out) / phyupd (in) handshakes</text>
+  <rect x="1090" y="90" width="380" height="300" fill="none" stroke="#aaaaaa" stroke-width="1.2"/>
+  <text x="1100" y="108" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">PHY</text>
+  <rect x="1110" y="120" width="340" height="70" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1280.0" y="140" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHY_CFG_REGS</text>
+  <text x="1280.0" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">leveling VREF delay-lines drift</text>
+  <rect x="1110" y="210" width="340" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="1280.0" y="230" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHY_TRAIN / DRIFT</text>
+  <text x="1280.0" y="248" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">retrain, VREF/gate track</text>
+  <rect x="1110" y="290" width="340" height="70" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1280.0" y="310" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHY UPDATE_IF</text>
+  <text x="1280.0" y="328" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">raises phyupd / accepts ctrlupd</text>
+  <line x1="430" y1="150" x2="1090" y2="150" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="760" y="144" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#b0602a">dfi_init_start -&gt;  ...  &lt;- dfi_init_complete</text>
+  <text x="760" y="162" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">INIT: MC pushes ALL config; PHY trains; init_complete</text>
+  <line x1="430" y1="230" x2="1090" y2="230" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="760" y="224" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">dfi_ctrlupd_req -&gt; / &lt;- dfi_ctrlupd_ack</text>
+  <text x="760" y="242" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">MC-initiated: MC wants a quiet window to update PHY cfg</text>
+  <line x1="1090" y1="310" x2="430" y2="310" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="760" y="304" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">&lt;- dfi_phyupd_req/type / dfi_phyupd_ack -&gt;</text>
+  <text x="760" y="322" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">PHY-initiated: PHY wants to retrain; MC grants (pauses)</text>
+  <text x="50" y="440" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Which registers get updated, by whom &amp; when:</text>
+  <rect x="50" y="456" width="700" height="170" fill="none" stroke="#7a4fb0" stroke-width="1.4"/>
+  <text x="64" y="478" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0" font-weight="bold">MC UPDATES  (init + ctrlupd)</text>
+  <text x="64" y="500" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- timing_reg_file: tRC/tRCD/... + tphy_wrlat/rdlat  (DRAM + PHY-iface timing)</text>
+  <text x="64" y="522" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- gear / dfi_cmd_freq_ratio / dfi_data_freq_ratio / freq_fsp  (on DVFS)</text>
+  <text x="64" y="544" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- MR shadow (CL/CWL/RTT...) - re-sent via MRW on freq change</text>
+  <text x="64" y="566" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- ODT / CS maps, 2N / geardown mode</text>
+  <text x="64" y="588" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- WHEN: at INIT (push all); at freq-change -&gt; ctrlupd window to re-push to PHY</text>
+  <rect x="780" y="456" width="690" height="170" fill="none" stroke="#2a8f86" stroke-width="1.4"/>
+  <text x="794" y="478" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86" font-weight="bold">PHY UPDATES  (init-train + phyupd)</text>
+  <text x="794" y="500" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- read/write leveling, gate training results</text>
+  <text x="794" y="522" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- VREF, DQ/DQS delay lines, per-bit deskew</text>
+  <text x="794" y="544" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- drift / temperature compensation (periodic)</text>
+  <text x="794" y="566" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- reported via phyupd_type; MC just grants the window</text>
+  <text x="794" y="588" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- WHEN: at INIT training; then PHY raises dfi_phyupd_req when it needs to retrain</text>
+  <text x="40" y="660" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">INIT (orange): MC pushes ALL config, PHY trains, init_complete. ctrlupd (purple, MC-initiated) = MC asks a quiet window to re-push PHY cfg (e.g. post freq-change); phyupd (teal, PHY-initiated) = PHY asks to retrain, MC grants by pausing. Neither writes the other's regs directly - they hand off through the update window.</text>
+</svg>

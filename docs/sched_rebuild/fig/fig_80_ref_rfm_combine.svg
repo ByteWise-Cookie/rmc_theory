@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="940" viewBox="0 0 1560 940" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1560" height="940" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Combined REF + RFM maintenance drain  (shared drain, REFsb-first)</text>
+  <rect x="40" y="80" width="250" height="66" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="290" y="72" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">REFRESH trigger</text>
+  <text x="290" y="56" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">per-bank debt (tREFI)</text>
+  <text x="52" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">ref_rdy=|debt  ref_force=&amp;debt</text>
+  <rect x="40" y="200" width="250" height="66" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="290" y="192" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">RFM trigger</text>
+  <text x="290" y="176" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">per-bank RAA (ACT)</text>
+  <text x="52" y="278" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">rfm_rdy=RAA&gt;=RAAIMT</text>
+  <text x="52" y="292" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">rfm_force=RAA&gt;=RAAMMT</text>
+  <rect x="330" y="150" width="170" height="90" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="415.0" y="172" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PRIORITY</text>
+  <text x="415.0" y="187" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">both? -&gt; REFsb first</text>
+  <line x1="290" y1="130" x2="328" y2="175" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="290" y1="233" x2="328" y2="210" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="340" y="250" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">cmd_type = REF | RFM</text>
+  <rect x="330" y="300" width="230" height="70" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="560" y="292" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PICK ba + DRAIN</text>
+  <text x="560" y="276" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">1 maint_pending -&gt; freeze+drain</text>
+  <text x="342" y="388" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">ba: REF=8-AND ready . RFM=8-OR need</text>
+  <text x="342" y="404" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">drain = finish CAS + PRE (shared for both)</text>
+  <rect x="657.0" y="128.0" width="126" height="44" fill="#ffffff" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="720" y="155" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">IDLE</text>
+  <rect x="650.0" y="278.0" width="140" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="720" y="305" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PICK/DRAIN</text>
+  <rect x="897.0" y="278.0" width="126" height="44" fill="#e3f2f1" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="960" y="305" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">8 idle?</text>
+  <rect x="885.0" y="448.0" width="150" height="44" fill="#efe6fb" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="960" y="475" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ISSUE cmd_type</text>
+  <rect x="630.0" y="448.0" width="180" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="720" y="475" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">GATE (REFING/RFMING)</text>
+  <rect x="657.0" y="598.0" width="126" height="44" fill="#f4f4f4" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="720" y="625" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RECHECK</text>
+  <path d="M720 172 L720 278" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="720.0" y="219.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rdy/force</text>
+  <path d="M790 300 L902 300" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="840.0" y="294.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0"></text>
+  <path d="M960 322 L960 448" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960.0" y="379.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">drained</text>
+  <path d="M885 470 L810 470" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="840.0" y="464.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">REFsb|RFMsb</text>
+  <path d="M720 492 L720 598" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="720.0" y="539.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">GC&gt;=tRFC/tRFM</text>
+  <line x1="658" y1="620" x2="500" y2="620" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="505" y="616" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">RAA&lt;RAAMMT -&gt; DONE (RFM skipped)</text>
+  <path d="M783 620 H1120 V470 H1035" fill="none" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1000" y="600" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">RAA&gt;=RAAMMT -&gt; RFM (back-to-back, still drained)</text>
+  <path d="M720 642 V700 H420 V150 H657" fill="none" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="430" y="700" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">loop -&gt; IDLE</text>
+  <rect x="40" y="720" width="1480" height="120" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="60" y="744" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">ISSUE effects (cross-credited):</text>
+  <text x="60" y="768" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">REFsb : cmd=REF ; gate_rfc (+tRFCsb) ; debt[8] &lt;= 0  AND  RAA[8] -= REF_amt   (full refresh: retention + mitigation -&gt; can clear BOTH)</text>
+  <text x="60" y="788" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">RFMsb : cmd=RFM ; gate_rfm (+tRFM=tRFCsb) ; RAA[8] -= RAAIMT   (targeted mitigation only; does NOT reset debt)</text>
+  <text x="60" y="810" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">REFsb-first when both pending: same duration (tRFM=tRFC), superset effect -&gt; recheck RAA after; issue RFM only if still &gt;= RAAMMT (usually skipped).</text>
+  <text x="40" y="900" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">One drain serves both (same 8 banks, both need precharge). PRIORITY = REFsb-first (superset, same tRFC time). RECHECK after the gate: RAA&lt;RAAMMT -&gt; done (RFM skipped); else back-to-back RFMsb on the still-drained banks. REF also -=RAA -&gt; RFM rarely fires.</text>
+</svg>

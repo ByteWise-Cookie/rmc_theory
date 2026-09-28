@@ -1,0 +1,276 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1000" viewBox="0 0 1560 1000" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1560" height="1000" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">DFI_CMD_ENCODE - logic level (one phase formatter)</text>
+  <text x="40" y="50" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Per phase slot: cmd_type + ui_idx + field bundle -&gt; CA[13:0] + cs_n. Replicated x GEAR. Bit map = JESD79-5 Table 241.</text>
+  <rect x="40" y="90" width="200" height="150" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="140.0" y="110" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">phaser slot in</text>
+  <text x="140" y="128" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">cmd_type[5]</text>
+  <text x="140" y="146" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">ui_idx (0/1)</text>
+  <text x="140" y="170" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">fields:</text>
+  <text x="140" y="186" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">rank bg ba</text>
+  <text x="140" y="200" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">addr(row|col)</text>
+  <text x="140" y="214" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">ap MRA OP CID</text>
+  <rect x="320" y="90" width="240" height="90" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="440.0" y="110" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">OPCODE_ROM</text>
+  <text x="440.0" y="128" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">cmd_type -&gt; CA[5:0] H/L pattern</text>
+  <text x="332" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">+ 1cyc/2cyc bit (=CA1)</text>
+  <line x1="240" y1="135" x2="318" y2="135" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="255" y="128" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">cmd_type</text>
+  <rect x="320" y="220" width="240" height="130" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="440.0" y="240" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">FIELD_MUX array</text>
+  <text x="440.0" y="258" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">per CA pin: pick field bit</text>
+  <text x="332" y="268" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">sel = (cmd_type, ui_idx)</text>
+  <text x="332" y="286" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">UI0: CA6..13 &lt;- BA/BG/CID</text>
+  <text x="332" y="302" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">UI1: CA0..13 &lt;- row / col+ap</text>
+  <text x="332" y="318" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">  / MRA+OP / ...</text>
+  <line x1="240" y1="200" x2="318" y2="260" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="240" y1="155" x2="300" y2="155" stroke="#7a4fb0" stroke-width="1.0"/>
+  <path d="M300 155 V300 H318" fill="none" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="262" y="300" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">sel</text>
+  <rect x="320" y="390" width="240" height="70" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="440.0" y="410" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CS_GEN</text>
+  <text x="440.0" y="428" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">ui0 &amp; !DES -&gt; rank one-cold (L), else H</text>
+  <rect x="640" y="150" width="180" height="240" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="730.0" y="170" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ASSEMBLE</text>
+  <text x="730.0" y="188" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">concat -&gt; CA[13:0]</text>
+  <line x1="560" y1="135" x2="638" y2="200" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="575" y="165" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">CA[5:0]</text>
+  <line x1="560" y1="285" x2="638" y2="285" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="575" y="278" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">CA[13:6]/UI1</text>
+  <line x1="820" y1="230" x2="940" y2="230" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="946" y="226" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">dfi_address_p0[13:0]</text>
+  <line x1="560" y1="425" x2="940" y2="425" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="946" y="421" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">dfi_cs_p0 [N_RANKS]</text>
+  <text x="40" y="520" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">CA[13:0] bit map (JESD79-5 Table 241) - what ASSEMBLE builds:</text>
+  <rect x="40" y="532" width="92" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="86.0" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">row \ pin</text>
+  <rect x="132" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="177" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CS_n</text>
+  <rect x="222" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="267" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA0</text>
+  <rect x="312" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="357" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA1</text>
+  <rect x="402" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="447" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA2</text>
+  <rect x="492" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="537" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA3</text>
+  <rect x="582" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="627" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA4</text>
+  <rect x="672" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="717" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA5</text>
+  <rect x="762" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="807" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA6</text>
+  <rect x="852" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="897" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA7</text>
+  <rect x="942" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="987" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA8</text>
+  <rect x="1032" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1077" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA9</text>
+  <rect x="1122" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1167" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA10</text>
+  <rect x="1212" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1257" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA11</text>
+  <rect x="1302" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1347" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA12</text>
+  <rect x="1392" y="532" width="90" height="24" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1437" y="549" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA13</text>
+  <rect x="40" y="556" width="92" height="24" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="46" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">ACT UI0</text>
+  <rect x="132" y="556" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="177" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="222" y="556" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="267" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="312" y="556" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="357" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="402" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="447" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R0</text>
+  <rect x="492" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="537" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R1</text>
+  <rect x="582" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="627" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R2</text>
+  <rect x="672" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="717" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R3</text>
+  <rect x="762" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="807" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BA0</text>
+  <rect x="852" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="897" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BA1</text>
+  <rect x="942" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="987" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG0</text>
+  <rect x="1032" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1077" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG1</text>
+  <rect x="1122" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1167" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG2</text>
+  <rect x="1212" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1257" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID0</text>
+  <rect x="1302" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1347" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID1</text>
+  <rect x="1392" y="556" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1437" y="572" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID2</text>
+  <rect x="40" y="580" width="92" height="24" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="46" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">ACT UI1</text>
+  <rect x="132" y="580" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="177" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="222" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="267" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R4</text>
+  <rect x="312" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="357" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R5</text>
+  <rect x="402" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="447" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R6</text>
+  <rect x="492" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="537" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R7</text>
+  <rect x="582" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="627" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R8</text>
+  <rect x="672" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="717" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R9</text>
+  <rect x="762" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="807" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R10</text>
+  <rect x="852" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="897" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R11</text>
+  <rect x="942" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="987" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R12</text>
+  <rect x="1032" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1077" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R13</text>
+  <rect x="1122" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1167" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R14</text>
+  <rect x="1212" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1257" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R15</text>
+  <rect x="1302" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1347" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R16</text>
+  <rect x="1392" y="580" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1437" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">R17</text>
+  <rect x="40" y="604" width="92" height="24" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="46" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">WR  UI0</text>
+  <rect x="132" y="604" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="177" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="222" y="604" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="267" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="312" y="604" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="357" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="402" y="604" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="447" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="492" y="604" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="537" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="582" y="604" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="627" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="672" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="717" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H*</text>
+  <rect x="762" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="807" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BA0</text>
+  <rect x="852" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="897" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BA1</text>
+  <rect x="942" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="987" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG0</text>
+  <rect x="1032" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1077" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG1</text>
+  <rect x="1122" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1167" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG2</text>
+  <rect x="1212" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1257" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID0</text>
+  <rect x="1302" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1347" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID1</text>
+  <rect x="1392" y="604" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1437" y="620" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID2</text>
+  <rect x="40" y="628" width="92" height="24" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="46" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">WR  UI1</text>
+  <rect x="132" y="628" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="177" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="222" y="628" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="267" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">V</text>
+  <rect x="312" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="357" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C3</text>
+  <rect x="402" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="447" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C4</text>
+  <rect x="492" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="537" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C5</text>
+  <rect x="582" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="627" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C6</text>
+  <rect x="672" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="717" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C7</text>
+  <rect x="762" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="807" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C8</text>
+  <rect x="852" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="897" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C9</text>
+  <rect x="942" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="987" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">C10</text>
+  <rect x="1032" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1077" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">V</text>
+  <rect x="1122" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1167" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">AP</text>
+  <rect x="1212" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1257" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="1302" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1347" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">V</text>
+  <rect x="1392" y="628" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1437" y="644" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID3</text>
+  <rect x="40" y="652" width="92" height="24" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="46" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">PREpb</text>
+  <rect x="132" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="177" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="222" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="267" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="312" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="357" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="402" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="447" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">L</text>
+  <rect x="492" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="537" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="582" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="627" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="672" y="652" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="717" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="762" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="807" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID3</text>
+  <rect x="852" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="897" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BA0</text>
+  <rect x="942" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="987" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BA1</text>
+  <rect x="1032" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1077" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG0</text>
+  <rect x="1122" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1167" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG1</text>
+  <rect x="1212" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1257" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">BG2</text>
+  <rect x="1302" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1347" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID0</text>
+  <rect x="1392" y="652" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1437" y="668" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CID1</text>
+  <rect x="40" y="676" width="92" height="24" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="46" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">DES</text>
+  <rect x="132" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="177" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">H</text>
+  <rect x="222" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="267" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="312" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="357" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="402" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="447" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="492" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="537" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="582" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="627" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="672" y="676" width="90" height="24" fill="#f4f4f4" stroke="#000000" stroke-width="1.0"/>
+  <text x="717" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="762" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="807" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="852" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="897" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="942" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="987" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="1032" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1077" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="1122" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1167" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="1212" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1257" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="1302" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1347" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <rect x="1392" y="676" width="90" height="24" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+  <text x="1437" y="692" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">X</text>
+  <text x="40" y="722" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">OPCODE_ROM drives the grey region (CS_n..CA5 fixed H/L per cmd; CA1 = 1cyc/2cyc). FIELD_MUX drives the rest (BA/BG/CID/row/col/ap...) picked by cmd+ui. * = BL bit.</text>
+  <text x="40" y="760" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Encoder per phase = OPCODE_ROM (cmd-&gt;CA[5:0]) + FIELD_MUX array (each higher CA pin picks a field bit by cmd_type &amp; ui_idx) + CS_GEN (cs_n=L one-cold on UI0, else H) -&gt; ASSEMBLE -&gt; dfi_address_p0[13:0] + dfi_cs_p0. Bit positions from Table 241. Pure comb; x GEAR.</text>
+</svg>

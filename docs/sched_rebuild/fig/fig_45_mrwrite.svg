@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1820" height="360" viewBox="0 0 1820 360" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1820" height="360" fill="#ffffff"/>
+  <text x="40" y="40" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">MR_WRITE FSM (9 states; dashed = conditional)</text>
+  <text x="40" y="60" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">software MR write via CSR. VERIFY_MRR..CHECK_MATCH run if VERIFY|AFFECTS_TIMING; APPLY_TIMING runs if AFFECTS_TIMING.</text>
+  <rect x="60" y="180" width="155" height="48" fill="#efe6fb" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="137.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">IDLE</text>
+  <rect x="236" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="313.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_REQ</text>
+  <line x1="215" y1="204.0" x2="236" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="225.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">init_done</text>
+  <rect x="412" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="489.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">GATE_CHECK</text>
+  <line x1="391" y1="204.0" x2="412" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="401.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">mr_wr_req</text>
+  <rect x="588" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="665.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">ISSUE_MRW</text>
+  <line x1="567" y1="204.0" x2="588" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="577.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">gate_pwr==0 &amp; idle?</text>
+  <rect x="764" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="841.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_tMRD</text>
+  <line x1="743" y1="204.0" x2="764" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="753.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">sched_ack</text>
+  <rect x="940" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" stroke-dasharray="4 3" rx="8"/>
+  <text x="1017.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">VERIFY_MRR</text>
+  <line x1="919" y1="204.0" x2="940" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="929.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">T_MRD</text>
+  <rect x="1116" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" stroke-dasharray="4 3" rx="8"/>
+  <text x="1193.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WAIT_RDDATA</text>
+  <line x1="1095" y1="204.0" x2="1116" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1105.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">arb grant+ack</text>
+  <rect x="1292" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" stroke-dasharray="4 3" rx="8"/>
+  <text x="1369.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">CHECK_MATCH</text>
+  <line x1="1271" y1="204.0" x2="1292" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1281.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">mrr_data_valid</text>
+  <rect x="1468" y="180" width="155" height="48" fill="#f4f4f4" stroke="#000000" stroke-width="1.4" stroke-dasharray="4 3" rx="8"/>
+  <text x="1545.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">APPLY_TIMING</text>
+  <line x1="1447" y1="204.0" x2="1468" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1457.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">cmp -&gt; mr_wr_error</text>
+  <rect x="1644" y="180" width="155" height="48" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="8"/>
+  <text x="1721.5" y="209.0" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">DONE</text>
+  <line x1="1623" y1="204.0" x2="1644" y2="204.0" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1633.5" y="196.0" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">commit staged</text>
+  <path d="M841.5 180 C841.5 110 1721.5 110 1721.5 180" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="1281.5" y="104" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">!VERIFY &amp; !AFFECTS_TIMING (skip)</text>
+  <path d="M1369.5 180 C1369.5 138 1721.5 138 1721.5 180" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="1545.5" y="132" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">!AFFECTS_TIMING (skip apply)</text>
+  <path d="M1721.5 228 V300 H137.5 V228" fill="none" stroke="#000000" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="852.0" y="314" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="middle" fill="#777777">DONE -&gt; IDLE</text>
+</svg>

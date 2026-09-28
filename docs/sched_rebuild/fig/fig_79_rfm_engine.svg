@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="900" viewBox="0 0 1520 900" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1520" height="900" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">RFM engine  (RAA-driven, mirror of REFsb; anti-rowhammer)</text>
+  <rect x="40" y="90" width="250" height="70" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="290" y="82" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">RAA[bank]  (per bank)</text>
+  <text x="290" y="66" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">++ on ACT / -= RAAIMT on RFM</text>
+  <text x="48" y="172" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">~9-10b (holds RAAMMT); ACT grant 1-hot -&gt; ++</text>
+  <text x="48" y="188" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">REF also -= RAA (refresh mitigates too)</text>
+  <path d="M360 100.0 L425.0 120 L360 140.0 L295.0 120 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="360" y="125" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold"></text>
+  <text x="360" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;= RAAIMT</text>
+  <text x="360" y="132" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">(opportunistic)</text>
+  <line x1="290" y1="125" x2="295" y2="125" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="425" y1="120" x2="500" y2="120" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="510" y="116" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">rfm_rdy = |need</text>
+  <path d="M360 180.0 L425.0 200 L360 220.0 L295.0 200 Z" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="360" y="205" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold"></text>
+  <text x="360" y="196" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;= RAAMMT</text>
+  <text x="360" y="212" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">(hard cap)</text>
+  <line x1="425" y1="200" x2="500" y2="200" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="510" y="196" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">rfm_force -&gt; gate_rfm</text>
+  <text x="510" y="214" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">  (masks can_act[bank])</text>
+  <rect x="500.0" y="308.0" width="120" height="44" fill="#ffffff" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="560" y="335" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">IDLE</text>
+  <rect x="700.0" y="308.0" width="120" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="760" y="335" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PICK ba</text>
+  <rect x="900.0" y="308.0" width="120" height="44" fill="#e3f2f1" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="960" y="335" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">DRAIN</text>
+  <rect x="900.0" y="448.0" width="120" height="44" fill="#efe6fb" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="960" y="475" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ISSUE</text>
+  <rect x="695.0" y="448.0" width="130" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="760" y="475" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">RFMING</text>
+  <rect x="500.0" y="448.0" width="120" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="560" y="475" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">release</text>
+  <path d="M620 330 L700 330" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="660.0" y="324.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rfm_rdy</text>
+  <path d="M820 330 L900 330" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="860.0" y="324.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">gate_rfm[8]</text>
+  <path d="M960 352 L960 448" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="960.0" y="394.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">8 idle</text>
+  <path d="M895 470 L825 470" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="860.0" y="464.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">RFMsb(ba)</text>
+  <path d="M695 470 L620 470" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="660.0" y="464.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">GC&gt;=tRFM</text>
+  <path d="M560 448 L560 352" fill="none" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="560.0" y="394.0" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">RAA[8]-=RAAIMT</text>
+  <text x="960" y="400" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">DRAIN: finish open-row CAS, PRE -&gt; idle</text>
+  <text x="40" y="580" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">need[bank] = (RAA &gt;= RAAIMT).  RFMsb(ba=k) target = bank k across BG0..7:</text>
+  <rect x="60" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="72" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">0</text>
+  <line x1="72" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="90" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="102" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">1</text>
+  <line x1="102" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="120" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="132" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">2</text>
+  <line x1="132" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="150" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="162" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">3</text>
+  <line x1="162" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="180" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="192" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">4</text>
+  <line x1="192" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="210" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="222" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">5</text>
+  <line x1="222" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="240" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="252" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">6</text>
+  <line x1="252" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="270" y="600" width="24" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="282" y="618" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">7</text>
+  <line x1="282" y1="626" x2="420" y2="660" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="60" y="594" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">need  BG0..7 (bank k)</text>
+  <rect x="400" y="648" width="110" height="40" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="455.0" y="670" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">8-OR</text>
+  <line x1="510" y1="668" x2="590" y2="668" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="596" y="664" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">rfm need for ba=k -&gt; PICK</text>
+  <text x="40" y="700" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">(REFsb used 8-AND = all precharged; RFM uses 8-OR = any bank hammered -&gt; manage that ba)</text>
+  <rect x="880" y="560" width="600" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="900" y="584" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">EDGE CASE (last ACT hits RAAMMT)</text>
+  <text x="900" y="606" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- The ACT that reaches RAAMMT is LEGAL -&gt; completes, opens row.</text>
+  <text x="900" y="626" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- Its open-row CAS train COMPLETES (RFM does not abort in-flight CAS).</text>
+  <text x="900" y="646" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- gate_rfm then blocks the NEXT ACT to that bank (can_act mask), not the CAS.</text>
+  <text x="900" y="666" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- flow: last ACT -&gt; serve CAS -&gt; PRE -&gt; RFMsb  (before any new ACT to the bank).</text>
+  <text x="900" y="686" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">- RFM = distinct command (own opcode/tRFM); same target+drain as REFsb.</text>
+  <text x="40" y="780" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">RFM mirrors REFsb, ACT-driven: per-bank RAA (++ACT, -=RAAIMT/RFM, REF also -=). RAAIMT -&gt; rfm_rdy (opportunistic); RAAMMT -&gt; rfm_force -&gt; gate_rfm masks can_act (blocks NEXT ACT). 8-OR across BGs picks ba; drain -&gt; RFMsb(ba) -&gt; RFMING(tRFM) -&gt; RAA[8]-=RAAIMT.</text>
+</svg>

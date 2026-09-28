@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1000" viewBox="0 0 1560 1000" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1560" height="1000" fill="#ffffff"/>
+  <text x="40" y="32" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">WRITE data timing  (schematic, burst BL/2 = 8 beats)</text>
+  <text x="40" y="74" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">CA (cmd)</text>
+  <line x1="230" y1="84" x2="1500" y2="84" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="240" y="60" width="70" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="275.0" y="77" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WR (2UI)</text>
+  <text x="40" y="129" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">WL_LINE</text>
+  <line x1="230" y1="139" x2="1500" y2="139" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="275" y1="86" x2="275" y2="139" stroke="#2a8f86" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="40" y="184" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_en</text>
+  <line x1="230" y1="194" x2="1500" y2="194" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="560" y="170" width="320" height="26" fill="none" stroke="#2a8f86" stroke-width="1.6"/>
+  <text x="720.0" y="187" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">en (held BL/2)</text>
+  <line x1="275" y1="158" x2="560" y2="158" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="560" y1="158" x2="275" y2="158" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="417.5" y="154" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#b0602a">tphy_wrlat</text>
+  <text x="40" y="239" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_wrdata_pN</text>
+  <line x1="230" y1="249" x2="1500" y2="249" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="610" y="225" width="320" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="770.0" y="242" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">8 x 64b  (from WD_SRAM via WR_SPLIT)</text>
+  <line x1="560" y1="213" x2="610" y2="213" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="610" y1="213" x2="560" y2="213" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="585.0" y="209" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#b0602a">tphy_wrdata</text>
+  <text x="40" y="294" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_odt[rank]</text>
+  <line x1="230" y1="304" x2="1500" y2="304" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="500" y="280" width="460" height="26" fill="none" stroke="#b0602a" stroke-width="1.6"/>
+  <text x="730.0" y="297" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#b0602a">RTT_WR window</text>
+  <text x="40" y="349" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">DQ @ DRAM</text>
+  <line x1="230" y1="359" x2="1500" y2="359" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="900" y="335" width="320" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1060.0" y="352" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">write data on DQ</text>
+  <line x1="275" y1="323" x2="900" y2="323" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="900" y1="323" x2="275" y2="323" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="587.5" y="319" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#3d8c40">CWL (PHY-side)</text>
+  <text x="40" y="540" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">READ data timing</text>
+  <text x="40" y="582" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">CA (cmd)</text>
+  <line x1="230" y1="592" x2="1500" y2="592" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="240" y="568" width="70" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="275.0" y="585" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">RD (2UI)</text>
+  <text x="40" y="637" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RL_LINE</text>
+  <line x1="230" y1="647" x2="1500" y2="647" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="275" y1="594" x2="275" y2="647" stroke="#2a8f86" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="40" y="692" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_en</text>
+  <line x1="230" y1="702" x2="1500" y2="702" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="560" y="678" width="320" height="26" fill="none" stroke="#2a8f86" stroke-width="1.6"/>
+  <text x="720.0" y="695" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">en (capture window)</text>
+  <line x1="275" y1="666" x2="560" y2="666" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="560" y1="666" x2="275" y2="666" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="417.5" y="662" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#b0602a">tphy_rdlat</text>
+  <text x="40" y="747" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_valid</text>
+  <line x1="230" y1="757" x2="1500" y2="757" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="900" y="733" width="320" height="26" fill="none" stroke="#2a8f86" stroke-width="1.6"/>
+  <text x="1060.0" y="750" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">valid (per beat)</text>
+  <text x="40" y="802" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dfi_rddata_wN</text>
+  <line x1="230" y1="812" x2="1500" y2="812" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="900" y="788" width="320" height="26" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="1060.0" y="805" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">8 x 64b  (PHY -&gt; MC)</text>
+  <line x1="275" y1="776" x2="900" y2="776" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="900" y1="776" x2="275" y2="776" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="587.5" y="772" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#3d8c40">RL = CL (PHY-side)</text>
+  <text x="40" y="857" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">RD_ACCUM</text>
+  <line x1="230" y1="867" x2="1500" y2="867" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="910" y="843" width="320" height="26" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1070.0" y="860" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">gather on valid -&gt; 512b -&gt; RD_SRAM</text>
+  <text x="40" y="980" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">WRITE: WR commit arms WL_LINE (tphy_wrlat) -&gt; dfi_wrdata_en, then dfi_wrdata_pN after tphy_wrdata (8 beats from WD_SRAM via WR_SPLIT); dfi_odt = RTT_WR window; PHY drives DQ at CWL.  READ: RD commit arms RL_LINE (tphy_rdlat) -&gt; dfi_rddata_en; PHY returns dfi_rddata_wN + valid at RL=CL; RD_ACCUM gathers on valid -&gt; 512b -&gt; RD_SRAM. tphy_* = PHY params; latencies deterministic -&gt; plain shift lines, no CAM.</text>
+</svg>

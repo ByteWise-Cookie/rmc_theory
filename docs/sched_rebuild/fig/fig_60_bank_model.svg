@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1500" height="820" fill="#ffffff"/>
+  <text x="40" y="34" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Per-bank model - reg arrays + FSM + who writes</text>
+  <text x="40" y="54" font-size="12" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">4 parallel arrays per bank (x32/rank). FSM driven by TWO classes: issue-edge INTO -ing states, comparator OUT of -ing states.</text>
+  <rect x="40" y="100" width="360" height="78" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="52" y="122" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BANK_STATUS  (FSM)</text>
+  <text x="52" y="142" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">state[4]  open_row[17]</text>
+  <text x="52" y="158" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">valid  pre_pending  ref_pending</text>
+  <text x="52" y="172" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">&lt;- issue-edge + comparator + ME + propose</text>
+  <rect x="40" y="230" width="360" height="62" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="52" y="252" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BANK_TREG  (deadlines)</text>
+  <text x="52" y="272" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">next_act  next_cas  next_pre  (13b ea)</text>
+  <text x="52" y="286" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">&lt;- issue-edge (3 adders: GC_ph+const)</text>
+  <rect x="40" y="330" width="360" height="62" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="52" y="352" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BANK_CAN  (SR flops)</text>
+  <text x="52" y="372" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">can_act  can_cas  can_pre</text>
+  <text x="52" y="386" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">&lt;- RESET=issue-edge   SET=comparator</text>
+  <rect x="40" y="430" width="360" height="62" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="52" y="452" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">BANK_REQ  (payload)</text>
+  <text x="52" y="472" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">rob_index  col  op(R/W)  sram_addr</text>
+  <text x="52" y="486" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">&lt;- admit (lookahead/decode); read at CAS</text>
+  <rect x="840.0" y="277.0" width="120" height="46" fill="#ffffff" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="900" y="305" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">IDLE</text>
+  <rect x="1060.0" y="147.0" width="120" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="1120" y="175" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ACTING</text>
+  <rect x="1280.0" y="277.0" width="120" height="46" fill="#e3f2f1" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="1340" y="305" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">OPEN</text>
+  <rect x="1060.0" y="417.0" width="120" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="1120" y="445" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PREING</text>
+  <rect x="840.0" y="497.0" width="120" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.6" rx="10"/>
+  <text x="900" y="525" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">REFING</text>
+  <path d="M940 280 L1065 188" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="940" y="220" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">ACT issue</text>
+  <path d="M1175 188 L1285 280" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1180" y="218" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">tRCD: GC&gt;=next_cas</text>
+  <path d="M1375 282 C 1460 230, 1460 370, 1375 318" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1410" y="260" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">RD/WR issue</text>
+  <path d="M1285 320 L1175 422" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1230" y="400" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">PRE issue</text>
+  <path d="M1065 432 L945 322" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="930" y="400" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">tRP: GC&gt;=next_act</text>
+  <path d="M890 323 L910 497" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="800" y="410" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">REF issue</text>
+  <path d="M935 497 L915 323" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="905" y="410" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">tRFC</text>
+  <path d="M470 470 L840 520" fill="none" stroke="#b0602a" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="560" y="560" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">ME: set ref_pending</text>
+  <text x="1120" y="520" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">propose: set pre_pending (drops can_cas early)</text>
+  <line x1="60" y1="700" x2="100" y2="700" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="110" y="704" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a4fb0">issue-edge (packer commit @{addr,cmd}) - INTO -ing states</text>
+  <line x1="60" y1="722" x2="100" y2="722" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="110" y="726" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#2a8f86">timestamp comparator (GC&gt;=next_*) - OUT of -ing states</text>
+  <line x1="60" y1="744" x2="100" y2="744" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="110" y="748" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#b0602a">maintenance engine - sets ref_pending</text>
+  <text x="40" y="800" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">TREG does double duty: its GE gates the can_* AND clocks the FSM out of transient states (next_cas=tRCD -&gt; ACTING-&gt;OPEN, next_act=tRP -&gt; PREING-&gt;IDLE, gate_rfc=tRFC -&gt; REFING-&gt;IDLE). Issue writes the START of a transition; the comparator writes the DONE.</text>
+</svg>

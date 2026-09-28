@@ -1,0 +1,137 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{gdone}{RGB}{34,120,60}
+\definecolor{gstub}{RGB}{176,96,42}
+\definecolor{gtodo}{RGB}{192,57,43}
+\renewcommand{\arraystretch}{1.18}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{11pt}{4pt}
+
+\newcommand{\done}{\textbf{\textcolor{gdone}{done}}}
+\newcommand{\stub}{\textbf{\textcolor{gstub}{stub}}}
+\newcommand{\todo}{\textbf{\textcolor{gtodo}{to-do}}}
+
+\newcolumntype{N}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{3.7cm}}
+\newcolumntype{D}{>{\footnotesize\centering\arraybackslash}p{0.7cm}}
+\newcolumntype{W}{>{\ttfamily\footnotesize\centering\arraybackslash}p{2.2cm}}
+\newcolumntype{B}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{3.5cm}}
+\newcolumntype{S}{>{\footnotesize\centering\arraybackslash}p{1.3cm}}
+\newcolumntype{X}{>{\footnotesize\raggedright\arraybackslash}p{4.3cm}}
+
+\newenvironment{portmap}{%
+  \footnotesize\begin{longtable}{N D W B S X}\toprule
+  \textbf{DFI port} & \textbf{Dir} & \textbf{Width} & \textbf{MC block} & \textbf{Status} & \textbf{Note}\\ \midrule\endhead}
+  {\bottomrule\end{longtable}}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{DFI 5.2 Port $\rightarrow$ MC Block Map}}\\[2pt]
+{\small DDR5, one channel. Every DFI port: which MC block drives it (out) / receives it (in),
+and status. Dir: out = MC$\rightarrow$PHY, in = PHY$\rightarrow$MC. Widths parametric
+(\texttt{N\_RANKS}, \texttt{DQ}, \texttt{GEAR}). \_pN = per-phase ($\times$GEAR).}\\[2pt]
+{\small \done\ = walked + figured \quad \stub\ = slot exists, detail later \quad \todo\ = not started}
+\end{center}
+
+\section{Command interface (out unless noted)}
+{\footnotesize \textbf{Note:} \texttt{cmd\_type} on the CA bus (via DFI\_CMD\_ENCODE) covers
+\emph{all} CA opcodes --- demand (ACT/RD/WR/PRE) \emph{and} maintenance/power
+(REF/REFsb/RFM/MRW/MRR/MPC/\textbf{SRE}/\textbf{SRX}/DES). The ME injects these into the bundle, so
+power/maint \emph{commands} share the command phase. Only the pure CKE-level transitions
+(power-down PDE/PDX, and CKE-low during self-refresh) ride \texttt{dfi\_cke} (POWER\_MGMT), not a CA
+opcode. So power management uses BOTH: a CA command (encoder) + the CKE pin.}\\[3pt]
+\begin{portmap}
+dfi\_address\_pN & out & 14$\times$GEAR & DFI\_CMD\_ENCODE & \done & fig\_70; CA-encoded 2-UI\\
+dfi\_cs\_pN & out & N\_RANKS$\times$GEAR & DFI\_CMD\_ENCODE / CS\_GEN & \done & fig\_70; one-cold active-low\\
+dfi\_reset\_n\_pN & out & 1 & INIT\_FSM & \done & init sequence\\
+dfi\_cke\_pN & out & N\_RANKS$\times$GEAR & POWER\_MGMT & \stub & power-down / self-refresh\\
+dfi\_odt\_pN & out & N\_RANKS$\times$GEAR & WL data-timing / POWER\_MGMT & \todo & RTT\_WR window (WL-offset)\\
+dfi\_dram\_clk\_disable\_pN & out & per-clk & POWER\_MGMT & \stub & clock-stop\\
+dfi\_2n\_mode\_pN & out & 1 & INIT / cfg & \stub & config-set\\
+dfi\_cs\_geardown\_pN & out & 1 & INIT / cfg & \stub & DDR5 geardown\\
+dfi\_parity\_in\_pN & out & 1 & DFI\_CMD\_ENCODE (parity) & \todo & CA parity gen\\
+dfi\_alert\_n\_pN & \textbf{in} & 1 & ALERT/ERR mon & \stub & CA-parity / write-CRC retry\\
+\end{portmap}
+
+\section{Write data interface (out)}
+\begin{portmap}
+dfi\_wrdata\_pN & out & 2$\cdot$DQ$\times$GEAR & WR\_SPLIT & \done & fig\_68/73; from WD\_SRAM\\
+dfi\_wrdata\_en\_pN & out & slices$\times$GEAR & WL\_LAUNCH & \done & tphy\_wrlat shift line\\
+dfi\_wrdata\_mask\_pN & out & 2$\cdot$DQ/8$\times$GEAR & WR\_ACCUM / WR\_SPLIT & \done & DM / narrow flag\\
+dfi\_wrdata\_cs\_pN & out & PHY\_RANK$\times$GEAR & WL\_LAUNCH & \todo & data-cs (rank timing)\\
+dfi\_wrdata\_crc\_pN & out & DATA/8$\times$GEAR & WR CRC gen & \stub & link CRC\\
+dfi\_wrdata\_ecc\_pN & out & opt & WR ECC gen & \stub & if controller ECC\\
+\end{portmap}
+
+\section{Read data interface}
+\begin{portmap}
+dfi\_rddata\_wN & \textbf{in} & 2$\cdot$DQ$\times$GEAR & RD\_ACCUM & \done & fig\_68/73; into RD\_SRAM\\
+dfi\_rddata\_en\_pN & out & slices$\times$GEAR & RD\_CAP & \done & tphy\_rdlat shift line\\
+dfi\_rddata\_valid\_wN & \textbf{in} & slices$\times$GEAR & RD\_ACCUM & \done & gates capture\\
+dfi\_rddata\_cs\_pN & out & PHY\_RANK$\times$GEAR & RD\_CAP & \todo & data-cs (rank timing)\\
+dfi\_rddata\_dnv\_wN & \textbf{in} & slices$\times$GEAR & RD\_ACCUM & \todo & data-not-valid\\
+dfi\_rddata\_dbi\_wN & \textbf{in} & DATA/8$\times$GEAR & RD path & \stub & read DBI\\
+dfi\_rddata\_crc\_wN & \textbf{in} & DATA/8$\times$GEAR & RD CRC check & \stub & read link CRC\\
+\end{portmap}
+
+\section{Status / Update (Control-clk, single-phase)}
+\begin{portmap}
+dfi\_init\_start & out & 1 & INIT / FREQ FSM & \done & init / freq-change start\\
+dfi\_init\_complete & \textbf{in} & 1 & INIT / FREQ FSM & \done & gates DFI\_MUX\\
+dfi\_cmd\_freq\_ratio & out & 2 & FREQ\_CHANGE FSM & \stub & = GEAR select\\
+dfi\_data\_freq\_ratio & out & 2 & FREQ\_CHANGE FSM & \stub & \\
+dfi\_freq\_fsp & out & 1--2 & FREQ\_CHANGE FSM & \stub & MR set-point\\
+dfi\_frequency & out & W & FREQ\_CHANGE FSM & \stub & target freq code\\
+dfi\_ctrlupd\_req & out & 1 & UPDATE ctrl & \todo & MC-requested update\\
+dfi\_ctrlupd\_ack & \textbf{in} & 1 & UPDATE ctrl & \todo & \\
+dfi\_phyupd\_req & \textbf{in} & 1 & UPDATE ctrl & \todo & PHY-requested update\\
+dfi\_phyupd\_ack & out & 1 & UPDATE ctrl & \todo & \\
+dfi\_phyupd\_type & \textbf{in} & 2 & UPDATE ctrl & \todo & \\
+\end{portmap}
+
+\section{Error / Low-power (Control-clk)}
+\begin{portmap}
+dfi\_error & \textbf{in} & 1 & ALERT/ERR mon & \stub & PHY error strobe\\
+dfi\_error\_info & \textbf{in} & W$\times$4 & ALERT/ERR mon & \stub & error source\\
+dfi\_lp\_ctrl\_req & out & 1 & POWER\_MGMT & \todo & LP control handshake\\
+dfi\_lp\_ctrl\_ack & \textbf{in} & 1 & POWER\_MGMT & \todo & \\
+dfi\_lp\_ctrl\_wakeup & out & 1 & POWER\_MGMT & \todo & \\
+dfi\_lp\_data\_req & out & 1 & POWER\_MGMT & \todo & LP data handshake\\
+dfi\_lp\_data\_ack & \textbf{in} & 1 & POWER\_MGMT & \todo & \\
+dfi\_lp\_data\_wakeup & out & 1 & POWER\_MGMT & \todo & \\
+\end{portmap}
+
+\section{Block status summary}
+\begin{tabular}{>{\ttfamily}l l l}
+\toprule
+\textbf{MC block} & \textbf{status} & \textbf{drives / receives}\\ \midrule
+DFI\_CMD\_ENCODE & \done & dfi\_address, dfi\_cs (+parity to-do)\\
+WL\_LAUNCH / WR\_SPLIT & \done & dfi\_wrdata, \_en, \_mask (cs/crc pending)\\
+RD\_CAP / RD\_ACCUM & \done & dfi\_rddata\_en, rddata, valid (cs/dnv pending)\\
+INIT\_FSM & \done & dfi\_reset\_n, dfi\_init\_start/complete\\
+DFI\_MUX & \done & CA driver select (init vs sched)\\
+POWER\_MGMT & \stub & dfi\_cke, dfi\_odt, dram\_clk\_disable, lp\_*\\
+FREQ\_CHANGE FSM & \stub & dfi\_*\_freq\_ratio, freq\_fsp, frequency\\
+UPDATE ctrl & \todo & dfi\_ctrlupd\_*, dfi\_phyupd\_*\\
+ALERT/ERR mon & \stub & dfi\_alert\_n, dfi\_error, error\_info\\
+CRC / ECC / DBI & \stub & wrdata\_crc/ecc, rddata\_crc/dbi\\
+\bottomrule
+\end{tabular}
+
+\vspace{4pt}
+{\footnotesize Data-path core (command encode + write/read data) is \done. Remaining are
+maintenance/power/config/error side-paths (\stub/\todo) --- slots defined, detail pending. All
+per-phase (\_pN) signals are $\times$GEAR wide; the output-register stage after DFI\_MUX drives
+them onto the DFI pins in \texttt{dfi\_clk}.}
+
+\end{document}

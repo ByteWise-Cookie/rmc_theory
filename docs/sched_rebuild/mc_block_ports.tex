@@ -1,0 +1,239 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,margin=13mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{inst}{RGB}{192,57,43}
+\renewcommand{\arraystretch}{1.15}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{12pt}{4pt}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\titlespacing*{\subsection}{0pt}{7pt}{2pt}
+\newcommand{\inst}[1]{\textbf{\textcolor{inst}{[#1]}}}
+
+\newcolumntype{N}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{3.6cm}}
+\newcolumntype{D}{>{\footnotesize\centering\arraybackslash}p{1.0cm}}
+\newcolumntype{W}{>{\ttfamily\footnotesize\centering\arraybackslash}p{2.2cm}}
+\newcolumntype{X}{>{\footnotesize\raggedright\arraybackslash}p{7.6cm}}
+
+\newenvironment{ports}{%
+  \footnotesize\begin{longtable}{N D W X}\toprule
+  \textbf{Port} & \textbf{Dir} & \textbf{Width} & \textbf{Meaning / valid-ready}\\ \midrule\endhead}
+  {\bottomrule\end{longtable}}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{MC-Core Block \& Port Reference}}\\[2pt]
+{\small One channel, AXI $\rightarrow$ DFI. Every sub-block: ports (dir/width), valid-ready,
+and \inst{instance count}. Params: \texttt{N\_RANKS}(=2), \texttt{N\_BANKS}=32 (8 BG$\times$4),
+\texttt{N\_BG}=8, \texttt{BL}=16, \texttt{GEAR}$\in\{1,2,4\}$, \texttt{ROB\_IDX}=8b, 64B-aligned addr.}
+\end{center}
+
+\section{Boundary interfaces}
+\subsection{AXI write channels \inst{$\times$1}}
+\begin{ports}
+awid & in & AXI\_ID\_W & write addr id\\
+awaddr & in & ADDR\_W & 64B-aligned (LSB[5:0]=0)\\
+awlen/awsize/awburst & in & 8/3/2 & beats-1 / bytes-per-beat / burst type\\
+awvalid/awready & i/o & 1/1 & AW handshake\\
+wdata/wstrb & in & 512/64 & write beat + byte enables (DM)\\
+wlast/wvalid/wready & i/o & 1 & W handshake; wlast = last beat\\
+bid/bresp/bvalid/bready & o/o/o/i & ID/2/1/1 & write response (self-timed)\\
+\end{ports}
+\subsection{AXI read channels \inst{$\times$1}}
+\begin{ports}
+arid/araddr/arlen/arsize/arburst & in & ID/ADDR/8/3/2 & read request\\
+arvalid/arready & i/o & 1 & AR handshake\\
+rid/rdata/rresp/rlast & out & ID/512/2/1 & read return beats\\
+rvalid/rready & o/i & 1 & R handshake\\
+\end{ports}
+\subsection{DFI egress \inst{$\times$1} (to PHY)}
+\begin{ports}
+dfi\_address & out & 14$\times$GEAR & CA bus, per phase (2-cyc cmds)\\
+dfi\_cs\_n/dfi\_act\_n & out & (2/1)$\times$GEAR & chip-select / activate per phase\\
+dfi\_bg/dfi\_bank & out & (3/2)$\times$GEAR & bank group / bank\\
+dfi\_wrdata/\_mask/\_en & out & (2$\cdot$32/16/1)$\times$GEAR & write data + DM + enable\\
+dfi\_rddata/\_valid & in & (2$\cdot$32/1)$\times$GEAR & read data + valid (RL later)\\
+dfi\_cke/dfi\_odt/dfi\_reset\_n & out & N\_RANKS & power / ODT / reset\\
+dfi\_freq\_ratio/\_init\_start & out & 2/1 & gear + freq-change handshake\\
+dfi\_init\_complete/dfi\_alert\_n & in & 1/1 & PHY ready / write-CRC alert\\
+\end{ports}
+
+\section{Request admit + write ROB \inst{$\times$1}}
+\subsection{req\_validate + aw\_id\_alloc \inst{$\times$1}}
+\begin{ports}
+axi\_req\_in & in & -- & \{axi\_id, ddrphy\_addr, burst\_len\}, req valid\\
+narrow & out & 1 & size$<$full $|$ wstrb$\ne$1s $|$ sub-64B\\
+req\_out & out & -- & \{aw\_id, axi\_size, axi\_len, w\_phy\_adr\}, valid/ready\\
+\end{ports}
+\subsection{write\_rob \inst{$\times$1} (depth ROB\_DEPTH)}
+\begin{ports}
+alloc\_in/alloc\_we & in & --/1 & \{aw\_id, addr, narrow\}; admit iff !full\\
+full & out & 1 & back-pressures AW\\
+pkt\_in\_pulse & in & 1 & ++gen\_idx / packet landed\\
+wr\_done\_pulse & in & 1 & ++done\_cnt (from write\_rob\_done)\\
+N/gen\_idx/done\_cnt & reg & 8$\times$3 & per aw\_id: total / addr-index / retire\\
+retire & out & 1 & (done\_cnt==N) -\/-$>$ mc\_resp, free\\
+\end{ports}
+\subsection{tcam \{aw\_id\} \inst{$\times$1} (depth ROB\_DEPTH)}
+\begin{ports}
+lookup\_aw\_id & in & AW\_ID & CAM match\\
+idx/hit & out & log2(DEPTH)/1 & row index + valid\\
+\end{ports}
+
+\section{Ingress lane \inst{$\times$N\_RANKS}}
+\subsection{rd\_bp\_fifo / wr\_bp\_fifo \inst{$\times$N\_RANKS each} (depth 16)}
+\begin{ports}
+push/pop & in & 1 & write/read enable\\
+din/dout & i/o & -- & \{rob\_index, phy\_adr, (wr:wd\_slot)\}\\
+full/empty/partial\_full & out & 1 & flags -\/-$>$ turn\_ctrl\\
+\end{ports}
+\subsection{turn\_ctrl + wlr\_sel \inst{$\times$N\_RANKS}}
+\begin{ports}
+rd/wr\_full\_flags & in & 2 & from bp-fifos\\
+batch\_dir & reg & 1 & R/W batch direction\\
+batch\_cnt & reg & W & batch/age counter (cap)\\
+sel\_out & out & 1 & rd/wr FIFO select (combined path)\\
+combined\_req/valid & out & --/1 & one merged path -\/-$>$ lookahead\\
+\end{ports}
+\subsection{lookahead \inst{$\times$N\_RANKS} (4-entry)}
+\begin{ports}
+e0..e3 & reg & 4$\times$-- & shift-reg window (e0=head)\\
+bank\_rdy & in & 32 & from scoreboard/bank states\\
+bank\_cmp & int & 6 & kill younger same-bank\\
+head\_out/sel & out & --/1 & prio-enc winner; shift on sel\\
+\end{ports}
+\subsection{bank\_dec \inst{$\times$N\_RANKS}}
+\begin{ports}
+phy\_adr & in & -- & decode\\
+bank\_oh & out & 32 & 1-of-32 \{bg,bank\}; drives cell WE\\
+\end{ports}
+
+\section{Per-bank + arb \inst{$\times$N\_RANKS$\times$32 = 64}}
+\subsection{bank\_cell / FSM\_TABLE \inst{$\times$64}  ($=$ pre\_bank\_elig repeated 32/rank)}
+\begin{ports}
+state & reg & 4 & IDLE/ACTING/OPEN/PREING/REFING/\dots\\
+valid/open\_row/pre\_pending & reg & 1/18/1 & status\\
+last\_op/ref\_pending & reg & 1/1 & dir / refresh flag\\
+bank\_req\_reg & reg & $\sim$28 & \{rob\_index,col,op,sram\_addr\}\\
+can\_act/cas/pre & in & 3 & from scoreboard (SR flops)\\
+need\_act/cas/pre,is\_hit & out & 4 & row\_comparator result\\
+bank\_go/bank\_cmd & out & 1/2 & elig $\rightarrow$ cmd\_arb\\
+grant\_oh & in & 1 & pop-on-CAS from L1/L2\\
+\end{ports}
+\subsection{cmd\_arb \inst{$\times$64}}
+\begin{ports}
+need\_*, can\_*, is\_hit & in & -- & eligible candidates\\
+cas\_w/act\_w/pre\_w & reg & W & weights (row-lock / age / close)\\
+bank\_cmd/bank\_go & out & 2/1 & W\_MAX pick $\rightarrow$ bgb\_arb\\
+\end{ports}
+\subsection{bgb\_arb \inst{$\times$N\_RANKS$\times$8 = 16}}
+\begin{ports}
+b0..b3\_go/cmd & in & 4$\times$ & 4 banks in the BG\\
+p\_bit[4] & in & 4 & ref-drain priority (MSB)\\
+bank\_winner/vld & out & 2/1 & 4$\rightarrow$1 (weight+p\_bit)\\
+\end{ports}
+\subsection{bg\_arb \inst{$\times$N\_RANKS = 2}}
+\begin{ports}
+bg0..bg7\_winner/vld & in & 8$\times$ & 8 BG winners\\
+last\_cas\_bg & in & 3 & diff-BG rotation bias\\
+rank\_winner/vld & out & --/1 & 8$\rightarrow$1 per rank\\
+\end{ports}
+\subsection{l3 class-split \inst{$\times$1}}
+\begin{ports}
+r0/r1 cas/act/pre & in & 6$\times$ & per-rank class winners\\
+last\_cas\_dir/rank & in & 1/1 & streak + rank-hop\\
+best\_cas/act/pre & out & 3$\times$ & $\le$3 grants $\rightarrow$ packer\\
+\end{ports}
+
+\section{Scoreboard / timestamp}
+\subsection{writeback\_upd \inst{$\times$1} (adders replicated per cmd$\times$rel)}
+\begin{ports}
+grants & in & $\le$3+ref & \{rank,bg,bank,phase\_off\}\\
+gc & in & 13 & CK timebase (+= gear)\\
+timing\_const & in & $\sim$20$\times$10 & shared JEDEC addends\\
+next\_*/we\_* & out & 13/-- & per-scope deadline + write-enable\\
+reset\_* & out & -- & per-scope can\_* SR reset (issue-decode)\\
+\end{ports}
+\subsection{scope reg-files (flop arrays, parallel-read)}
+\begin{ports}
+bank\_treg & reg & 64$\times$39 & next\_act/cas/pre \inst{$\times$64}\\
+bgs\_treg & reg & 16$\times$26 & next\_act\_bg/cas\_bg \inst{$\times$16}\\
+bgd\_treg & reg & 2$\times$13 & next\_act\_dbg \inst{$\times$2}\\
+rank\_treg & reg & 2$\times$85 & faw\_ts[4]/next\_rd/wr/gates \inst{$\times$2}\\
+global\_reg & reg & 54 & dqFree/caFree/last\_cas \inst{$\times$1}\\
+\end{ports}
+\subsection{comparator + SR flop \inst{$\times$(64$\cdot$3 + 16$\cdot$2 + 2 + \dots)}}
+\begin{ports}
+ge & int & -- & (gc-next)[MSB]==0 $\rightarrow$ SET\\
+reset & in & 1 & issue-decode (reset-dominant)\\
+can\_x & out & 1 & 1-bit flop $\rightarrow$ arb\\
+\end{ports}
+
+\section{Phaser \inst{$\times$1 each}}
+\subsection{phase\_packer \inst{$\times$1}}
+\begin{ports}
+grants/me\_cmd & in & $\le$3/1 & demand + maint flag\\
+gc/gear & in & 13/2 & phase offsets, slot mask\\
+tokens & out & $\le$4 & \{cmd,bank,addr,phase\_off,len\}\\
+commit\_pulse & out & $\le$4 & FSM/scoreboard/RAA writeback\\
+\end{ports}
+\subsection{ca\_beat\_encoder \inst{$\times$1}}
+\begin{ports}
+tokens & in & $\le$4 & from packer\\
+tail\_pending & reg & 1 & 1:1 straddle carry\\
+dfi\_address/cs\_n/act\_n & out & per phase & 2-cyc $\rightarrow$ 2 beats\\
+\end{ports}
+\subsection{dfi\_mux \inst{$\times$1}}
+\begin{ports}
+init\_drive/sched\_drive & in & 2$\times$ & two DFI sources\\
+init\_done & in & 1 & sel (one-way latch)\\
+dfi\_out & out & -- & to PHY\\
+\end{ports}
+
+\section{Data path \inst{$\times$1 each}}
+\subsection{wr\_accum \inst{$\times$1}}
+\begin{ports}
+w\_beats/wstrb/narrow & in & 512/64/1 & AXI beats + strobe + flag\\
+line\_512/strobe & out & 512/64 & 64B packet + DM mask\\
+line\_done & out & 1 & wlast / 64B boundary\\
+\end{ports}
+\subsection{wd\_sram \inst{$\times$1} / rd\_sram \inst{$\times$1}}
+\begin{ports}
+wr\_ptr/rd\_ptr & in & PTR & alloc-on-arrival / RL-line\\
+line\_io & i/o & 512 & one packet per line\\
+full & out & 1 & back-pressure W\\
+\end{ports}
+\subsection{wr\_split+wl\_launch / rd\_cap+rd\_accum \inst{$\times$1 each}}
+\begin{ports}
+arm\_in & in & -- & \{op,rob\_index,sram\_addr,beats\} @CAS-commit\\
+dfi\_wrdata / dfi\_rddata & o/i & 2$\cdot$32$\times$GEAR & beats (CWL / RL delayed)\\
+done & out & 1 & wr\_done (self-timed) / rd\_done (last beat)\\
+\end{ports}
+\subsection{completion \inst{$\times$1}}
+\begin{ports}
+rd\_done/wr\_done & in & 2 & two done sources\\
+resp\_afifo\_out & out & 13 & \{rob\_index, pkt\_num, status\} $\rightarrow$ CIF\\
+\end{ports}
+
+\section{Maintenance engine \inst{$\times$1} (refresh timers $\times$N\_RANKS)}
+Seven sub-FSMs (Init/Refresh/RFM/ZQcal/MR\_Poll/MR\_Write/PwrMgmt) + MR\_Read\_Arb + FreqChange
+(stub) + Error (stub). Full port lists in \texttt{fig\_39--46}. Common bus:
+\begin{ports}
+me\_cmd\_valid/type/rank/bg/bank/mr & out & 1/3/../.. & flag to scheduler\\
+sched\_ack & in & 1 & packer accepted\\
+set/clr\_gate\_rfc/zq/mr & out & N\_RANKS & scoreboard gates\\
+raa\_inc\_en/raa\_dec & i/o & 16$\times$N\_RANKS & RFM counters\\
+mrr\_data\_valid/data/rank/requester & in & 1/8/../.. & RD\_CAP sideband\\
+init\_done & out & 1 & DFI mux handoff\\
+\end{ports}
+
+\end{document}

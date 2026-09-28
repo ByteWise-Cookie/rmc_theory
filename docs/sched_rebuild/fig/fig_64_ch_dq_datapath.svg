@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="900" viewBox="0 0 1300 900" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1300" height="900" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">CH / DQ (global) timestamp - x1 (one DQ bus, one CA bus)</text>
+  <text x="40" y="150" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">x1 =&gt; NO address, NO write-demux - single reg, WE = any CAS (either rank).</text>
+  <text x="40" y="168" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">dqFree = pure same-dir occupancy (BL/2). Flip penalty (tWTR/tRTW) lives at RANK (fig_63); cross-rank tRTRS + MRR/ZQ sharing at L3 = the parked DQ handler.</text>
+  <rect x="40" y="800" width="300" height="54" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="340" y="792" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">CAS issue</text>
+  <text x="340" y="776" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">{dir, rank, bg} (RD/WR/MRR/ZQ)</text>
+  <rect x="410" y="800" width="240" height="54" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="650" y="792" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">op -&gt; const_sel</text>
+  <text x="650" y="776" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">BL/2 (or ZQ-busy)</text>
+  <line x1="340" y1="827" x2="408" y2="827" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="40" y="690" width="300" height="54" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="340" y="682" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">global_counter_24b</text>
+  <text x="340" y="666" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">shared; compare low 13b</text>
+  <circle cx="400" cy="716" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="400" y="720" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="400" y="720" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <line x1="340" y1="716" x2="378" y2="716" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="404" y="694" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">+ph_off</text>
+  <path d="M422 716 H1180 V560" fill="none" stroke="#3d8c40" stroke-width="1.0"/>
+  <text x="650" y="708" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">GC_ph -&gt; adders + (13b) compares</text>
+  <circle cx="430" cy="600" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="604" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="430" y="604" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <line x1="430" y1="800" x2="430" y2="620" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="438" y="770" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">BL/2 (=8)</text>
+  <line x1="390" y1="560" x2="424" y2="586" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <circle cx="760" cy="600" r="20" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="760" y="604" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="760" y="604" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">+</text>
+  <text x="768" y="640" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">CA occ</text>
+  <line x1="720" y1="560" x2="754" y2="586" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="385" y="470" width="90" height="70" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="512" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">dqFree</text>
+  <text x="490" y="505" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">x1</text>
+  <line x1="430" y1="580" x2="430" y2="540" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="715" y="470" width="90" height="70" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="760" y="512" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">caFree</text>
+  <text x="820" y="505" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">x1</text>
+  <line x1="760" y1="580" x2="760" y2="540" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <circle cx="430" cy="400" r="21" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="404" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;=</text>
+  <line x1="430" y1="470" x2="430" y2="421" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="388" y="404" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">GC13</text>
+  <line x1="372" y1="400" x2="409" y2="400" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="368" y="270" width="124" height="32" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="430" y="290" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_cas_dq</text>
+  <line x1="440" y1="379" x2="440" y2="302" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="444" y="350" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">set</text>
+  <line x1="418" y1="379" x2="418" y2="302" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="400" y="350" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rst</text>
+  <circle cx="760" cy="400" r="21" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="760" y="404" font-size="12" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&gt;=</text>
+  <line x1="760" y1="470" x2="760" y2="421" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="718" y="404" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#3d8c40">GC13</text>
+  <line x1="702" y1="400" x2="739" y2="400" stroke="#3d8c40" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="698" y="270" width="124" height="32" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="760" y="290" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">can_ca</text>
+  <line x1="770" y1="379" x2="770" y2="302" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="774" y="350" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">set</text>
+  <line x1="748" y1="379" x2="748" y2="302" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="730" y="350" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">rst</text>
+  <rect x="950" y="470" width="220" height="90" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="1060" y="494" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">LAST_CAS (bus state)</text>
+  <text x="962" y="518" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">dir  rank  bg  ts</text>
+  <line x1="430" y1="505" x2="948" y2="505" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="1060" y="585" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">-&gt; rank turnaround (fig_63) + L3 tRTRS</text>
+  <line x1="1060" y1="570" x2="1060" y2="560" stroke="#777777" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <rect x="950" y="640" width="300" height="90" fill="#ffffff" stroke="#777777" stroke-width="1.4"/>
+  <text x="1100" y="664" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777" font-weight="bold">L3 / DQ HANDLER  (PARKED)</text>
+  <text x="962" y="686" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">cross-rank tRTRS on rank hop</text>
+  <text x="962" y="702" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">turnaround (from RANK scope)</text>
+  <text x="962" y="718" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">MRR / ZQ also grab DQ</text>
+  <text x="40" y="210" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">RST = issue-decode (reset-dominant).  SET = GC[12:0] &gt;= dqFree/caFree.</text>
+  <text x="40" y="872" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">One DQ bus + one CA bus -&gt; single dqFree/caFree regs (x1, no address). Any CAS (either rank, 1/cycle) stamps dqFree = GC_ph + BL/2; can_cas_dq = GC &gt;= dqFree. LAST_CAS records {dir,rank,bg,ts} for the rank turnaround gate and the L3 cross-rank tRTRS pick. dqFree is same-dir occupancy only; flip + rank-hop + MRR/ZQ = parked handler.</text>
+</svg>

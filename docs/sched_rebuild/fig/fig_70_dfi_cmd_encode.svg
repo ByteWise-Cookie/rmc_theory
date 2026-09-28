@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="940" viewBox="0 0 1500 940" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1500" height="940" fill="#ffffff"/>
+  <text x="40" y="32" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">DFI_CMD_ENCODE internals  (bundle -&gt; CA beats + CS, DDR5)</text>
+  <rect x="50" y="120" width="210" height="260" fill="#e3f2f1" stroke="#000000" stroke-width="1.4"/>
+  <text x="155.0" y="140" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">PHASER bundle</text>
+  <text x="155" y="160" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">per phase tag:</text>
+  <text x="155" y="178" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">{cmd_ref, ui_idx}</text>
+  <text x="155" y="210" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">cmd fields (BANK_REQ):</text>
+  <text x="155" y="232" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">cmd_type</text>
+  <text x="155" y="250" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">rank</text>
+  <text x="155" y="268" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">bg / ba</text>
+  <text x="155" y="286" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">row / col</text>
+  <text x="155" y="304" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">AP / BL</text>
+  <rect x="360" y="120" width="250" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="485.0" y="140" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA_FORMAT p0</text>
+  <text x="485.0" y="157" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">case(cmd,ui) + field mux</text>
+  <text x="368" y="178" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">-&gt; dfi_address_p0 [13:0]</text>
+  <line x1="260" y1="250" x2="358" y2="160" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="360" y="215" width="250" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="485.0" y="235" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA_FORMAT p1</text>
+  <text x="485.0" y="252" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">case(cmd,ui) + field mux</text>
+  <text x="368" y="273" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">-&gt; dfi_address_p1 [13:0]</text>
+  <line x1="260" y1="250" x2="358" y2="255" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="360" y="310" width="250" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="485.0" y="330" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA_FORMAT p2</text>
+  <text x="485.0" y="347" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">case(cmd,ui) + field mux</text>
+  <text x="368" y="368" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">-&gt; dfi_address_p2 [13:0]</text>
+  <line x1="260" y1="250" x2="358" y2="350" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="360" y="405" width="250" height="80" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="485.0" y="425" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CA_FORMAT p3</text>
+  <text x="485.0" y="442" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">case(cmd,ui) + field mux</text>
+  <text x="368" y="463" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">-&gt; dfi_address_p3 [13:0]</text>
+  <line x1="260" y1="250" x2="358" y2="445" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="360" y="520" width="250" height="80" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="485.0" y="540" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">CS_GEN</text>
+  <text x="485.0" y="557" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">assert cs on UI0 phase</text>
+  <text x="368" y="578" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">-&gt; dfi_cs_pN [N_RANKS-1:0]</text>
+  <line x1="260" y1="300" x2="358" y2="555" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="720" y="220" width="190" height="180" fill="#e9f0dc" stroke="#000000" stroke-width="1.4"/>
+  <text x="815.0" y="240" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">phase pack</text>
+  <text x="815.0" y="257" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">p0..p3 buses</text>
+  <line x1="610" y1="160" x2="720" y2="310" stroke="#7a4fb0" stroke-width="1.0"/>
+  <line x1="610" y1="255" x2="720" y2="310" stroke="#7a4fb0" stroke-width="1.0"/>
+  <line x1="610" y1="350" x2="720" y2="310" stroke="#7a4fb0" stroke-width="1.0"/>
+  <line x1="610" y1="445" x2="720" y2="310" stroke="#7a4fb0" stroke-width="1.0"/>
+  <line x1="610" y1="560" x2="720" y2="380" stroke="#7a4fb0" stroke-width="1.0"/>
+  <line x1="910" y1="300" x2="1010" y2="300" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1016" y="296" font-size="10" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#7a4fb0">-&gt; DFI_MUX -&gt; PHY</text>
+  <rect x="720" y="460" width="720" height="200" fill="none" stroke="#aaaaaa" stroke-width="1.2"/>
+  <text x="732" y="478" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">CA_FORMAT pN  (one slot, zoom)</text>
+  <rect x="740" y="494" width="150" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="815.0" y="514" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">opcode ROM</text>
+  <text x="815.0" y="531" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">cmd_type -&gt; CA[4:0] pat</text>
+  <rect x="920" y="494" width="150" height="60" fill="#f4f4f4" stroke="#000000" stroke-width="1.4"/>
+  <text x="995.0" y="514" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">field MUX</text>
+  <text x="995.0" y="531" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">ui_idx picks UI0/UI1</text>
+  <rect x="1100" y="494" width="150" height="60" fill="#efe6fb" stroke="#000000" stroke-width="1.4"/>
+  <text x="1175.0" y="514" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">assemble</text>
+  <text x="1175.0" y="531" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">opcode + fields -&gt; CA[13:0]</text>
+  <line x1="890" y1="524" x2="920" y2="524" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1070" y1="524" x2="1100" y2="524" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1250" y1="524" x2="1280" y2="524" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1286" y="520" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">dfi_address_pN</text>
+  <text x="740" y="580" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">UI0: opcode + CS=0 + BG/BA + row/col-low</text>
+  <text x="740" y="596" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">UI1: CS=1 + row/col-high + AP/BL   (2-UI cmds)</text>
+  <text x="740" y="612" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">1-UI (PRE/REF): single slot, no UI1</text>
+  <text x="740" y="632" font-size="8" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#b0602a">bit positions per JESD79-5 CA truth table (not hardcoded here)</text>
+  <rect x="50" y="690" width="1390" height="210" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="70" y="714" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">ENCODE RULES</text>
+  <text x="70" y="736" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">1. N per-phase formatters (=GEAR). Each slot pN gets {cmd_ref, ui_idx} from the phaser and formats ONE CA beat -&gt; dfi_address_pN. Pure comb, dfi_clk.</text>
+  <text x="70" y="760" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">2. 2-UI command (ACT/RD/WR/MRW/MRR) occupies 2 ADJACENT phases: UI0 (CS=0) + UI1 (CS=1). The UI1 slot pulls the SAME cmd's upper-address fields (row/col-high, AP).</text>
+  <text x="70" y="784" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">3. 1-UI command (PRE/REF/DES/NOP) = 1 phase. Idle phases -&gt; DES (dfi_cs=1, CA don't-care).</text>
+  <text x="70" y="808" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">4. CS_GEN asserts the target rank's dfi_cs on the UI0 phase only; diff-rank cmds in one bundle -&gt; different rank bits asserted on their own phase-pairs (fig_69 B).</text>
+  <text x="70" y="832" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">5. 2N mode / CS-geardown (DDR5): hold CA &gt;=1 cmd-clk after CS / single-data-rate CA format - a config-gated variant of CS_GEN + the assemble stage.</text>
+  <text x="70" y="856" font-size="9" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">6. At 1:1 only p0 formats a beat; a 2-UI cmd straddles p0 of two dfi_clk cycles (UI0 then UI1).</text>
+  <text x="40" y="924" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">DFI_CMD_ENCODE = N per-phase CA formatters (case(cmd,ui)+field mux) + CS_GEN. Phaser places, encoder frames: each phase slot -&gt; one CA[13:0] beat + its cs bit, 2-UI cmds span 2 slots, idle=DES. Bit layout from the JESD79-5 CA truth table.</text>
+</svg>
