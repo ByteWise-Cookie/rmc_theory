@@ -1,0 +1,144 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,margin=10mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[strings]{underscore}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{hdr}{RGB}{38,66,105}
+\definecolor{dir}{RGB}{150,90,30}
+\setlength{\columnsep}{14pt}
+\titleformat{\section}{\normalfont\bfseries\color{hdr}\normalsize}{}{0pt}{}
+\titlespacing*{\section}{0pt}{7pt}{2pt}
+\pagestyle{empty}
+
+% \mod{name}{in ports}{out ports}
+\newcommand{\md}[3]{%
+  \noindent\textbf{\ttfamily #1}\par
+  {\scriptsize\ttfamily\color{dir}in:\,}{\scriptsize\ttfamily #2}\par
+  {\scriptsize\ttfamily\color{dir}out:\,}{\scriptsize\ttfamily #3}\par
+  \vspace{2.5pt}}
+
+\begin{document}
+\begin{center}
+{\large\textbf{MC + CIF --- module-level port list}}\\
+{\footnotesize All modules also have \texttt{clk} + \texttt{rst_n} (omitted). Widths parametric:
+AW=addr, DW=AXI data, IDW=axid, 512=SRAM line, N\_RANKS/N\_BANKS, DQ=sub-channel. Handshake pairs
+\texttt{valid/ready}, FIFO \texttt{push/pop + full/empty} implied where a port is a FIFO iface.}
+\end{center}
+
+\begin{multicols}{2}
+\footnotesize
+
+\section{CIF --- AXI front end (single port)}
+\md{AXI_SLAVE}{araddr[AW], arlen[8], arsize[3], arid[IDW], arvalid; awaddr, awlen, awsize, awid, awvalid; wdata[DW], wstrb[DW/8], wlast, wvalid; rready, bready}{arready, awready, wready; rdata[DW], rresp[2], rlast, rid, rvalid; bresp[2], bid, bvalid}
+\md{AR_CH}{araddr, arlen, arsize, arid, arvalid}{arready, ar_req\{addr,len,id\}, ar_push}
+\md{AW_CH}{awaddr, awlen, awsize, awid, awvalid}{awready, aw_req\{addr,len,id\}, aw_push}
+\md{W_CH}{wdata[DW], wstrb[DW/8], wlast, wvalid}{wready, w_beat\{data,strb,last\}, wd_wr_en}
+\md{R_CH}{r_beat\{rdata,rresp,rlast,rid\}, r_valid, rready}{rdata, rresp, rlast, rid, rvalid, r_ready}
+\md{BRESP_CH}{b_resp\{bresp,bid\}, b_valid, bready}{bresp, bid, bvalid, b_ready}
+
+\section{CIF --- request FIFOs / pairing}
+\md{AR_REQ_FIFO}{ar_req, push}{ar_req_o, empty, full, pop}
+\md{AW_REQ_FIFO}{aw_req, push}{aw_req_o, empty, full, pop}
+\md{W_BURST_FIFO}{desc\{start_ptr,count\}, push}{desc_o, empty, full, pop}
+\md{WR_PAIR}{aw_req_o, w_desc}{wr_req\{addr,wd_slot,count\}, wr_valid}
+
+\section{CIF --- validate / segment / hash}
+\md{REQ_VAL_R}{ar_req, geom_cfg}{val_req, n_segs, err, err_type}
+\md{REQ_VAL_W}{wr_req, geom_cfg}{val_req, n_segs, err, err_type}
+\md{ERR_HDLR_R}{err, err_type, arid}{rob_alloc_err, status}
+\md{ERR_HDLR_W}{err, err_type, awid}{rob_alloc_err, status}
+\md{BURST_SPLIT_R}{val_req, n_segs, row_size}{seg_req\{addr,beats\}, seg_valid}
+\md{BURST_SPLIT_W}{val_req, n_segs, wd_slot[]}{seg_req\{addr,beats,wd_slot\}, seg_valid}
+\md{R_ADR_HASH}{seg_addr, hash_cfg, adr_cfg}{daddr\{rank,bg,bank,row,col\}}
+\md{W_ADR_HASH}{seg_addr, hash_cfg, adr_cfg}{daddr\{rank,bg,bank,row,col\}}
+\md{PKT_FORM_R}{daddr, rob_index, dbuf_addr, beats}{rd_pkt\{rob_index,dbuf_addr,daddr,beats\}}
+\md{PKT_FORM_W}{daddr, rob_index, wd_slot, beats}{wr_pkt\{rob_index,wd_slot,daddr,beats\}}
+
+\section{CIF --- reorder buffers}
+\md{ROB_RD}{alloc_req, resp\{rob_index,pkt_num,status\}}{rob_index, start_ptr, exp_pkts, bitmap, rob_full, retire\{rob_index\}}
+\md{ROB_WR}{alloc_req, resp\{rob_index,status\}}{rob_index, retire\{rob_index,status\}, rob_full}
+
+\section{CIF --- data SRAM + managers (shared with MCC)}
+\md{RD_SRAM}{wr_data[512], wr_addr(dbuf), wr_en (MC port); rd_addr, rd_en (CIF port)}{rd_data[512]}
+\md{WD_SRAM}{wr_data(beats), wr_addr(wd_slot), wr_en (CIF port); rd_addr, rd_en (MC port)}{rd_data[512]}
+\md{RD_SRAM_MGR}{alloc_req(size), free_req}{dbuf_addr, range, full}
+\md{WR_SRAM_MGR}{alloc_req(burst), free_req(pkt)}{wd_slot[], full}
+
+\section{CIF --- response path}
+\md{MERGE_LOGIC}{rob_retire, bitmap, rd_data[512]}{r_beat\{rdata,rresp,rlast\}, r_valid, free_range}
+\md{BRESP_GEN}{rob_wr_retire\{rob_index,status\}}{b_resp\{bresp,bid\}, b_valid}
+
+\section{CIF --- CDC to MCC}
+\md{CH_R_PKT_FIFO}{rd_pkt, push}{rd_pkt_o, empty, full}
+\md{CH_W_PKT_FIFO}{wr_pkt, push}{wr_pkt_o, empty, full}
+\md{CH_R_REQ_AFIFO}{rd_pkt (cif_clk), wr_en}{rd_pkt (mc_clk), rd_valid, rd_ready, full}
+\md{CH_W_REQ_AFIFO}{wr_pkt (cif_clk), wr_en}{wr_pkt (mc_clk), rd_valid, rd_ready, full}
+\md{CH_R_RESP_AFIFO}{resp (mc_clk), wr_en}{resp (cif_clk), rd_valid}
+\md{CH_W_RESP_AFIFO}{resp (mc_clk), wr_en}{resp (cif_clk), rd_valid}
+
+\section{CIF --- config}
+\md{APB_SLAVE}{paddr, pwdata, psel, penable, pwrite}{prdata, pready, csr_wr, csr_addr, csr_wdata}
+\md{CSR}{csr_wr, csr_addr, csr_wdata}{csr_rdata, cfg_bus}
+\md{CFG_REG / ADR_CFG / GEOM_CFG / HASH_CFG}{cfg_bus (write)}{enable/mode; field pos/width; ranks/bg/banks/rows/cols/row_size; hash taps  (bc)}
+
+\section{MCC --- ingress (per rank)}
+\md{R_REQ_AFIFO / W_REQ_AFIFO}{pkt (cif_clk), wr_en}{pkt (mc_clk), valid, ready, full}
+\md{RD_BP_FIFO / WR_BP_FIFO}{\{rob_index,phy_adr,wr_data_prt\}, push}{o, full, partial_full, empty, pop}
+\md{TURN_CTRL}{rd_full, wr_full, rd_empty, wr_empty, batch_state}{rd_wr_select, batch_dir}
+\md{WLR_SEL}{rd_stream, wr_stream, rd_wr_select}{combined_stream}
+\md{LOOKAHEAD}{stream_head, bank_rdy[N_BANKS]}{sel_pkt\{rob_index,phy_adr,op\}, shift}
+\md{BANK_DEC}{pkt(daddr)}{bank_push_oh[N_BANKS], bank_req}
+
+\section{MCC --- per-bank cell (xN\_BANKS)}
+\md{BANK_REQ_REG}{bank_req\{rob_index,col,op,sram_addr\}, wr_en, grant_oh}{req_meta\{op,rob_index,col,sram_addr\}}
+\md{BANK_STATUS_REG}{fsm_wr\{state,open_row,valid,pre_pending\}, pre_propose}{state[4], open_row, valid, pre_pending}
+\md{ROW_COMPARATOR}{pkt_row, open_row}{is_hit, need_pre, need_act, need_cas}
+\md{BANK_ELIG}{need_*, can_act, can_cas, can_pre, row_valid, stall_acts}{bank_go, bank_cmd(cas/act/pre), is_hit}
+\md{BANK_FSM}{cmd[3], grant_act/cas/pre, ap, can_cas, can_act, gate_rfc, gate_rfm, pre_pending}{state[4], act_set, cas_set, pre_set, row_valid, cas_complete, bank_busy}
+
+\section{MCC --- arb tree}
+\md{CMD_ARB}{bank_go, bank_cmd, is_hit, cas_w, act_w, pre_w}{win\{go,cmd,is_hit\}}
+\md{BGB_ARB}{bank_win[4]}{bg_win\{go,cmd,bank\}}
+\md{BG_ARB}{bg_win[8], last_cas_bg}{rank_cand\{go,cmd,bg,bank\}}
+\md{RANK_ARB}{cand, can_act_rank, can_cas_rank, p_bit}{act_win, cas_win, pre_win[0:1] = \{rdy,bg,bank\}}
+
+\section{MCC --- schedule + phaser}
+\md{SCHEDULER}{act_win, cas_win, pre_win, maint flags, dqfree, turnaround, gear}{cmd_0/1\{vld,len,packet\}, grant_act/cas/pre_oh, fsm_commit, cmd_issued}
+\md{CMD_PHASER}{cmd_0, cmd_1, gear}{cmd_0_enc, cmd_1_enc, rdy0, rdy1}
+\md{DFI_CMD_ENCODER}{record, gear_cfg, ui_idx}{dfi_pN\{address[14],cs_n,cke,odt,parity\}}
+\md{OPCODE_ROM}{cmd_type[5], rw}{two_ui, ca_fix_ui0[14], ca_fix_ui1[14], field_sel, cs_pattern}
+\md{FIELD_MUX}{record\{bg,bank,addr,ap,bl,cid\}, ui_idx}{ca_field[14]}
+\md{CS_GEN}{rank, valid, ui_idx}{dfi_cs_n[N_RANKS]}
+
+\section{MCC --- write data path}
+\md{WR_ACCUM}{w_beats\{data,strb,last\}, narrow}{line[512], dm[512/8], wd_wr_en, wd_slot}
+\md{WL_LAUNCH}{wd_slot, rob_index, tphy_wrlat, tphy_wrdata, cas_commit}{dfi_wrdata_en, split_fire, wr_done\{rob_index,pkt\}}
+\md{WR_SPLIT}{line[512], gear}{dfi_wrdata_pN[2*DQ], dfi_wrdata_mask_pN}
+
+\section{MCC --- read data path}
+\md{RD_CAP}{dbuf_addr, rob_index, tphy_rdlat, dfi_rddata_valid}{cap_en, accum_load, rd_done\{rob_index,pkt\}}
+\md{RD_ACCUM}{dfi_rddata_pN[2*DQ], cap_en}{line[512], rd_wr_en, dbuf_addr}
+\md{RD_SPLIT}{line[512]}{r_beats\{rdata,rlast\}, r_valid}
+
+\section{MCC --- completion / tracking}
+\md{COMPLETION}{rd_done, wr_done}{resp\{rob_index,pkt_num,status\}, resp_valid}
+\md{WR_ROB}{alloc\{N\}, wr_done}{gen_idx, addr_offset, retire, done}
+
+\section{MCC --- scoreboard}
+\md{GC}{gear}{gc[24]}
+\md{TIMING_CONST}{cfg_write}{t_const[] (bc)}
+\md{*_UPD}{gc, t_const, cmd_issued}{next_* [13] (per scope)}
+\md{*_TREG + CMP}{next_*, gc, we}{can_act, can_cas, can_pre, can_*_bgs, can_*_rank}
+\md{refi_cnt}{gear, refsb_done, rr_shift}{ref_rdy, ref_force, o_ref_rdy}
+\md{RAA_cnt}{act_issue, rfm_done, ref_done, raaimt, raammt}{rfm_rdy, rfm_force}
+
+\section{MCC --- maintenance}
+\md{MAINT_ENG}{cas_complete[N_BANKS], debt, raa, mr4_temp, dfi_init_complete}{stall_acts, gate_rfc, gate_rfm, maint_cmd\{type,ba\}, maint_inject, init_done}
+
+\end{multicols}
+\end{document}
