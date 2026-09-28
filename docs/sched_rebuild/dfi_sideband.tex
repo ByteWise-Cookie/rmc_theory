@@ -1,0 +1,98 @@
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper,landscape,margin=10mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\definecolor{headbg}{RGB}{38,66,105}
+\definecolor{hb}{RGB}{223,232,241}
+\definecolor{opc}{RGB}{214,239,205}   % fixed level
+\definecolor{fld}{RGB}{255,244,204}   % variable / conditional
+\renewcommand{\arraystretch}{1.25}
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{10pt}{3pt}
+
+\newcolumntype{F}{>{\footnotesize\raggedright\arraybackslash}p{4.2cm}}
+\newcolumntype{A}{>{\ttfamily\scriptsize\centering\arraybackslash}p{1.6cm}}
+\newcolumntype{K}{>{\ttfamily\scriptsize\centering\arraybackslash}p{1.9cm}}
+\newcolumntype{M}{>{\footnotesize\raggedright\arraybackslash}p{13cm}}
+\newcommand{\op}[1]{\cellcolor{opc}#1}
+\newcommand{\fd}[1]{\cellcolor{fld}#1}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{DFI command sideband ports --- CS\_n / CKE / ODT / parity / static}}\\[2pt]
+{\small One channel, DDR5. Everything on the command bus that is \emph{not} the CA opcode
+(see \texttt{opcode\_rom.pdf} for the CA truth table). \colorbox{opc}{green}=fixed level,
+\colorbox{fld}{yellow}=conditional. \texttt{L}=0 (active-low asserted), \texttt{H}=1, \texttt{--}=no
+2nd beat. \textbf{ck0}=first CK beat, \textbf{ck1}=second (2-clk commands only; 1 CK = 1 command beat,
+CA is SDR).}
+\end{center}
+
+\section{dfi\_cs\_n\_pN[N\_RANKS-1:0]  ---  rank select, ONE-COLD (active-low)}
+{\footnotesize The \texttt{rank} field of the phaser record decodes to a one-cold vector: the target
+rank's bit = \texttt{L}, every other rank = \texttt{H}. \texttt{dfi\_cs\_n[r] = !(r == rank)} on the
+select beat. CS\_n is the \emph{qualifier} --- the DRAM only decodes the CA bus on the CK beat its
+CS\_n is L. Below = the \textbf{target rank bit} per command (non-target ranks = H, except the ck1-ODT case).}
+
+\smallskip
+\begin{center}
+\begin{tabular}{F A A M}
+\toprule
+\rowcolor{hb}\textbf{command} & \textbf{CS\_n ck0} & \textbf{CS\_n ck1} & \textbf{note}\\ \midrule
+ACT / MRW / WRP (2-clk, no ODT) & \op{L} & \op{H} & 2-clk with no ODT control: CS\_n \emph{must} be H on ck1, else DRAM ignores the command (JEDEC note 11).\\
+RD / WR / MRR (2-clk, ODT) & \op{L} & \fd{L / H} & ck1 CS\_n controls ODT on \emph{non-target} ranks (note 8): drive L on a non-target rank to assert its ODT during the data window; H = no ODT.\\
+PRE(ab/sb/pb), REF(ab/sb), RFM(ab/sb) & \op{L} & -- & 1-clk command: single select beat.\\
+MPC / SRE / SREF / PDE / PDX / NOP & \op{L} & -- & 1-clk command.\\
+DES (deselect) & \op{H} & \op{H} & all ranks H = nobody decodes the CA bus this beat.\\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip
+{\footnotesize \textbf{One-cold vs one-hot:} CS\_n is one-\emph{cold} (exactly one bit \textbf{low}).
+A binary \texttt{rank[clog2 N\_RANKS]} $\rightarrow$ \texttt{NR}-wide decoder $\rightarrow$ invert
+$\rightarrow$ one-cold. Two different-rank commands in one bundle each drive their own rank bit low on
+their own phase, so a rank-0 CAS + rank-1 ACT coexist (this is the cross-rank parallelism). CKE and
+ODT are \emph{not} one-hot --- they are per-rank independent state (any subset may be asserted).}
+
+\section{Per-rank state ports  (POWER\_FSM / ODT\_GEN --- not opcode-driven)}
+{\footnotesize These do not follow the command opcode; they follow power state or the write data
+window. Each is a per-rank vector, driven per phase.}
+\smallskip
+\begin{center}
+\begin{tabular}{F K M}
+\toprule
+\rowcolor{hb}\textbf{port} & \textbf{driver} & \textbf{value / when asserted}\\ \midrule
+dfi\_cke\_pN[NR-1:0] & POWER\_FSM & H = clock enabled (normal). Driven L for a rank on Power-Down entry (PDE) / Self-Refresh entry (SRE); held L until PDX/SRX. Per-rank independent, latency-critical (CKE setup).\\
+dfi\_dram\_clk\_disable\_pN[NR-1:0] & POWER\_FSM & H = gate CK to that rank (deep power-down / self-refresh, after CKE low). Per rank.\\
+dfi\_odt\_pN[NR-1:0] & ODT\_GEN & Asserted in a WL-aligned window around a WRITE (offset = odt\_latency). Target and/or non-target ranks per RTT\_WR/RTT\_NOM/RTT\_PARK. Timing-driven, not command-bit driven; overlaps the CAS by CWL.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Computed / static command ports}
+\begin{center}
+\begin{tabular}{F K M}
+\toprule
+\rowcolor{hb}\textbf{port} & \textbf{kind} & \textbf{value}\\ \midrule
+dfi\_parity\_pN & \fd{per phase} & CA-bus parity for that beat: \texttt{= \textasciicircum(CA0..CA13)} (even parity) when \texttt{parity\_en}; else 0. One bit per phase, recomputed from the CA vector the encoder just built.\\
+dfi\_2n\_mode & \op{static} & 1 = 2N command timing (CA held 2 CK, CS pulses the sample beat --- SI margin, half command rate). Config bit, boot/init only. One value all phases, no per-phase mux.\\
+dfi\_reset\_n & \op{static} & L during DRAM reset, H after; driven by INIT\_FSM, one-way. Not phased.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{How each maps onto the phases (gear)}
+{\footnotesize Same rule as the CA bus. Each \emph{phased} port has one mux per phase; \texttt{phase\_sel}
+routes the right \{slot, ck-beat\} value onto phase pN. At \textbf{1:1 (gear=00)} there is one phase, so
+a 2-clk command's ck0/ck1 land in two successive mc\_clks (temporal, held by \texttt{two\_clk/repeat}). At
+\textbf{1:2 / 1:4} the beats land on parallel phases in one mc\_clk (constant spatial wiring:
+p0=ck0, p1=ck1, \dots). \textbf{Static} ports (\texttt{2n\_mode}, \texttt{reset\_n}) drive one value across
+all phases --- no mux. A \textbf{1-clk} command uses one phase; the next phase is free for another command.}
+
+\end{document}
