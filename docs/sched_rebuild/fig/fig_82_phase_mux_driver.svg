@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="900" viewBox="0 0 1520 900" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1520" height="900" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">DFI command-port phase mux driver  (p0 shown; all phases + all ports identical)</text>
+  <rect x="1160" y="12" width="340" height="62" fill="#f4f4f4" stroke="#000000" stroke-width="1.2"/>
+  <text x="1174" y="32" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">convention: 1 CK = 2 UI  (always)</text>
+  <text x="1174" y="50" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">DQ (data) = DDR, 2 UI/CK -&gt; BL16 = 8 CK</text>
+  <text x="1174" y="66" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">CA (command) = SDR, 1 beat/CK; 'ckN' = one CK beat</text>
+  <text x="40" y="74" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">scheduler bundle</text>
+  <rect x="40" y="90" width="130" height="38" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="105" y="113" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">slot s0</text>
+  <rect x="40" y="138" width="130" height="38" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="105" y="161" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">slot s1</text>
+  <rect x="40" y="186" width="130" height="38" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="105" y="209" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">slot s2</text>
+  <rect x="40" y="234" width="130" height="38" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="105" y="257" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">slot s3</text>
+  <text x="46" y="292" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">each = phaser record</text>
+  <rect x="220" y="90" width="180" height="182" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="400" y="82" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">ENCODE</text>
+  <text x="400" y="66" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">OPCODE_ROM + FIELD_MUX</text>
+  <text x="228" y="290" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">per slot -&gt; ca_ck0[13:0], ca_ck1[13:0]</text>
+  <line x1="170" y1="109" x2="220" y2="109" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="170" y1="157" x2="220" y2="157" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="170" y1="205" x2="220" y2="205" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="170" y1="253" x2="220" y2="253" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="400" y1="181" x2="470" y2="120" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="408" y="116" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">s0.ck0</text>
+  <line x1="400" y1="181" x2="470" y2="160" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="408" y="156" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">s0.ck1</text>
+  <line x1="400" y1="181" x2="470" y2="200" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="408" y="196" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">s1.ck0</text>
+  <line x1="400" y1="181" x2="470" y2="240" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="408" y="236" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">s1.ck1</text>
+  <path d="M500.0 105.0 L620.0 142.5 L620.0 217.5 L500.0 255.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="556" y="184" font-size="10" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">p0 MUX</text>
+  <line x1="620" y1="180" x2="720" y2="180" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="628" y="172" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_address_p0[13:0]</text>
+  <line x1="560" y1="380" x2="560" y2="258" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="575" y="320" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0" font-weight="bold">phase_sel[p0]</text>
+  <rect x="485" y="380" width="150" height="90" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="635" y="372" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">GEAR + CLK_CNT</text>
+  <text x="635" y="356" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">-&gt; phase_sel</text>
+  <text x="300" y="402" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">gear[1:0]</text>
+  <line x1="360" y1="398" x2="483" y2="410" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="300" y="440" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">two_clk / repeat</text>
+  <line x1="390" y1="436" x2="483" y2="440" stroke="#b0602a" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="430" y="520" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">p1..p3 = identical mux, phase_sel</text>
+  <text x="430" y="536" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">offset by phase index (spatial)</text>
+  <rect x="780" y="90" width="700" height="190" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="796" y="114" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">gear -&gt; select behavior</text>
+  <text x="796" y="140" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">1:1 (gear=00): only p0. select = TEMPORAL CLK counter:</text>
+  <text x="820" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">clk0 -&gt; s0.ck0 , clk1 -&gt; s0.ck1 (held by two_clk/repeat). slot sel const = s0.</text>
+  <text x="796" y="186" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">1:2 (gear=01): p0=s0.ck0  p1=s0.ck1   (one 2-CLK cmd / mc_clk)</text>
+  <text x="796" y="210" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">1:4 (gear=11): p0=s0.ck0 p1=s0.ck1 p2=s1.ck0 p3=s1.ck1</text>
+  <text x="820" y="228" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">(two 2-CLK cmds / mc_clk). select = CONSTANT spatial wiring, no counter.</text>
+  <text x="796" y="256" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">1-CLK cmd (PRE/REF/RFM): occupies ONE phase; next phase free for another cmd.</text>
+  <rect x="780" y="320" width="700" height="300" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="796" y="344" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">same phase-mux driver, every command-group port (per phase pN):</text>
+  <text x="804" y="368" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_address_pN[13:0]</text>
+  <text x="1050" y="368" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">CA bus</text>
+  <text x="1170" y="368" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">OPCODE_ROM+FIELD_MUX</text>
+  <text x="1340" y="368" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">muxed / phase</text>
+  <text x="804" y="398" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_cs_n_pN[NR-1:0]</text>
+  <text x="1050" y="398" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">rank select</text>
+  <text x="1170" y="398" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">CS_GEN (one-cold)</text>
+  <text x="1340" y="398" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">muxed / phase</text>
+  <text x="804" y="428" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_cke_pN[NR-1:0]</text>
+  <text x="1050" y="428" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">clock enable</text>
+  <text x="1170" y="428" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">POWER_FSM</text>
+  <text x="1340" y="428" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">muxed / phase</text>
+  <text x="804" y="458" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_odt_pN[NR-1:0]</text>
+  <text x="1050" y="458" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">ODT</text>
+  <text x="1170" y="458" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">ODT_GEN (WL-aligned)</text>
+  <text x="1340" y="458" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">muxed / phase</text>
+  <text x="804" y="488" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_parity_pN</text>
+  <text x="1050" y="488" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">CA parity</text>
+  <text x="1170" y="488" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">parity over CA</text>
+  <text x="1340" y="488" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">muxed / phase</text>
+  <text x="804" y="518" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777" font-weight="bold">dfi_2n_mode</text>
+  <text x="1050" y="518" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">2N timing</text>
+  <text x="1170" y="518" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">config bit</text>
+  <text x="1340" y="518" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">STATIC (no mux)</text>
+  <text x="804" y="548" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777" font-weight="bold">dfi_reset_n</text>
+  <text x="1050" y="548" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">DRAM reset</text>
+  <text x="1170" y="548" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">INIT_FSM</text>
+  <text x="1340" y="548" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#b0602a">STATIC (no mux)</text>
+  <text x="804" y="578" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">dfi_dram_clk_disable_pN</text>
+  <text x="1050" y="578" font-size="8.5" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000">CK gate</text>
+  <text x="1170" y="578" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">power-down</text>
+  <text x="1340" y="578" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">muxed / phase</text>
+  <text x="796" y="610" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">STATIC ports (2n_mode, reset_n) = one value all phases -&gt; no per-phase mux.</text>
+  <text x="40" y="680" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">One mux per phase per command port. Candidates = the bundle slots' per-UI encoded vectors; phase_sel routes {slot,ck} onto the phase. 1:1 = temporal CLK counter; 1:2/1:4 = constant spatial wiring. Static ports skip the mux.</text>
+</svg>
