@@ -100,14 +100,4 @@ CA4=pb(H)/sb$\cdot$ab(L), CA10=sb(H)/ab(L). \textbf{CKE0=L} for SRE/SREF/PDE (ra
 PDE \textbf{ODT0=H} = ODT persists in power-down (note 16). NOP has CSn=L; DES = CSn all H (nobody decodes CA). Static
 \colorbox{stat}{2N/RST} = one value every phase, boot/init driven.}
 
-\section{How to read a row}
-{\small
-\textbf{Each command = one row (1-CLK) or two rows (2-CLK, ck0 then ck1).} Left block CA0--CA13 = the shared
-command/address wires; right block = the sideband. Green cells are the fixed \emph{fingerprint} the DRAM decodes;
-yellow are \emph{fields} the FIELD\_MUX / generators fill; blue are \emph{static} (no per-phase mux). Decode tree:
-CA1 (\texttt{L}=2-CLK, \texttt{H}=1-CLK) $\to$ CA0 (\texttt{L}=ACT) $\to$ CA2/CA3/CA4 (command) $\to$ latch the yellow
-fields. In parallel, CSn qualifies which \emph{rank} decodes (one-cold), CKE/ODT carry power \& termination state,
-PAR is the CA parity, 2N/RST are static. \textbf{1:1 gear:} a 2-CLK command's ck0/ck1 are two successive mc\_clks;
-at 1:2/1:4 they would be parallel phases (see gear notes in \texttt{dfi\_sideband.pdf}).}
-
 \end{document}
