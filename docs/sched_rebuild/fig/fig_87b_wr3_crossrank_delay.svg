@@ -387,14 +387,39 @@
   <line x1="150" y1="108" x2="150" y2="286" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4"/>
   <line x1="334" y1="108" x2="334" y2="286" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4"/>
   <line x1="426" y1="108" x2="426" y2="286" stroke="#2a8f86" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="150" y1="168" x2="334" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="334" y1="168" x2="150" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="242.0" y="163" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">wrlat=4</text>
+  <line x1="334" y1="232" x2="426" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="426" y1="232" x2="334" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="380.0" y="227" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">wrdata=2</text>
   <text x="153" y="102" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">cmd</text>
   <text x="337" y="102" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">en^</text>
   <text x="429" y="102" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">data</text>
-  <line x1="150" y1="168" x2="334" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="334" y1="168" x2="150" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="242.0" y="163" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">tphy_wrlat=4</text>
-  <line x1="334" y1="232" x2="426" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
-  <line x1="426" y1="232" x2="334" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
-  <text x="380.0" y="227" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">tphy_wrdata=2</text>
-  <text x="20" y="396" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">WR1/WR2 repeat the SAME two hops from their own cmd (8 apart). spacing 8 = burst 8 -&gt; en + data both continuous; en leads data by wrdata=2.</text>
+  <line x1="518" y1="108" x2="518" y2="286" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="702" y1="108" x2="702" y2="286" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="794" y1="108" x2="794" y2="286" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="518" y1="168" x2="702" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="702" y1="168" x2="518" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="610.0" y="163" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">wrlat</text>
+  <line x1="702" y1="232" x2="794" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="794" y1="232" x2="702" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="748.0" y="227" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">wrdata</text>
+  <line x1="886" y1="108" x2="886" y2="286" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="1070" y1="108" x2="1070" y2="286" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="1162" y1="108" x2="1162" y2="286" stroke="#aaaaaa" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="886" y1="168" x2="1070" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1070" y1="168" x2="886" y2="168" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="978.0" y="163" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">wrlat</text>
+  <line x1="1070" y1="232" x2="1162" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1162" y1="232" x2="1070" y2="232" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1116.0" y="227" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">wrdata</text>
+  <line x1="334" y1="174" x2="334" y2="226" stroke="#2a8f86" stroke-width="1.4"/>
+  <line x1="702" y1="174" x2="702" y2="226" stroke="#2a8f86" stroke-width="1.4"/>
+  <line x1="1070" y1="174" x2="1070" y2="226" stroke="#2a8f86" stroke-width="1.4"/>
+  <line x1="1438" y1="174" x2="1438" y2="226" stroke="#2a8f86" stroke-width="1.4"/>
+  <text x="518" y="215" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">WR0 en</text>
+  <text x="886" y="215" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">WR1 en</text>
+  <text x="1254" y="215" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">WR2 en</text>
+  <text x="20" y="396" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">each write anchors its OWN wrlat/wrdata to its cmd. en windows = 8 CK, starts 8 apart (cyc 4/12/20) -&gt; they ABUT at 12 &amp; 20, never overlap (spacing 8 = burst 8).</text>
 </svg>

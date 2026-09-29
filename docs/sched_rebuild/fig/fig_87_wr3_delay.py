@@ -68,16 +68,26 @@ def panel(title, sub, cs0, cs1, fname):
     f.text(X0-10, ydat+RH/2+4, "wrdata_p0", size=8.5, mono=True, anchor="end"); bus(f, ydat, data)
     f.text(X0-10, ycs0+RH/2+4, "cs_n_r0", size=8.5, mono=True, anchor="end"); bit(f, ycs0, cs0)
     f.text(X0-10, ycs1+RH/2+4, "cs_n_r1", size=8.5, mono=True, anchor="end"); bit(f, ycs1, cs1)
-    # guides + delay arrows on WR0
-    for c, col in [(0, LAT), (4, LAT), (6, DAT)]:
-        f.line(xc(c), ycmd-6, xc(c), ydat+RH, dashed=True, stroke=col)
-    for c, t in [(0, "cmd"), (4, "en^"), (6, "data")]:
-        f.text(xc(c)+3, ycmd-12, t, size=6.5, mono=True, fill=INK)
-    darrow(f, 0, 4, ycmd+RH+10, "tphy_wrlat=4", LAT)
-    darrow(f, 4, 6, yen+RH+10, "tphy_wrdata=2", DAT)
+    # per-write guides + delay arrows (all 3)
+    for i, s in enumerate([0, 8, 16]):
+        enc = s + wrlat; dac = s + wrlat + wrdata
+        for c, col in [(s, LAT), (enc, LAT), (dac, DAT)]:
+            f.line(xc(c), ycmd-6, xc(c), ydat+RH, dashed=True, stroke=(col if i == 0 else FAINT))
+        lab = ("=4" if i == 0 else ""); labd = ("=2" if i == 0 else "")
+        darrow(f, s, enc, ycmd+RH+10, "wrlat"+lab, LAT)
+        darrow(f, enc, dac, yen+RH+10, "wrdata"+labd, DAT)
+        if i == 0:
+            for c, t in [(s, "cmd"), (enc, "en^"), (dac, "data")]:
+                f.text(xc(c)+3, ycmd-12, t, size=6.5, mono=True, fill=INK)
+    # en-window boundary ticks (4|12|20|28) - shows the 8-CK en segments ABUT
+    for c in [4, 12, 20, 28]:
+        f.line(xc(c), yen-4, xc(c), yen+RH+4, stroke=DAT, width=1.4)
+    for c, t in [(8, "WR0 en"), (16, "WR1 en"), (24, "WR2 en")]:
+        f.text(xc(c), yen+RH-7, t, size=6.5, mono=True, fill=DAT, anchor="middle")
     f.text(20, ycs1+RH+22,
-           "WR1/WR2 repeat the SAME two hops from their own cmd (8 apart). spacing 8 = burst 8 -> "
-           "en + data both continuous; en leads data by wrdata=2.", size=8, mono=True, fill=INK)
+           "each write anchors its OWN wrlat/wrdata to its cmd. en windows = 8 CK, starts 8 apart "
+           "(cyc 4/12/20) -> they ABUT at 12 & 20, never overlap (spacing 8 = burst 8).",
+           size=8, mono=True, fill=INK)
     f.save(fname); print("wrote", fname)
 
 
