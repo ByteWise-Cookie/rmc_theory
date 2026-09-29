@@ -1,0 +1,534 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1944" height="470" viewBox="0 0 1944 470" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1944" height="470" fill="#ffffff"/>
+  <text x="20" y="26" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">wr_launch needs a DELAY LINE (not one counter)  -  wrlat(14) &gt; spacing(8)</text>
+  <text x="20" y="44" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">WR0/1/2 @ 0/8/16; each launch injects a shift-reg entry; taps fire en@wrlat, wd_read_ptr@data. Pipes OVERLAP -&gt; multiple in flight.</text>
+  <line x1="160" y1="64" x2="160" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="200" y1="64" x2="200" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="240" y1="64" x2="240" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="280" y1="64" x2="280" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="320" y1="64" x2="320" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="360" y1="64" x2="360" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="400" y1="64" x2="400" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="440" y1="64" x2="440" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="480" y1="64" x2="480" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="520" y1="64" x2="520" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="560" y1="64" x2="560" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="600" y1="64" x2="600" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="640" y1="64" x2="640" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="680" y1="64" x2="680" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="720" y1="64" x2="720" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="760" y1="64" x2="760" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="800" y1="64" x2="800" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="840" y1="64" x2="840" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="880" y1="64" x2="880" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="920" y1="64" x2="920" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="960" y1="64" x2="960" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1000" y1="64" x2="1000" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1040" y1="64" x2="1040" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1080" y1="64" x2="1080" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1120" y1="64" x2="1120" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1160" y1="64" x2="1160" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1200" y1="64" x2="1200" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1240" y1="64" x2="1240" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1280" y1="64" x2="1280" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="64" x2="1320" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1360" y1="64" x2="1360" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1400" y1="64" x2="1400" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1440" y1="64" x2="1440" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1480" y1="64" x2="1480" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1520" y1="64" x2="1520" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1560" y1="64" x2="1560" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1600" y1="64" x2="1600" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1640" y1="64" x2="1640" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1680" y1="64" x2="1680" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1720" y1="64" x2="1720" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1760" y1="64" x2="1760" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1800" y1="64" x2="1800" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1840" y1="64" x2="1840" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1880" y1="64" x2="1880" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1920" y1="64" x2="1920" y2="372" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="180.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">0</text>
+  <text x="260.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">2</text>
+  <text x="340.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">4</text>
+  <text x="420.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">6</text>
+  <text x="500.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">8</text>
+  <text x="580.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">10</text>
+  <text x="660.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">12</text>
+  <text x="740.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">14</text>
+  <text x="820.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">16</text>
+  <text x="900.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">18</text>
+  <text x="980.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">20</text>
+  <text x="1060.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">22</text>
+  <text x="1140.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">24</text>
+  <text x="1220.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">26</text>
+  <text x="1300.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">28</text>
+  <text x="1380.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">30</text>
+  <text x="1460.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">32</text>
+  <text x="1540.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">34</text>
+  <text x="1620.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">36</text>
+  <text x="1700.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">38</text>
+  <text x="1780.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">40</text>
+  <text x="1860.0" y="60" font-size="6" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">42</text>
+  <text x="150" y="92.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">dfi_clk</text>
+  <line x1="160" y1="78" x2="180.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="180.0" y1="78" x2="180.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="180.0" y1="98" x2="200" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="200" y1="98" x2="200" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="200" y1="78" x2="220.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="220.0" y1="78" x2="220.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="220.0" y1="98" x2="240" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="240" y1="98" x2="240" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="240" y1="78" x2="260.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="260.0" y1="78" x2="260.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="260.0" y1="98" x2="280" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="280" y1="98" x2="280" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="280" y1="78" x2="300.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="300.0" y1="78" x2="300.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="300.0" y1="98" x2="320" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="320" y1="98" x2="320" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="320" y1="78" x2="340.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="340.0" y1="78" x2="340.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="340.0" y1="98" x2="360" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="360" y1="98" x2="360" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="360" y1="78" x2="380.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="380.0" y1="78" x2="380.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="380.0" y1="98" x2="400" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="400" y1="98" x2="400" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="400" y1="78" x2="420.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="420.0" y1="78" x2="420.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="420.0" y1="98" x2="440" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="440" y1="98" x2="440" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="440" y1="78" x2="460.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="460.0" y1="78" x2="460.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="460.0" y1="98" x2="480" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="480" y1="98" x2="480" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="480" y1="78" x2="500.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="500.0" y1="78" x2="500.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="500.0" y1="98" x2="520" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="520" y1="98" x2="520" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="520" y1="78" x2="540.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="540.0" y1="78" x2="540.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="540.0" y1="98" x2="560" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="560" y1="98" x2="560" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="560" y1="78" x2="580.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580.0" y1="78" x2="580.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580.0" y1="98" x2="600" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="600" y1="98" x2="600" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="600" y1="78" x2="620.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="620.0" y1="78" x2="620.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="620.0" y1="98" x2="640" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="640" y1="98" x2="640" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="640" y1="78" x2="660.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="660.0" y1="78" x2="660.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="660.0" y1="98" x2="680" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="680" y1="98" x2="680" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="680" y1="78" x2="700.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="700.0" y1="78" x2="700.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="700.0" y1="98" x2="720" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="720" y1="98" x2="720" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="720" y1="78" x2="740.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="740.0" y1="78" x2="740.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="740.0" y1="98" x2="760" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="760" y1="98" x2="760" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="760" y1="78" x2="780.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="780.0" y1="78" x2="780.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="780.0" y1="98" x2="800" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="800" y1="98" x2="800" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="800" y1="78" x2="820.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="820.0" y1="78" x2="820.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="820.0" y1="98" x2="840" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="840" y1="98" x2="840" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="840" y1="78" x2="860.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="860.0" y1="78" x2="860.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="860.0" y1="98" x2="880" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="880" y1="98" x2="880" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="880" y1="78" x2="900.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="900.0" y1="78" x2="900.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="900.0" y1="98" x2="920" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="920" y1="98" x2="920" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="920" y1="78" x2="940.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="940.0" y1="78" x2="940.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="940.0" y1="98" x2="960" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="960" y1="98" x2="960" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="960" y1="78" x2="980.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="980.0" y1="78" x2="980.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="980.0" y1="98" x2="1000" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1000" y1="98" x2="1000" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1000" y1="78" x2="1020.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1020.0" y1="78" x2="1020.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1020.0" y1="98" x2="1040" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1040" y1="98" x2="1040" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1040" y1="78" x2="1060.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1060.0" y1="78" x2="1060.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1060.0" y1="98" x2="1080" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1080" y1="98" x2="1080" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1080" y1="78" x2="1100.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1100.0" y1="78" x2="1100.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1100.0" y1="98" x2="1120" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1120" y1="98" x2="1120" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1120" y1="78" x2="1140.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1140.0" y1="78" x2="1140.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1140.0" y1="98" x2="1160" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1160" y1="98" x2="1160" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1160" y1="78" x2="1180.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1180.0" y1="78" x2="1180.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1180.0" y1="98" x2="1200" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1200" y1="98" x2="1200" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1200" y1="78" x2="1220.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1220.0" y1="78" x2="1220.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1220.0" y1="98" x2="1240" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1240" y1="98" x2="1240" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1240" y1="78" x2="1260.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1260.0" y1="78" x2="1260.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1260.0" y1="98" x2="1280" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1280" y1="98" x2="1280" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1280" y1="78" x2="1300.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1300.0" y1="78" x2="1300.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1300.0" y1="98" x2="1320" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="98" x2="1320" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="78" x2="1340.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1340.0" y1="78" x2="1340.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1340.0" y1="98" x2="1360" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1360" y1="98" x2="1360" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1360" y1="78" x2="1380.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1380.0" y1="78" x2="1380.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1380.0" y1="98" x2="1400" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1400" y1="98" x2="1400" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1400" y1="78" x2="1420.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1420.0" y1="78" x2="1420.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1420.0" y1="98" x2="1440" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1440" y1="98" x2="1440" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1440" y1="78" x2="1460.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1460.0" y1="78" x2="1460.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1460.0" y1="98" x2="1480" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1480" y1="98" x2="1480" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1480" y1="78" x2="1500.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1500.0" y1="78" x2="1500.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1500.0" y1="98" x2="1520" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1520" y1="98" x2="1520" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1520" y1="78" x2="1540.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1540.0" y1="78" x2="1540.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1540.0" y1="98" x2="1560" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1560" y1="98" x2="1560" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1560" y1="78" x2="1580.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1580.0" y1="78" x2="1580.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1580.0" y1="98" x2="1600" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1600" y1="98" x2="1600" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1600" y1="78" x2="1620.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1620.0" y1="78" x2="1620.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1620.0" y1="98" x2="1640" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1640" y1="98" x2="1640" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1640" y1="78" x2="1660.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1660.0" y1="78" x2="1660.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1660.0" y1="98" x2="1680" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1680" y1="98" x2="1680" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1680" y1="78" x2="1700.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1700.0" y1="78" x2="1700.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1700.0" y1="98" x2="1720" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1720" y1="98" x2="1720" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1720" y1="78" x2="1740.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1740.0" y1="78" x2="1740.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1740.0" y1="98" x2="1760" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1760" y1="98" x2="1760" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1760" y1="78" x2="1780.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1780.0" y1="78" x2="1780.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1780.0" y1="98" x2="1800" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1800" y1="98" x2="1800" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1800" y1="78" x2="1820.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1820.0" y1="78" x2="1820.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1820.0" y1="98" x2="1840" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1840" y1="98" x2="1840" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1840" y1="78" x2="1860.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1860.0" y1="78" x2="1860.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1860.0" y1="98" x2="1880" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1880" y1="98" x2="1880" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1880" y1="78" x2="1900.0" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1900.0" y1="78" x2="1900.0" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1900.0" y1="98" x2="1920" y2="98" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1920" y1="98" x2="1920" y2="78" stroke="#000000" stroke-width="1.0"/>
+  <text x="150" y="128.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">wr_cmd</text>
+  <rect x="161" y="115" width="38" height="18" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="180.0" y="127.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WR0</text>
+  <line x1="200" y1="124.0" x2="240" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="240" y1="124.0" x2="280" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="280" y1="124.0" x2="320" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="320" y1="124.0" x2="360" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="360" y1="124.0" x2="400" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="400" y1="124.0" x2="440" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="440" y1="124.0" x2="480" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="481" y="115" width="38" height="18" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="500.0" y="127.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WR1</text>
+  <line x1="520" y1="124.0" x2="560" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="560" y1="124.0" x2="600" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="600" y1="124.0" x2="640" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="640" y1="124.0" x2="680" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="680" y1="124.0" x2="720" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="720" y1="124.0" x2="760" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="760" y1="124.0" x2="800" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="801" y="115" width="38" height="18" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="820.0" y="127.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">WR2</text>
+  <line x1="840" y1="124.0" x2="880" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="880" y1="124.0" x2="920" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="920" y1="124.0" x2="960" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="960" y1="124.0" x2="1000" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1000" y1="124.0" x2="1040" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1040" y1="124.0" x2="1080" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1080" y1="124.0" x2="1120" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1120" y1="124.0" x2="1160" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1160" y1="124.0" x2="1200" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1200" y1="124.0" x2="1240" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1240" y1="124.0" x2="1280" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1280" y1="124.0" x2="1320" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="124.0" x2="1360" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1360" y1="124.0" x2="1400" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1400" y1="124.0" x2="1440" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1440" y1="124.0" x2="1480" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1480" y1="124.0" x2="1520" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1520" y1="124.0" x2="1560" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1560" y1="124.0" x2="1600" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1600" y1="124.0" x2="1640" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1640" y1="124.0" x2="1680" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1680" y1="124.0" x2="1720" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1720" y1="124.0" x2="1760" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1760" y1="124.0" x2="1800" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1800" y1="124.0" x2="1840" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1840" y1="124.0" x2="1880" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1880" y1="124.0" x2="1920" y2="124.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="150" y="164.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">wr_launch</text>
+  <line x1="160" y1="150" x2="200" y2="150" stroke="#000000" stroke-width="1.7"/>
+  <line x1="200" y1="150" x2="200" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="200" y1="170" x2="240" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="240" y1="170" x2="280" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="280" y1="170" x2="320" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="320" y1="170" x2="360" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="360" y1="170" x2="400" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="400" y1="170" x2="440" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="440" y1="170" x2="480" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="480" y1="170" x2="480" y2="150" stroke="#000000" stroke-width="1.0"/>
+  <line x1="480" y1="150" x2="520" y2="150" stroke="#000000" stroke-width="1.7"/>
+  <line x1="520" y1="150" x2="520" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="520" y1="170" x2="560" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="560" y1="170" x2="600" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="600" y1="170" x2="640" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="640" y1="170" x2="680" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="680" y1="170" x2="720" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="720" y1="170" x2="760" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="760" y1="170" x2="800" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="800" y1="170" x2="800" y2="150" stroke="#000000" stroke-width="1.0"/>
+  <line x1="800" y1="150" x2="840" y2="150" stroke="#000000" stroke-width="1.7"/>
+  <line x1="840" y1="150" x2="840" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="840" y1="170" x2="880" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="880" y1="170" x2="920" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="920" y1="170" x2="960" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="960" y1="170" x2="1000" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1000" y1="170" x2="1040" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1040" y1="170" x2="1080" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1080" y1="170" x2="1120" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1120" y1="170" x2="1160" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1160" y1="170" x2="1200" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1200" y1="170" x2="1240" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1240" y1="170" x2="1280" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1280" y1="170" x2="1320" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="170" x2="1360" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1360" y1="170" x2="1400" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1400" y1="170" x2="1440" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1440" y1="170" x2="1480" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1480" y1="170" x2="1520" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1520" y1="170" x2="1560" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1560" y1="170" x2="1600" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1600" y1="170" x2="1640" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1640" y1="170" x2="1680" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1680" y1="170" x2="1720" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1720" y1="170" x2="1760" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1760" y1="170" x2="1800" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1800" y1="170" x2="1840" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1840" y1="170" x2="1880" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1880" y1="170" x2="1920" y2="170" stroke="#000000" stroke-width="1.0"/>
+  <line x1="160" y1="190" x2="720" y2="190" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="720" y1="190" x2="160" y2="190" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="440.0" y="185" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">wrlat (WR0 in flight)</text>
+  <line x1="480" y1="206" x2="1040" y2="206" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1040" y1="206" x2="480" y2="206" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="760.0" y="201" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">wrlat (WR1 in flight)</text>
+  <line x1="800" y1="222" x2="1360" y2="222" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1360" y1="222" x2="800" y2="222" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1080.0" y="217" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">wrlat (WR2 in flight)</text>
+  <text x="150" y="208" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">delay_line</text>
+  <rect x="480" y="184" width="240" height="46" fill="#e9f0dc" stroke="none" stroke-width="0"/>
+  <rect x="800" y="184" width="240" height="46" fill="#e9f0dc" stroke="none" stroke-width="0"/>
+  <text x="600" y="240" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">2 in flight</text>
+  <text x="920" y="240" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">2 in flight</text>
+  <text x="150" y="264.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">wr_en_p0</text>
+  <line x1="160" y1="270" x2="200" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="200" y1="270" x2="240" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="240" y1="270" x2="280" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="280" y1="270" x2="320" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="320" y1="270" x2="360" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="360" y1="270" x2="400" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="400" y1="270" x2="440" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="440" y1="270" x2="480" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="480" y1="270" x2="520" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="520" y1="270" x2="560" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="560" y1="270" x2="600" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="600" y1="270" x2="640" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="640" y1="270" x2="680" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="680" y1="270" x2="720" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="720" y1="270" x2="720" y2="250" stroke="#000000" stroke-width="1.0"/>
+  <line x1="720" y1="250" x2="760" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="760" y1="250" x2="800" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="800" y1="250" x2="840" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="840" y1="250" x2="880" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="880" y1="250" x2="920" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="920" y1="250" x2="960" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="960" y1="250" x2="1000" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1000" y1="250" x2="1040" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1040" y1="250" x2="1080" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1080" y1="250" x2="1120" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1120" y1="250" x2="1160" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1160" y1="250" x2="1200" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1200" y1="250" x2="1240" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1240" y1="250" x2="1280" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1280" y1="250" x2="1320" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1320" y1="250" x2="1360" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1360" y1="250" x2="1400" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1400" y1="250" x2="1440" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1440" y1="250" x2="1480" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1480" y1="250" x2="1520" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1520" y1="250" x2="1560" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1560" y1="250" x2="1600" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1600" y1="250" x2="1640" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1640" y1="250" x2="1680" y2="250" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1680" y1="250" x2="1680" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1680" y1="270" x2="1720" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1720" y1="270" x2="1760" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1760" y1="270" x2="1800" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1800" y1="270" x2="1840" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1840" y1="270" x2="1880" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1880" y1="270" x2="1920" y2="270" stroke="#000000" stroke-width="1.0"/>
+  <line x1="720" y1="287" x2="800" y2="287" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="800" y1="287" x2="720" y2="287" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="760.0" y="282" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#2a8f86">wrdata=2</text>
+  <text x="150" y="322.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">wrdata_p0</text>
+  <line x1="160" y1="318.0" x2="200" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="200" y1="318.0" x2="240" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="240" y1="318.0" x2="280" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="280" y1="318.0" x2="320" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="320" y1="318.0" x2="360" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="360" y1="318.0" x2="400" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="400" y1="318.0" x2="440" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="440" y1="318.0" x2="480" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="480" y1="318.0" x2="520" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="520" y1="318.0" x2="560" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="560" y1="318.0" x2="600" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="600" y1="318.0" x2="640" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="640" y1="318.0" x2="680" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="680" y1="318.0" x2="720" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="720" y1="318.0" x2="760" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="760" y1="318.0" x2="800" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="801" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="820.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="841" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="860.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="881" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="900.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="921" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="940.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="961" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="980.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="1001" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1020.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="1041" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1060.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="1081" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1100.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W0</text>
+  <rect x="1121" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1140.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1161" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1180.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1201" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1220.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1241" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1260.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1281" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1300.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1321" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1340.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1361" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1380.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1401" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1420.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W1</text>
+  <rect x="1441" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1460.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1481" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1500.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1521" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1540.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1561" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1580.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1601" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1620.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1641" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1660.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1681" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1700.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <rect x="1721" y="309" width="38" height="18" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1740.0" y="321.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">W2</text>
+  <line x1="1760" y1="318.0" x2="1800" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1800" y1="318.0" x2="1840" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1840" y1="318.0" x2="1880" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1880" y1="318.0" x2="1920" y2="318.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="150" y="358.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">wd_read_ptr</text>
+  <line x1="160" y1="354.0" x2="200" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="200" y1="354.0" x2="240" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="240" y1="354.0" x2="280" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="280" y1="354.0" x2="320" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="320" y1="354.0" x2="360" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="360" y1="354.0" x2="400" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="400" y1="354.0" x2="440" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="440" y1="354.0" x2="480" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="480" y1="354.0" x2="520" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="520" y1="354.0" x2="560" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="560" y1="354.0" x2="600" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="600" y1="354.0" x2="640" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="640" y1="354.0" x2="680" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="680" y1="354.0" x2="720" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="720" y1="354.0" x2="760" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="761" y="345" width="38" height="18" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="780.0" y="357.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">rd0</text>
+  <line x1="800" y1="354.0" x2="840" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="840" y1="354.0" x2="880" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="880" y1="354.0" x2="920" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="920" y1="354.0" x2="960" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="960" y1="354.0" x2="1000" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1000" y1="354.0" x2="1040" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1040" y1="354.0" x2="1080" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="1081" y="345" width="38" height="18" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1100.0" y="357.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">rd1</text>
+  <line x1="1120" y1="354.0" x2="1160" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1160" y1="354.0" x2="1200" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1200" y1="354.0" x2="1240" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1240" y1="354.0" x2="1280" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1280" y1="354.0" x2="1320" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="354.0" x2="1360" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1360" y1="354.0" x2="1400" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="1401" y="345" width="38" height="18" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1420.0" y="357.0" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">rd2</text>
+  <line x1="1440" y1="354.0" x2="1480" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1480" y1="354.0" x2="1520" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1520" y1="354.0" x2="1560" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1560" y1="354.0" x2="1600" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1600" y1="354.0" x2="1640" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1640" y1="354.0" x2="1680" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1680" y1="354.0" x2="1720" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1720" y1="354.0" x2="1760" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1760" y1="354.0" x2="1800" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1800" y1="354.0" x2="1840" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1840" y1="354.0" x2="1880" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1880" y1="354.0" x2="1920" y2="354.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="20" y="394" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">wrlat=14 &gt; spacing=8 -&gt; when WR1 launches (cyc8) WR0 is still in the WL pipe -&gt; 2 entries coexist. one counter cannot; a shift-reg delay line of depth WL holds them all. real DDR5: WL~40 -&gt; ~5 in flight.</text>
+</svg>
