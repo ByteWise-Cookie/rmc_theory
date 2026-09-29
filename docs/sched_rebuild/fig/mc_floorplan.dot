@@ -1,0 +1,113 @@
+digraph MC {
+  rankdir=LR;
+  compound=true;
+  splines=true;
+  nodesep=0.35;
+  ranksep=0.7;
+  fontname="Helvetica";
+  node [shape=box, style="rounded,filled", fillcolor="#ffffff", fontname="Helvetica", fontsize=10, margin="0.10,0.05"];
+  edge [fontname="Helvetica", fontsize=8, color="#444444", arrowsize=0.7];
+
+  label="MC core - module floorplan  (one rank lane detailed; x N_RANKS x N_CH; bank B0 expanded, B1..B3 collapsed)";
+  labelloc="t"; fontsize=14;
+
+  /* ---------------- ingress ---------------- */
+  LOOKAHEAD [label="LOOKAHEAD\n(your stub)", style="rounded,dashed,filled", fillcolor="#f0f0f0"];
+  BANK_DEC  [label="BANK_DEC\n1-of-N {rank,bank}"];
+
+  /* ---------------- detailed bank cell B0 ---------------- */
+  subgraph cluster_b0 {
+    label="BANK_CELL  B0  (detailed)"; style="rounded,filled"; fillcolor="#eef3f8"; fontsize=11;
+    ROW_TCAM  [label="ROW_TCAM (2-wide)\nrow hit/miss -> slot ptr"];
+    SHIFT_REG [label="SHIFT_REG (2)\nrow-miss order"];
+    PKT_RAM   [label="PKT_RAM (SRAM)\n{col, w/r, data_ptr, rob_index}"];
+    FREE_LIST [label="FREE_LIST"];
+    RETIRE_PTR[label="RETIRE_PTR\nFCFS/FIFO"];
+    COL_REG   [label="COL_REG (2)\ndrain on row-hit"];
+    STATUS_REG[label="STATUS_REG\nstate,open_row,valid,pre_pending"];
+    CAN_BITS  [label="CAN_BITS\ncan_act/cas/pre", fillcolor="#eaf5ea"];
+    REF_RFM   [label="REF_RFM\nref_pending, RAA"];
+    NEED_GEN  [label="NEED_GEN\nneed_pre/act/cas"];
+    WEIGHTS   [label="WEIGHTS\nCAS_W/ACT_W/PRE_W"];
+    DRAIN_DEC [label="DRAIN_DEC\ncol/port -> CAS"];
+
+    ROW_TCAM -> SHIFT_REG   [label="miss"];
+    ROW_TCAM -> PKT_RAM     [label="slot"];
+    FREE_LIST -> PKT_RAM    [label="alloc"];
+    PKT_RAM  -> RETIRE_PTR   [style=dashed];
+    PKT_RAM  -> COL_REG     [label="hit drain"];
+    ROW_TCAM -> NEED_GEN;
+    STATUS_REG -> NEED_GEN;
+    REF_RFM  -> NEED_GEN;
+    CAN_BITS -> NEED_GEN;
+    NEED_GEN -> WEIGHTS;
+    COL_REG  -> DRAIN_DEC;
+  }
+
+  /* collapsed banks */
+  B1 [label="BANK_CELL B1"];
+  B2 [label="BANK_CELL B2"];
+  B3 [label="BANK_CELL B3\n... x N_BANKS", style="rounded,dashed,filled", fillcolor="#f7f7f7"];
+
+  /* ---------------- arb tree ---------------- */
+  CMD_ARB  [label="CMD_ARB\ntier-1 (weights)"];
+  BGB_ARB  [label="BGB_ARB\nbank in BG"];
+  BG_ARB   [label="BG_ARB\ndiff-BG pref"];
+  RANK_ARB [label="RANK_ARB\nact/cas/pre win"];
+  L3       [label="L3 INTER-RANK\ncas/act/pre lanes", fillcolor="#fdf1dc"];
+
+  /* ---------------- scoreboard ---------------- */
+  subgraph cluster_sb {
+    label="SCOREBOARD"; style="rounded,filled"; fillcolor="#f3eef8"; fontsize=11;
+    GC        [label="GC (24b)\n+=gear"];
+    TIMING_CONST [label="TIMING_CONST\nJEDEC addends"];
+    UPD       [label="*_UPD\nnext_*=GC+const"];
+    TREG_CMP  [label="*_TREG + CMP\n-> can_*"];
+    REFI      [label="refi_cnt+debt"];
+    RAA       [label="RAA_cnt"];
+    GC -> UPD; TIMING_CONST -> UPD; UPD -> TREG_CMP;
+  }
+
+  /* ---------------- back-end ---------------- */
+  subgraph cluster_be {
+    label="BACK-END (shared / channel)"; style="rounded,filled"; fillcolor="#eef8ee"; fontsize=11;
+    PHASER   [label="CMD_PHASER\n2-slot"];
+    DFI_ENC  [label="DFI_CMD_ENCODER\nOPCODE_ROM+FIELD_MUX+CS_GEN"];
+    PHY      [label="DFI / PHY -> DRAM"];
+    WD_SRAM  [label="WD_SRAM"];
+    WR_SPLIT [label="WL_LAUNCH + WR_SPLIT"];
+    RD_ACC   [label="RD_CAP + RD_ACCUM"];
+    RD_SRAM  [label="RD_SRAM"];
+    PHASER -> DFI_ENC -> PHY;
+    WD_SRAM -> WR_SPLIT -> PHY;
+    PHY -> RD_ACC -> RD_SRAM;
+  }
+
+  MAINT [label="MAINT_ENG\nINIT/REF/RFM/ZQ/MRW/MRR", style="rounded,filled", fillcolor="#f8eef5"];
+
+  /* ---------------- top-level edges ---------------- */
+  LOOKAHEAD -> BANK_DEC;
+  BANK_DEC -> ROW_TCAM [lhead=cluster_b0, label="B0"];
+  BANK_DEC -> B1; BANK_DEC -> B2; BANK_DEC -> B3;
+
+  WEIGHTS  -> CMD_ARB [ltail=cluster_b0, label="forward {go,cmd,is_hit,w}"];
+  DRAIN_DEC -> CMD_ARB [ltail=cluster_b0, label="cas col"];
+  B1 -> CMD_ARB; B2 -> CMD_ARB; B3 -> CMD_ARB;
+  CMD_ARB -> BGB_ARB -> BG_ARB -> RANK_ARB -> L3;
+  L3 -> PHASER [lhead=cluster_be];
+
+  /* scoreboard broadcast + writeback */
+  TREG_CMP -> CAN_BITS [lhead=cluster_b0, style=dashed, label="can_* bcast"];
+  PHASER -> UPD [ltail=cluster_be, lhead=cluster_sb, style=dashed, label="cmd_issued"];
+  GC -> PHASER [ltail=cluster_sb, lhead=cluster_be, style=dotted, label="gear"];
+
+  /* feedback grant */
+  L3 -> STATUS_REG [lhead=cluster_b0, style=dashed, label="grant_oh (pop-on-CAS)"];
+
+  /* maint */
+  MAINT -> PHASER [lhead=cluster_be, style=dashed, label="inject"];
+  MAINT -> CAN_BITS [lhead=cluster_b0, style=dashed, label="stall/gate"];
+  REFI -> MAINT [ltail=cluster_sb, label="ref_rdy"];
+  RAA  -> MAINT [ltail=cluster_sb, label="rfm_rdy"];
+  STATUS_REG -> MAINT [ltail=cluster_b0, style=dashed, label="cas_complete"];
+}
