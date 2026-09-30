@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1418" height="428" viewBox="0 0 1418 428" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1418" height="428" fill="#ffffff"/>
+  <text x="20" y="26" font-size="14" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Read burst 1:1 (gear=00)</text>
+  <text x="20" y="45" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">p0 only; rd_cmd +tphy_rdlat=5 -&gt; rddata_en (MC window); PHY drives rddata_valid+rddata; accum -&gt; 512b write</text>
+  <line x1="210" y1="68" x2="210" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="284" y1="68" x2="284" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="358" y1="68" x2="358" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="432" y1="68" x2="432" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="506" y1="68" x2="506" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="580" y1="68" x2="580" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="654" y1="68" x2="654" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="728" y1="68" x2="728" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="802" y1="68" x2="802" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="876" y1="68" x2="876" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="950" y1="68" x2="950" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1024" y1="68" x2="1024" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1098" y1="68" x2="1098" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1172" y1="68" x2="1172" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1246" y1="68" x2="1246" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="68" x2="1320" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1394" y1="68" x2="1394" y2="354" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="247.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">0</text>
+  <text x="321.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">1</text>
+  <text x="395.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">2</text>
+  <text x="469.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">3</text>
+  <text x="543.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">4</text>
+  <text x="617.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">5</text>
+  <text x="691.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">6</text>
+  <text x="765.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">7</text>
+  <text x="839.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">8</text>
+  <text x="913.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">9</text>
+  <text x="987.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">10</text>
+  <text x="1061.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">11</text>
+  <text x="1135.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">12</text>
+  <text x="1209.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">13</text>
+  <text x="1283.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">14</text>
+  <text x="1357.0" y="64" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">15</text>
+  <text x="198" y="98.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">dfi_clk</text>
+  <line x1="210" y1="82" x2="247.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="247.0" y1="82" x2="247.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="247.0" y1="106" x2="284" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="284" y1="106" x2="284" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="284" y1="82" x2="321.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="321.0" y1="82" x2="321.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="321.0" y1="106" x2="358" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="358" y1="106" x2="358" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="358" y1="82" x2="395.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="395.0" y1="82" x2="395.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="395.0" y1="106" x2="432" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="432" y1="106" x2="432" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="432" y1="82" x2="469.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="469.0" y1="82" x2="469.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="469.0" y1="106" x2="506" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="506" y1="106" x2="506" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="506" y1="82" x2="543.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="543.0" y1="82" x2="543.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="543.0" y1="106" x2="580" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580" y1="106" x2="580" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580" y1="82" x2="617.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="617.0" y1="82" x2="617.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="617.0" y1="106" x2="654" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="654" y1="106" x2="654" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="654" y1="82" x2="691.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="691.0" y1="82" x2="691.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="691.0" y1="106" x2="728" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="728" y1="106" x2="728" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="728" y1="82" x2="765.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="765.0" y1="82" x2="765.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="765.0" y1="106" x2="802" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="802" y1="106" x2="802" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="802" y1="82" x2="839.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="839.0" y1="82" x2="839.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="839.0" y1="106" x2="876" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="876" y1="106" x2="876" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="876" y1="82" x2="913.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="913.0" y1="82" x2="913.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="913.0" y1="106" x2="950" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="950" y1="106" x2="950" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="950" y1="82" x2="987.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="987.0" y1="82" x2="987.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="987.0" y1="106" x2="1024" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1024" y1="106" x2="1024" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1024" y1="82" x2="1061.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1061.0" y1="82" x2="1061.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1061.0" y1="106" x2="1098" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1098" y1="106" x2="1098" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1098" y1="82" x2="1135.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1135.0" y1="82" x2="1135.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1135.0" y1="106" x2="1172" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1172" y1="106" x2="1172" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1172" y1="82" x2="1209.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1209.0" y1="82" x2="1209.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1209.0" y1="106" x2="1246" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1246" y1="106" x2="1246" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1246" y1="82" x2="1283.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1283.0" y1="82" x2="1283.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1283.0" y1="106" x2="1320" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="106" x2="1320" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="82" x2="1357.0" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1357.0" y1="82" x2="1357.0" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1357.0" y1="106" x2="1394" y2="106" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1394" y1="106" x2="1394" y2="82" stroke="#000000" stroke-width="1.0"/>
+  <text x="198" y="138.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rd_cmd</text>
+  <rect x="211.5" y="123" width="71" height="22" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="247.0" y="137.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">RD</text>
+  <rect x="285.5" y="123" width="71" height="22" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="321.0" y="137.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">COL</text>
+  <line x1="358" y1="134.0" x2="432" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="432" y1="134.0" x2="506" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="506" y1="134.0" x2="580" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="580" y1="134.0" x2="654" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="654" y1="134.0" x2="728" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="728" y1="134.0" x2="802" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="802" y1="134.0" x2="876" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="876" y1="134.0" x2="950" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="950" y1="134.0" x2="1024" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1024" y1="134.0" x2="1098" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1098" y1="134.0" x2="1172" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1172" y1="134.0" x2="1246" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1246" y1="134.0" x2="1320" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="134.0" x2="1394" y2="134.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="198" y="178.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rddata_en_p0</text>
+  <line x1="210" y1="186" x2="284" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="284" y1="186" x2="358" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="358" y1="186" x2="432" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="432" y1="186" x2="506" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="506" y1="186" x2="580" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580" y1="186" x2="580" y2="162" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580" y1="162" x2="654" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="654" y1="162" x2="728" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="728" y1="162" x2="802" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="802" y1="162" x2="876" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="876" y1="162" x2="950" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="950" y1="162" x2="1024" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1024" y1="162" x2="1098" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1098" y1="162" x2="1172" y2="162" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1172" y1="162" x2="1172" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1172" y1="186" x2="1246" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1246" y1="186" x2="1320" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="186" x2="1394" y2="186" stroke="#000000" stroke-width="1.0"/>
+  <text x="198" y="218.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rddata_valid_p0</text>
+  <line x1="210" y1="226" x2="284" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="284" y1="226" x2="358" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="358" y1="226" x2="432" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="432" y1="226" x2="506" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="506" y1="226" x2="580" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580" y1="226" x2="580" y2="202" stroke="#000000" stroke-width="1.0"/>
+  <line x1="580" y1="202" x2="654" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="654" y1="202" x2="728" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="728" y1="202" x2="802" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="802" y1="202" x2="876" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="876" y1="202" x2="950" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="950" y1="202" x2="1024" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1024" y1="202" x2="1098" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1098" y1="202" x2="1172" y2="202" stroke="#000000" stroke-width="1.7"/>
+  <line x1="1172" y1="202" x2="1172" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1172" y1="226" x2="1246" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1246" y1="226" x2="1320" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <line x1="1320" y1="226" x2="1394" y2="226" stroke="#000000" stroke-width="1.0"/>
+  <text x="198" y="258.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rddata_p0</text>
+  <line x1="210" y1="254.0" x2="284" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="284" y1="254.0" x2="358" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="358" y1="254.0" x2="432" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="432" y1="254.0" x2="506" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="506" y1="254.0" x2="580" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="581.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="617.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B0-7</text>
+  <rect x="655.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="691.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B8-15</text>
+  <rect x="729.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="765.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B16-23</text>
+  <rect x="803.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="839.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B24-31</text>
+  <rect x="877.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="913.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B32-39</text>
+  <rect x="951.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="987.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B40-47</text>
+  <rect x="1025.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1061.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B48-55</text>
+  <rect x="1099.5" y="243" width="71" height="22" fill="#efe6fb" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1135.0" y="257.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">B56-63</text>
+  <line x1="1172" y1="254.0" x2="1246" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1246" y1="254.0" x2="1320" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="254.0" x2="1394" y2="254.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="198" y="298.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rd_sram_wr</text>
+  <line x1="210" y1="294.0" x2="284" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="284" y1="294.0" x2="358" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="358" y1="294.0" x2="432" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="432" y1="294.0" x2="506" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="506" y1="294.0" x2="580" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="580" y1="294.0" x2="654" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="654" y1="294.0" x2="728" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="728" y1="294.0" x2="802" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="802" y1="294.0" x2="876" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="876" y1="294.0" x2="950" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="950" y1="294.0" x2="1024" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1024" y1="294.0" x2="1098" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1098" y1="294.0" x2="1172" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="1173.5" y="283" width="71" height="22" fill="#e9f0dc" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1209.0" y="297.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">512b @dbuf</text>
+  <line x1="1246" y1="294.0" x2="1320" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="294.0" x2="1394" y2="294.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <text x="198" y="338.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rd_done</text>
+  <line x1="210" y1="334.0" x2="284" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="284" y1="334.0" x2="358" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="358" y1="334.0" x2="432" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="432" y1="334.0" x2="506" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="506" y1="334.0" x2="580" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="580" y1="334.0" x2="654" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="654" y1="334.0" x2="728" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="728" y1="334.0" x2="802" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="802" y1="334.0" x2="876" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="876" y1="334.0" x2="950" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="950" y1="334.0" x2="1024" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1024" y1="334.0" x2="1098" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1098" y1="334.0" x2="1172" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <rect x="1173.5" y="323" width="71" height="22" fill="#e3f2f1" stroke="#000000" stroke-width="1.0" rx="2"/>
+  <text x="1209.0" y="337.0" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">done</text>
+  <line x1="1246" y1="334.0" x2="1320" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="1320" y1="334.0" x2="1394" y2="334.0" stroke="#aaaaaa" stroke-width="1.0"/>
+  <line x1="210" y1="163" x2="580" y2="163" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="580" y1="163" x2="210" y2="163" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="395.0" y="158" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#7a4fb0">tphy_rdlat=5</text>
+  <rect x="210" y="366" width="1184" height="46" fill="#ffffff" stroke="#000000" stroke-width="1.1"/>
+  <text x="220" y="384" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000" font-weight="bold">disabled this gear (no toggle):</text>
+  <text x="220" y="402" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">rddata_en/valid/rddata _p1/p2/p3</text>
+</svg>
