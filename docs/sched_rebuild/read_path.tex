@@ -1,0 +1,129 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=16mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[strings]{underscore}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\definecolor{hd}{RGB}{38,66,105}
+\definecolor{hb}{RGB}{223,232,241}
+\definecolor{zeb}{RGB}{244,246,249}
+\titleformat{\section}{\large\bfseries\color{hd}}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\renewcommand{\arraystretch}{1.25}
+\setlist{nosep,leftmargin=1.4em}
+
+\newcolumntype{P}{>{\ttfamily\footnotesize\raggedright\arraybackslash}p{4.3cm}}
+\newcolumntype{W}{>{\ttfamily\scriptsize\centering\arraybackslash}p{1.7cm}}
+\newcolumntype{D}{>{\scriptsize\centering\arraybackslash}p{1.1cm}}
+\newcolumntype{M}{>{\footnotesize\raggedright\arraybackslash}p{8.4cm}}
+
+\begin{document}
+\begin{center}
+{\LARGE\textbf{MC read data-return path}}\\[2pt]
+{\small One channel, DDR5. DFI read capture $\rightarrow$ accumulate $\rightarrow$ RD\_SRAM $\rightarrow$
+completion. All ports + timing explained. Widths parametric (DQ, N\_RANKS, 512=line). Mirror of the
+write launch, but \textbf{PHY-timed}, not self-timed.}
+\end{center}
+
+\section{Shape of a read (vs a write)}
+A RD command is issued on the CA bus; the data comes back \textbf{RL = CL} cycles later at the DRAM
+pins. The MC does \emph{not} generate the data timing --- the \textbf{PHY drives} \texttt{dfi\_rddata}
+with a \texttt{dfi\_rddata\_valid} strobe when the beats are actually present. The MC's job is:
+\begin{itemize}
+\item at RD issue, \textbf{arm} the capture: assert \texttt{dfi\_rddata\_en} at \texttt{cmd + tphy\_rdlat}
+      (opens the capture window for \texttt{BL/2} beats), and push \{\texttt{dbuf\_addr, rob\_index}\}
+      into a fixed-depth \textbf{RL delay line} so the destination is known when data lands;
+\item \textbf{capture} beats on \texttt{dfi\_rddata\_valid}, accumulate into a 512b line, write \emph{once}
+      to RD\_SRAM at \texttt{dbuf\_addr};
+\item on the last beat, raise \texttt{rd\_done}; the ROB marks its bitmap; when all packets of a request
+      are in, \texttt{MERGE} drains RD\_SRAM to the AXI R channel in order.
+\end{itemize}
+Key contrast with the write path: write data is \textbf{self-timed} (MC drives it out); read data is
+\textbf{PHY-timed} (MC waits for \texttt{dfi\_rddata\_valid}). There is no ``en leads data'' offset the
+MC owns --- the MC opens a window (\texttt{rddata\_en}) and the PHY fills it.
+
+\section{DFI read-data ports}
+\rowcolors{2}{white}{zeb}
+\begin{tabular}{P W D M}
+\toprule
+\rowcolor{hb}\textbf{port} & \textbf{dir} & \textbf{width} & \textbf{meaning / when}\\ \midrule
+dfi_rddata_pN        & PHY$\to$MC & 2*DQ & read beats for phase N (2 UI). Valid only when rddata_valid_pN=1.\\
+dfi_rddata_valid_pN  & PHY$\to$MC & 1    & PHY asserts when dfi_rddata_pN carries valid beats. The capture strobe.\\
+dfi_rddata_en_pN     & MC$\to$PHY & 1    & MC opens the capture window: assert at cmd+tphy_rdlat, hold BL/2. Tells PHY to return data.\\
+dfi_rddata_dbi_pN    & PHY$\to$MC & 2*DQ/8 & read DBI (if enabled); PHY may pre-resolve. Optional.\\
+dfi_rddata_cs_n / valid variants & MC$\to$PHY & few & some PHYs qualify per-rank; PHY-IP dependent (parametric).\\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize Read CRC / on-die ECC: handled by DRAM/PHY, not the MC data path (same as write ---
+MC only monitors \texttt{dfi\_alert\_n} / \texttt{dfi\_error}). No CRC/ECC data port the MC drives.}
+
+\section{Timing}
+\begin{itemize}
+\item \textbf{tphy\_rdlat} --- delay (DFI cycles) from the RD command to when the MC asserts
+      \texttt{dfi\_rddata\_en} (open the window). PHY-reported, DVFS-reloadable, \textbf{same across
+      ranks} (per-rank skew absorbed in the PHY, invisible on DFI).
+\item \textbf{RL = CL} --- command-to-data at the DRAM pins. The PHY maps the MC's window to the pin
+      timing; the MC counts only DFI cycles.
+\item \textbf{Capture window} --- \texttt{dfi\_rddata\_en} held for \texttt{BL/2} DFI-beats; PHY returns
+      \texttt{dfi\_rddata} + \texttt{dfi\_rddata\_valid} within it. The MC keys capture off
+      \texttt{rddata\_valid} (robust to small PHY skew), not a fixed offset.
+\item \textbf{RL delay line} --- deterministic depth; loaded with \{\texttt{dbuf\_addr, rob\_index}\} at
+      RD issue, pops at the capture point so the accumulator knows where to write. No CAM, no timestamp.
+\item \textbf{dqFree} --- read bursts occupy the DQ bus \texttt{BL/2} = 8 CK each, same as writes;
+      spacing / cross-rank tRTRS rules are identical to the write side (scoreboard).
+\end{itemize}
+
+\section{Gear / beat placement}
+BL16 = 16 UI = 8 CK of data; a 64B line = 8 beat-groups of 8B (2 UI $\times$ DQ). Per mc\_clk the MC
+captures \texttt{2*gear} beats across the active phases (mirror of write split):
+\rowcolors{2}{white}{zeb}
+\begin{tabular}{>{\footnotesize}l W W M}
+\toprule
+\rowcolor{hb}\textbf{gear} & \textbf{phases} & \textbf{mc\_clks} & \textbf{byte capture per mc\_clk}\\ \midrule
+1:1 & p0        & 8 & p0: B0-7, then B8-15, \dots B56-63 (one beat-group/cyc, 8 cyc)\\
+1:2 & p0,p1     & 4 & cyc0 p0=B0-7 p1=B8-15 ; cyc1 p0=B16-23 p1=B24-31 ; \dots\\
+1:4 & p0..p3    & 2 & cyc0 p0..p3=B0-31 ; cyc1 p0..p3=B32-63\\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize \textbf{RD\_ACCUM} is the width/rate matcher (knows gear); RD\_SRAM stays gear-agnostic
+--- one wide 512b write per packet, not per beat.}
+
+\section{Modules (read path)}
+\rowcolors{2}{white}{zeb}
+\begin{tabular}{P M}
+\toprule
+\rowcolor{hb}\textbf{module} & \textbf{role + I/O}\\ \midrule
+RD_CAP   & RL delay line + window arm. IN (at RD issue): dbuf_addr, rob_index, tphy_rdlat; dfi_rddata_valid. OUT: dfi_rddata_en, cap_en, accum_load, rd_done\{rob_index,pkt\}.\\
+RD_ACCUM & beats $\to$ 512b. IN: dfi_rddata_pN[2*DQ], cap_en, gear. OUT: line[512], rd_wr_en, dbuf_addr.\\
+RD_SRAM  & 512b/line store. IN: line[512] @ dbuf_addr (MC port). OUT: 512b read @ dbuf_addr (CIF/merge port). Dual-domain.\\
+RD_SPLIT / MERGE & 512b $\to$ AXI R beats, in segment order once the ROB bitmap is full. OUT: \{rdata,rresp,rlast,rid\} valid/ready.\\
+COMPLETION & rd_done $\to$ ROB bitmap set; bitmap full $\to$ trigger MERGE; free dbuf range (RD_SRAM_MGR).\\
+\bottomrule
+\end{tabular}
+
+\section{Points to get right (for your diagram)}
+\begin{itemize}
+\item Read is \textbf{PHY-timed}: capture on \texttt{dfi\_rddata\_valid}; don't assume a fixed en$\to$data
+      offset the MC controls (that was the write side).
+\item \texttt{dfi\_rddata\_en} = window the MC opens (cmd+tphy\_rdlat, hold BL/2); \texttt{rddata\_valid}
+      = PHY says data is here. Two different signals, two owners.
+\item \textbf{One wide 512b write} to RD\_SRAM per packet (RD\_ACCUM gathers first); not per-beat.
+\item \texttt{rd\_done} = \textbf{last beat committed to RD\_SRAM}, never before --- completion can't fire
+      until the final beat is in.
+\item \texttt{dbuf\_addr} + \texttt{rob\_index} ride the \textbf{RL delay line} from RD issue; no CAM.
+\item Multiple reads in flight: RL line depth $\approx$ RL/spacing (like the write WL line) --- a
+      \textbf{delay line}, not one counter (same reasoning as the write path).
+\item \texttt{tphy\_rdlat} \textbf{same across ranks}; gear only rescales the DFI-cycle unit + capture width.
+\end{itemize}
+
+\end{document}
