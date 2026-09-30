@@ -4,7 +4,7 @@ from rtlfig import Fig, INK, MUTED, FAINT, PAPER, FILL_ACTIVE, FILL_NEW, FILL_CE
 # (MC opens window); PHY returns rddata_valid + rddata within it; RD_ACCUM
 # gathers -> one 512b RD_SRAM write -> rd_done. PHY-timed (not self-timed).
 
-CW = 74; RH = 40; X0 = 210
+CW = 74; RH = 40; X0 = 250
 RL = "#7a4fb0"; PHY = "#2a8f86"
 
 
@@ -18,12 +18,12 @@ def clk(f, y, n):
         f.line(x+CW/2, bot, x+CW, bot, stroke=INK); f.line(x+CW, bot, x+CW, top, stroke=INK); x += CW
 
 
-def bit(f, y, lv):
+def bit(f, y, lv, col=INK):
     top = y+8; bot = y+RH-8; x = X0; prev = lv[0]
     for c, v in enumerate(lv):
         yl = top if v else bot
-        if c > 0 and v != prev: f.line(x, top if prev else bot, x, yl, stroke=INK)
-        f.line(x, yl, x+CW, yl, stroke=INK, width=1.7 if v else 1.0); prev = v; x += CW
+        if c > 0 and v != prev: f.line(x, top if prev else bot, x, yl, stroke=col)
+        f.line(x, yl, x+CW, yl, stroke=col, width=1.9 if v else 1.0); prev = v; x += CW
 
 
 def bus(f, y, cells, fill=FILL_ACTIVE):
@@ -57,6 +57,8 @@ def panel(title, sub, n, rows, disabled, rdlat_to, fname):
         f.text(X0-12, ry+RH/2+4, name, size=8.5, mono=True, anchor="end")
         if kind == "clk": clk(f, ry, n)
         elif kind == "bit": bit(f, ry, data)
+        elif kind == "bite": bit(f, ry, data, RL)
+        elif kind == "bitv": bit(f, ry, data, PHY)
         elif kind == "bus": bus(f, ry, data)
         elif kind == "busv": bus(f, ry, data, fill=FILL_NEW)
         elif kind == "busm": bus(f, ry, data, fill=FILL_CELL)
@@ -77,8 +79,8 @@ panel("Read burst 1:1 (gear=00)",
       16, [
       ("clk", "dfi_clk", None),
       ("bus", "rd_cmd", ["RD","COL"]+[N]*14),
-      ("bit", "rddata_en_p0", [0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0]),
-      ("bit", "rddata_valid_p0", [0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0]),
+      ("bite", "rddata_en_p0 [MC>PHY]", [0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0]),
+      ("bitv", "rddata_valid_p0 [PHY>MC]", [0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0]),
       ("busv", "rddata_p0", [N]*5+["B0-7","B8-15","B16-23","B24-31","B32-39","B40-47","B48-55","B56-63"]+[N]*3),
       ("busm", "rd_sram_wr", [N]*13+["512b @dbuf"]+[N]*2),
       ("bus", "rd_done", [N]*13+["done"]+[N]*2),
@@ -90,9 +92,9 @@ panel("Read burst 1:2 (gear=01)",
       10, [
       ("clk", "dfi_clk", None),
       ("bus", "rd_cmd", ["RD"]+[N]*9),
-      ("bit", "rddata_en_p0", [0,0,0,0,0,1,1,1,1,0]),
-      ("bit", "rddata_en_p1", [0,0,0,0,0,1,1,1,1,0]),
-      ("bit", "rddata_valid", [0,0,0,0,0,1,1,1,1,0]),
+      ("bite", "rddata_en_p0 [MC>PHY]", [0,0,0,0,0,1,1,1,1,0]),
+      ("bite", "rddata_en_p1 [MC>PHY]", [0,0,0,0,0,1,1,1,1,0]),
+      ("bitv", "rddata_valid [PHY>MC]", [0,0,0,0,0,1,1,1,1,0]),
       ("busv", "rddata_p0", [N]*5+["B0-7","B16-23","B32-39","B48-55"]+[N]),
       ("busv", "rddata_p1", [N]*5+["B8-15","B24-31","B40-47","B56-63"]+[N]),
       ("busm", "rd_sram_wr", [N]*9+["512b"]),
@@ -105,8 +107,8 @@ panel("Read burst 1:4 (gear=11)",
       9, [
       ("clk", "dfi_clk", None),
       ("bus", "rd_cmd", ["RD"]+[N]*8),
-      ("bit", "rddata_en_p0..p3", [0,0,0,0,0,1,1,0,0]),
-      ("bit", "rddata_valid", [0,0,0,0,0,1,1,0,0]),
+      ("bite", "rddata_en_p0..p3 [MC>PHY]", [0,0,0,0,0,1,1,0,0]),
+      ("bitv", "rddata_valid [PHY>MC]", [0,0,0,0,0,1,1,0,0]),
       ("busv", "rddata_p0", [N]*5+["B0-7","B32-39"]+[N]*2),
       ("busv", "rddata_p1", [N]*5+["B8-15","B40-47"]+[N]*2),
       ("busv", "rddata_p2", [N]*5+["B16-23","B48-55"]+[N]*2),
