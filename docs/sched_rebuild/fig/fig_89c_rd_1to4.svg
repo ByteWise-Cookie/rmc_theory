@@ -86,7 +86,7 @@
   <line x1="768" y1="162" x2="768" y2="186" stroke="#7a4fb0" stroke-width="1.0"/>
   <line x1="768" y1="186" x2="842" y2="186" stroke="#7a4fb0" stroke-width="1.0"/>
   <line x1="842" y1="186" x2="916" y2="186" stroke="#7a4fb0" stroke-width="1.0"/>
-  <text x="238" y="218.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rddata_valid [PHY&gt;MC]</text>
+  <text x="238" y="218.0" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#000000">rddata_valid_p0..p3 [PHY&gt;MC]</text>
   <line x1="250" y1="226" x2="324" y2="226" stroke="#2a8f86" stroke-width="1.0"/>
   <line x1="324" y1="226" x2="398" y2="226" stroke="#2a8f86" stroke-width="1.0"/>
   <line x1="398" y1="226" x2="472" y2="226" stroke="#2a8f86" stroke-width="1.0"/>
