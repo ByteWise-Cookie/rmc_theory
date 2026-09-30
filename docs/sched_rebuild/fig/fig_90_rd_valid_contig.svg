@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="560" viewBox="0 0 1180 560" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1180" height="560" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">Read valid contiguity  (no-bubble guarantee)</text>
+  <text x="46" y="114" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_valid_p0</text>
+  <line x1="210" y1="110" x2="250" y2="110" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="46" y="150" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_valid_p1</text>
+  <line x1="210" y1="146" x2="250" y2="146" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="46" y="186" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_valid_p2</text>
+  <line x1="210" y1="182" x2="250" y2="182" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="46" y="222" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">dfi_rddata_valid_p3</text>
+  <line x1="210" y1="218" x2="250" y2="218" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="250" y="96" width="150" height="140" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="400" y="88" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">MASK by gear</text>
+  <text x="400" y="72" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">inactive lane -&gt; 1</text>
+  <text x="300" y="78" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">gear</text>
+  <line x1="325" y1="82" x2="325" y2="96" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="400" y1="110" x2="470" y2="110" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="400" y1="146" x2="470" y2="146" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="400" y1="182" x2="470" y2="182" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="400" y1="218" x2="470" y2="218" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="410" y="250" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">masked_valid[3:0]</text>
+  <path d="M477.0 90.0 L510 90.0 A75.0 75.0 0 0 1 510 240.0 L477.0 240.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="504" y="169" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <line x1="548" y1="165" x2="635" y2="165" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="556" y="158" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">cycle_valid</text>
+  <path d="M645.0 135.0 L675 135.0 A40.0 40.0 0 0 1 675 215.0 L645.0 215.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="669" y="179" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <line x1="705" y1="175" x2="770" y2="175" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="770" y="150" width="150" height="52" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="920" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">run_valid FF</text>
+  <text x="920" y="126" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">load=1 @burst_start</text>
+  <text x="700" y="130" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">burst_start</text>
+  <line x1="760" y1="134" x2="800" y2="150" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M920 176 L965 176 L965 300 L635 300" fill="none" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4"/>
+  <line x1="635" y1="300" x2="655" y2="205" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="700" y="296" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">run_valid (feedback)</text>
+  <path d="M645.0 360.0 L675 360.0 A40.0 40.0 0 0 1 675 440.0 L645.0 440.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="669" y="404" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <line x1="635" y1="300" x2="635" y2="380" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="560" y="372" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">run_valid</text>
+  <text x="560" y="430" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">cnt==0</text>
+  <line x1="600" y1="428" x2="648" y2="418" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="705" y1="400" x2="900" y2="400" stroke="#000000" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="712" y="393" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">read_done</text>
+  <rect x="900" y="387" width="150" height="26" fill="#e3f2f1" stroke="#000000" stroke-width="1.3" rx="4"/>
+  <text x="908" y="404" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">read_done</text>
+  <rect x="40" y="470" width="1100" height="74" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+  <text x="56" y="492" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">cycle_valid = AND of ACTIVE-phase valids (gear masks inactive lanes to 1): 1:1=vp0 ; 1:2=vp0&amp;vp1 ; 1:4=vp0&amp;..&amp;vp3.</text>
+  <text x="56" y="512" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">run_valid &lt;= run_valid &amp; cycle_valid ; reset to 1 at burst_start. A bubble (any active-cycle valid low) drops run_valid.</text>
+  <text x="56" y="532" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">read_done = run_valid &amp; (cnt==0). Bubble -&gt; run_valid=0 -&gt; read_done blocked (flag as read error). Contiguous -&gt; done.</text>
+</svg>
