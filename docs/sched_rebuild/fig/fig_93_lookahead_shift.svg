@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="620" viewBox="0 0 1360 620" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1360" height="620" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">LOOKAHEAD (shift-reg) - elig + p_encoder + compact-remove</text>
+  <text x="40" y="95" font-size="9" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">new entry</text>
+  <rect x="140" y="74" width="150" height="44" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="290" y="66" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">lowest_free_slot</text>
+  <line x1="290" y1="96" x2="360" y2="120" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="360" y="100" width="520" height="52" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="880" y="92" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">COMPACT / REMOVE</text>
+  <text x="880" y="76" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">slot[i] &lt;= (i&lt;served)? slot[i] : slot[i+1]</text>
+  <line x1="420" y1="152" x2="420" y2="188" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <line x1="540" y1="152" x2="540" y2="188" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <line x1="660" y1="152" x2="660" y2="188" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <line x1="780" y1="152" x2="780" y2="188" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <rect x="362" y="190" width="116" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="420" y="217" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">e0</text>
+  <text x="420" y="205" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{bank,vld,pl}</text>
+  <rect x="482" y="190" width="116" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="540" y="217" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">e1</text>
+  <text x="540" y="205" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{bank,vld,pl}</text>
+  <rect x="602" y="190" width="116" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="660" y="217" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">e2</text>
+  <text x="660" y="205" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{bank,vld,pl}</text>
+  <rect x="722" y="190" width="116" height="46" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="780" y="217" font-size="11" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">e3</text>
+  <text x="780" y="205" font-size="6.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#777777">{bank,vld,pl}</text>
+  <line x1="420" y1="236" x2="420" y2="300" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M400.0 299.0 L420 299.0 A21.0 21.0 0 0 1 420 341.0 L400.0 341.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="416" y="323" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <text x="446" y="312" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">elig[0]</text>
+  <line x1="420" y1="341" x2="420" y2="392" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="540" y1="236" x2="540" y2="300" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M520.0 299.0 L540 299.0 A21.0 21.0 0 0 1 540 341.0 L520.0 341.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="536" y="323" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <text x="566" y="312" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">elig[1]</text>
+  <line x1="540" y1="341" x2="540" y2="392" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="660" y1="236" x2="660" y2="300" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M640.0 299.0 L660 299.0 A21.0 21.0 0 0 1 660 341.0 L640.0 341.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="656" y="323" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <text x="686" y="312" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">elig[2]</text>
+  <line x1="660" y1="341" x2="660" y2="392" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="780" y1="236" x2="780" y2="300" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <path d="M760.0 299.0 L780 299.0 A21.0 21.0 0 0 1 780 341.0 L760.0 341.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="776" y="323" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">&amp;</text>
+  <text x="806" y="312" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">elig[3]</text>
+  <line x1="780" y1="341" x2="780" y2="392" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="120" y="300" width="170" height="44" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="290" y="292" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">bank_rdy_vec</text>
+  <path d="M290 322 L340 322 L340 320 L398 320" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="300" y="360" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">bank_rdy_vec[bank_ei]</text>
+  <rect x="360" y="392" width="500" height="50" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="860" y="384" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">P_ENCODER  (lowest set)</text>
+  <text x="860" y="368" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">-&gt; served_idx , served_oh[3:0] ;  elig==0 -&gt; HOLD</text>
+  <path d="M360 417 L120 417 L120 152 L360 130" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="130" y="175" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">served_idx</text>
+  <path d="M860 410 L1000 410 L1000 250" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="905" y="405" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">served_oh</text>
+  <path d="M970 153.0 L1040 183.0 L1040 243.0 L970 273.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="1003.0" y="217" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">ISSUE
+MUX</text>
+  <path d="M838 213 L940 213" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="880" y="206" font-size="7" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">slot entries</text>
+  <line x1="1040" y1="213" x2="1120" y2="213" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1120" y="199" width="150" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.3" rx="4"/>
+  <text x="1128" y="217" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">issued -&gt; BANK_DEC</text>
+  <text x="40" y="470" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">elig[i]=vld_i &amp; bank_rdy_vec[bank_ei]. p_encoder -&gt; lowest set = served_idx -&gt; issue that slot (head if ready, else younger bypasses). COMPACT-REMOVE pulls entries ABOVE served down 1; freed top loads new entry. Order free: same-bank entries share one bank_rdy bit + lowest-index -&gt; younger same-bank never passes older. elig==0 -&gt; hold (bubble).</text>
+</svg>
