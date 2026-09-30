@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="540" viewBox="0 0 1400 540" font-family="Inter, DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9Z" fill="#000000"/>
+    </marker>
+  </defs>
+  <rect width="1400" height="540" fill="#ffffff"/>
+  <text x="40" y="30" font-size="15" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#000000" font-weight="bold">LOOKAHEAD  -  compacting queue + parallel prio_enc + bypass mux</text>
+  <text x="40" y="300" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">in {rob_index, phy_adr, op} + vld</text>
+  <line x1="300" y1="305" x2="340" y2="305" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="150" y="270" width="150" height="70" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="300" y="262" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">LOAD</text>
+  <text x="300" y="246" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">lowest-free slot</text>
+  <line x1="300" y1="300" x2="340" y2="130" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="340" y="88" width="150" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="415" y="113" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">e0 (head/oldest)</text>
+  <line x1="490" y1="110" x2="560" y2="110" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="340" y="146" width="150" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="415" y="171" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">e1</text>
+  <line x1="490" y1="168" x2="560" y2="168" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="340" y="204" width="150" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="415" y="229" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">e2</text>
+  <line x1="490" y1="226" x2="560" y2="226" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="340" y="262" width="150" height="44" fill="#e9f0dc" stroke="#000000" stroke-width="1.4" rx="5"/>
+  <text x="415" y="287" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000">e3 (newest)</text>
+  <line x1="490" y1="284" x2="560" y2="284" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="430" y="60" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">bank_rdy[N_BANKS]</text>
+  <line x1="560" y1="64" x2="620" y2="90" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="560" y="90" width="130" height="220" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="690" y="82" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PROBE</text>
+  <text x="690" y="66" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">elig[3:0]</text>
+  <line x1="690" y1="200" x2="720" y2="200" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="720" y="90" width="130" height="220" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="850" y="82" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">BANK_CMP</text>
+  <text x="850" y="66" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">masked_elig</text>
+  <line x1="850" y1="200" x2="890" y2="200" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="890" y="150" width="120" height="100" fill="none" stroke="#000000" stroke-width="1.6"/>
+  <text x="1010" y="142" font-size="13" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="end" fill="#777777">PRIO_ENC</text>
+  <text x="1010" y="126" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="end" fill="#777777">lowest elig -&gt; sel_oh</text>
+  <path d="M1060 125.0 L1130 162.5 L1130 237.5 L1060 275.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="1093.0" y="204" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">HEAD
+MUX</text>
+  <path d="M490 130 L520 130 L520 200 L1060 200" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="700" y="344" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#777777">slot entries (bus) -&gt; HEAD_MUX</text>
+  <path d="M950 250 L950 300 L1085 300 L1085 240" fill="none" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="958" y="296" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">sel_oh</text>
+  <path d="M910 250 L910 420 L415 420 L415 306" fill="none" stroke="#7a4fb0" stroke-width="1.0" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+  <text x="560" y="434" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">compact / shift on select</text>
+  <path d="M1180 235.0 L1250 267.5 L1250 332.5 L1180 365.0 Z" fill="none" stroke="#000000" stroke-width="1.0"/>
+  <text x="1213.0" y="304" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="middle" fill="#000000" font-weight="bold">BYPASS</text>
+  <line x1="1130" y1="200" x2="1160" y2="270" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="1120" y="250" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">head</text>
+  <path d="M300 305 L330 460 L1150 460 L1160 330" fill="none" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <text x="700" y="474" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#2a8f86">input bypass (window empty -&gt; 0-cyc)</text>
+  <text x="1120" y="380" font-size="7.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#7a4fb0">window_empty</text>
+  <line x1="1180" y1="380" x2="1200" y2="335" stroke="#7a4fb0" stroke-width="1.0" marker-end="url(#arw)"/>
+  <line x1="1250" y1="300" x2="1290" y2="300" stroke="#2a8f86" stroke-width="1.0" marker-end="url(#arw)"/>
+  <rect x="1250" y="286" width="150" height="28" fill="#e3f2f1" stroke="#000000" stroke-width="1.3" rx="4"/>
+  <text x="1258" y="304" font-size="8.5" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000"></text>
+  <text x="1258" y="304" font-size="8" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" text-anchor="start" fill="#000000">-&gt; BANK_DEC</text>
+  <text x="40" y="512" font-size="11" font-family="Inter, DejaVu Sans, sans-serif" text-anchor="start" fill="#777777">Depth 4 = reorder window, NOT latency. New entry -&gt; lowest-free slot; all slots probed vs bank_rdy in parallel; bank_cmp holds per-bank order; prio_enc picks lowest eligible. BYPASS forwards input-&gt;out when window empty (0-cyc); else 1-cyc.</text>
+</svg>
